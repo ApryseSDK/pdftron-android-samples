@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Here we have a custom sticky note icon list with the default icons
+         and a custom Right Arrow icon. -->
+    <string-array name="stickynote_icons">
+        <item>Comment</item>
+        <item>Help</item>
+        <item>InsertCaret</item>
+        <item>Star</item>
+        <item>LightBulb</item>
+        <item>NewParagraph</item>
+        <item>CrossMark</item>
+        <item>CheckMark</item>
+        <item>LocationPin</item>
+        <item>ThumbsUp</item>
+        <item>RightArrow</item>
+    </string-array>
+
+    <!-- Alternatively you can choose to use a subset of the available icons by specifying
+         a different string array. -->
+    <!--<string-array name="stickynote_icons">
+        <item>Comment</item>
+        <item>Help</item>
+        <item>InsertCaret</item>
+        <item>RightArrow</item>
+    </string-array>-->
+
+</resources>

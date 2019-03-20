@@ -6,6 +6,7 @@ This repository contains sample projects using different features of the PDFTron
 | Sample | Description |
 |--|--|
 |[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-color-picker#customize-the-icon-picker).
+|[CustomQuickMenu](./CustomQuickMenu)| Customize the quick menu icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-quick-menu).
 
 ## Integration samples
 | Sample | Description |

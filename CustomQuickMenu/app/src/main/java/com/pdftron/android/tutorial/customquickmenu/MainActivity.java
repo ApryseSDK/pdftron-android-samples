@@ -12,12 +12,14 @@ import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -138,12 +140,40 @@ public class MainActivity extends AppCompatActivity {
                         if (which == R.id.qm_star) {
                             CommonToast.showText(MainActivity.this, "Star pressed");
                             return true;
+                        } else if (which == R.id.qm_custom_link) {
+                            CommonToast.showText(MainActivity.this, "Link pressed");
+                        } else if (which == R.id.qm_custom_unlink) {
+                            CommonToast.showText(MainActivity.this, "Unlink pressed");
                         }
                         return false;
                     }
 
                     @Override
-                    public boolean onShowQuickMenu(Annot annot) {
+                    public boolean onShowQuickMenu(QuickMenu quickMenu, Annot annot) {
+                        // Programmatically change quick menu
+
+                        try {
+                            if (annot != null && quickMenu != null) {
+
+                                if (annot.getType() == Annot.e_Square) {
+                                    QuickMenuItem item = new QuickMenuItem(MainActivity.this, R.id.qm_custom_link, QuickMenuItem.OVERFLOW_ROW_MENU);
+                                    item.setTitle(R.string.qm_custom_link);
+                                    ArrayList<QuickMenuItem> items = new ArrayList<>(1);
+                                    items.add(item);
+                                    quickMenu.addMenuEntries(items);
+                                } else if (annot.getType() == Annot.e_Circle) {
+                                    QuickMenuItem item = new QuickMenuItem(MainActivity.this, R.id.qm_custom_unlink, QuickMenuItem.OVERFLOW_ROW_MENU);
+                                    item.setTitle(R.string.qm_custom_unlink);
+                                    ArrayList<QuickMenuItem> items = new ArrayList<>(1);
+                                    items.add(item);
+                                    quickMenu.addMenuEntries(items);
+                                }
+
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+
                         return false;
                     }
 

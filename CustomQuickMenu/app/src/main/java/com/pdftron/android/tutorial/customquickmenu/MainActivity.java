@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabDocumentLoaded(String s) {
-                quickMenuPressed();
+                customizeQuickMenu();
             }
         });
 
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-    private void quickMenuPressed() {
+    private void customizeQuickMenu() {
         mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment()
                 .addQuickMenuListener(new ToolManager.QuickMenuListener() {
                     @Override

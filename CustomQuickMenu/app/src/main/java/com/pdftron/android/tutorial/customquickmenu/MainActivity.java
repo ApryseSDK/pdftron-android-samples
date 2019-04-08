@@ -156,8 +156,10 @@ public class MainActivity extends AppCompatActivity {
                             if (annot != null && quickMenu != null) {
 
                                 if (annot.getType() == Annot.e_Square) {
-                                    QuickMenuItem item = new QuickMenuItem(MainActivity.this, R.id.qm_custom_link, QuickMenuItem.OVERFLOW_ROW_MENU);
+                                    QuickMenuItem item = new QuickMenuItem(MainActivity.this, R.id.qm_custom_link, QuickMenuItem.FIRST_ROW_MENU);
                                     item.setTitle(R.string.qm_custom_link);
+                                    item.setIcon(R.drawable.ic_link_black_24dp);
+                                    item.setOrder(3);
                                     ArrayList<QuickMenuItem> items = new ArrayList<>(1);
                                     items.add(item);
                                     quickMenu.addMenuEntries(items);

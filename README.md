@@ -34,5 +34,8 @@ This repository contains sample projects using different features of the PDFTron
 
 3. **Run the project in Android Studio**
 
+## Contributing
+See [Contributing](./CONTRIBUTING.md)
+
 ## License
 See [License](./LICENSE)

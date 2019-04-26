@@ -30,7 +30,7 @@ This repository contains sample projects using different features of the PDFTron
 	PDFTRON_LICENSE_KEY=YOUR_PDFTRON_LICENSE_KEY_GOES_HERE
 	```
 
-	Your license key and AWS credentials are confidential. Please make sure that they are not publicly available.
+	Your PDFTron license key and credentials are confidential. Please make sure that they are not publicly available.
 
 3. **Run the project in Android Studio**
 

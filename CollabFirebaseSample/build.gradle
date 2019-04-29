@@ -16,8 +16,8 @@ buildscript {
     }
 }
 
-ext.myPdftronRepo = "s3://pdftron-maven/snapshot"
-ext.myPdftronVersion = "6.10.3-beta5"
+ext.myPdftronRepo = "s3://pdftron-maven/release"
+ext.myPdftronVersion = "6.10.3"
 
 allprojects {
     repositories {

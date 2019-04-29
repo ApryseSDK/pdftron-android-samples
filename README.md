@@ -4,14 +4,14 @@ This repository contains sample projects using different features of the PDFTron
 ## Integration samples
 | Sample | Description |
 |--|--|
-|[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/guides/getting-started/integrate-gradle).
+|[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/guides/getting-started/integrate-gradle)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
 
 ## Customization samples
 | Sample | Description |
 |--|--|
-|[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-color-picker#customize-the-icon-picker).
-|[CustomQuickMenu](./CustomQuickMenu)| Customize the quick menu icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-quick-menu).
+|[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-color-picker#customize-the-icon-picker)
+|[CustomQuickMenu](./CustomQuickMenu)| Customize the quick menu icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-quick-menu)
 
 ## Collaboration samples
 | Sample | Description |

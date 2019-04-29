@@ -9,7 +9,7 @@ app/
   build.gradle                - Module level Gradle build file.
 stickynote_icons_default.pdf  - PDF file containing default sticky note icon information.
 build.gradle                  - Project level Gradle build file.
-gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and AWS credentials.
+gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and credentials.
 ```
 
 ## License

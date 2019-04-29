@@ -11,7 +11,7 @@ app/
   build.gradle                - Module level Gradle build file.
   res/menu                    - quick menu resources that will be modified (see guide).
 build.gradle                  - Project level Gradle build file.
-gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and AWS credentials.
+gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and credentials.
 ```
 
 ## License

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PDFTron Firebase Demo</string>
+    <string name="user_name_title">Welcome! Tell us your name :)</string>
+    <string name="user_name_body">Your name</string>
+    <string name="existing_user_name_title">Welcome back! :)</string>
+    <string name="existing_user_name_body">Your name is %s</string>
+</resources>

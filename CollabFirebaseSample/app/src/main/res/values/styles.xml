@@ -1,0 +1,30 @@
+<resources>
+
+    <!-- Style used by the activity containing the document viewer Fragment-->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <!-- Colors used by the document viewer -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Specify your custom annotation reply theme with the replyTheme attribute -->
+        <item name="replyTheme">@style/MyCustomReplyTheme</item>
+    </style>
+
+    <!-- We'll also customize the viewer Fragment to use the sample color palette
+        by defining CustomAppTheme and extending AppTheme -->
+    <style name="CustomAppTheme" parent="AppTheme"/>
+
+    <!-- Custom theme used by the reply UI components -->
+    <style name="MyCustomReplyTheme" parent="ReplyBaseTheme.DayNight">
+        <!-- Component wide attributes used by the reply UI -->
+        <item name="replyColorBackgroundPrimary">@color/backgroundPrimary</item>
+        <item name="replyColorBackgroundSecondary">@color/backgroundSecondary</item>
+        <item name="replyIconColor">@color/iconPrimary</item>
+        <item name="replyDividerColor">@color/backgroundSecondary</item>
+        <item name="replyEditorSendButtonColor">@color/iconPrimary</item>
+        <item name="replyEditorCancelButtonColor">@color/colorAccent</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#C9C9C9</item>
+    </style>
+
+</resources>

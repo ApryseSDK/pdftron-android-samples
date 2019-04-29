@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Our custom app theme colors -->
+    <color name="colorPrimary">#202D3D</color>
+    <color name="colorPrimaryDark">#151e29</color>
+    <color name="colorAccent">#ff5722</color>
+    <color name="iconPrimary">#9dd8ff</color>
+    <color name="backgroundPrimary">@color/colorPrimary</color>
+    <color name="backgroundSecondary">@color/colorPrimaryDark</color>
+</resources>

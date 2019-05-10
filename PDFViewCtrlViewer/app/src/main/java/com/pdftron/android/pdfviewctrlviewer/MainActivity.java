@@ -1,9 +1,9 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
@@ -14,8 +14,10 @@ import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.sdf.SDFDoc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private PDFDoc mPdfDoc;
     private ToolManager mToolManager;
     private AnnotationToolbar mAnnotationToolbar;
+
+    private File mCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
-            viewFromResource(R.raw.sample, "sample_file");
-        } catch (PDFNetException e) {
-            Log.e(TAG, "Error setting up PDFViewCtrl");
+            viewFromHTTP();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -76,11 +80,42 @@ public class MainActivity extends AppCompatActivity {
         // mPdfDoc = mPdfViewCtrl.openPDFUri(fileUri, null);
     }
 
+    public void viewFromHTTP() throws FileNotFoundException, PDFNetException {
+        String url = "http://pdftron.s3.amazonaws.com/downloads/pl/form1.pdf";
+        mCache = new File(this.getFilesDir(), "form1.pdf");
+        mPdfViewCtrl.openPDFUri(Uri.parse(url), "");
+        mPdfViewCtrl.addDocumentDownloadListener(new PDFViewCtrl.DocumentDownloadListener() {
+            @Override
+            public void onDownloadEvent(PDFViewCtrl.DownloadState downloadState, int i, int i1, int i2, String s) {
+                if (downloadState == PDFViewCtrl.DownloadState.FINISHED) {
+                    mPdfDoc = mPdfViewCtrl.getDoc();
+                }
+            }
+        });
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Handle configuration changes from the toolbar here
         mAnnotationToolbar.onConfigurationChanged(newConfig);
+    }
+
+    private void save() {
+        boolean shouldUnlock = false;
+        try {
+            mPdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+            if (mPdfDoc != null && mCache != null) {
+                mPdfDoc.save(mCache.getAbsolutePath(), SDFDoc.SaveMode.LINEARIZED, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                mPdfViewCtrl.docUnlock();
+            }
+        }
     }
 
     /**
@@ -91,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (mPdfViewCtrl != null) {
+            save();
             mPdfViewCtrl.pause();
             mPdfViewCtrl.purgeMemory();
         }

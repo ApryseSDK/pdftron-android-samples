@@ -9,9 +9,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.controls.AnnotationToolbar;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.model.GroupedItem;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.ToolManager;
@@ -20,6 +23,11 @@ import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_LINE;
+import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_NOTE;
+import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_RECT;
+import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_TEXT;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -122,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabDocumentLoaded(String s) {
                 customizeQuickMenu();
+                customizeAnnotationToolbar();
             }
         });
 
@@ -129,6 +138,23 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    private void customizeAnnotationToolbar() {
+        if (mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            AnnotationToolbar annotationToolbar = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getAnnotationToolbar();
+            if (annotationToolbar == null) {
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().createAnnotationToolbar();
+                annotationToolbar = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getAnnotationToolbar();
+            }
+            if (annotationToolbar != null) {
+                annotationToolbar.getGroupItems().clear();
+                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_LINE, new int[]{Annot.e_Polyline, Annot.e_Line, AnnotStyle.CUSTOM_ANNOT_TYPE_ARROW, AnnotStyle.CUSTOM_ANNOT_TYPE_RULER, AnnotStyle.CUSTOM_ANNOT_TYPE_PERIMETER_MEASURE}));
+                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_RECT, new int[]{Annot.e_Circle, Annot.e_Square, Annot.e_Polygon, AnnotStyle.CUSTOM_ANNOT_TYPE_CLOUD, AnnotStyle.CUSTOM_ANNOT_TYPE_AREA_MEASURE}));
+                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_TEXT, new int[]{Annot.e_FreeText, AnnotStyle.CUSTOM_ANNOT_TYPE_CALLOUT}));
+                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_NOTE, new int[]{Annot.e_Sound, Annot.e_Text}));
+            }
+        }
     }
 
     private void customizeQuickMenu() {

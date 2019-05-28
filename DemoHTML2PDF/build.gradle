@@ -15,16 +15,15 @@ buildscript {
     }
 }
 
+ext.myPdftronRepo = "https://pdftron-maven.s3.amazonaws.com/release"
+ext.myPdftronVersion = file("${rootDir}/../pdftron-version.txt").text.trim()
+
 allprojects {
     repositories {
         google()
         jcenter()
         maven {
-            url "s3://pdftron-maven/release"
-            credentials(AwsCredentials) {
-                accessKey AWS_ACCESS_KEY
-                secretKey AWS_SECRET_KEY
-            }
+            url myPdftronRepo
         }
     }
 }

@@ -28,5 +28,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // PDFTron SDK dependencies
-    implementation "com.pdftron:pdftron-standard:6.10.3"
+    implementation "com.pdftron:pdftron-standard:$myPdftronVersion"
 }

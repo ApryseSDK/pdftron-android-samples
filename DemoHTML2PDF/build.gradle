@@ -20,7 +20,7 @@ allprojects {
         google()
         jcenter()
         maven {
-            url "http://pdftron-maven.s3.amazonaws.com/release"
+            url "https://pdftron-maven.s3.amazonaws.com/release"
         }
     }
 }

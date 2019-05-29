@@ -7,6 +7,7 @@ import com.google.firebase.database.*
 import com.pdftron.collab.db.CollabDatabase
 import com.pdftron.collab.db.entity.AnnotationEntity
 import com.pdftron.collab.service.CustomService
+import com.pdftron.collab.utils.JsonUtils
 import com.pdftron.collab.utils.XfdfUtils
 import com.pdftron.pdf.utils.Utils
 import com.pdftron.realtimecollaboration.model.Annotation
@@ -203,7 +204,10 @@ class Server(applicationContext: Context) : CustomService {
                     for (child in p0.children) {
                         val key = child.key
                         val newAnnot = child.getValue(Annotation::class.java)
-                        mInitialAnnotMap[key!!] = convAnnotationToAnnotationEntity(key, newAnnot!!)
+                        val entity = convAnnotationToAnnotationEntity(key!!, newAnnot!!)
+                        if (entity != null) {
+                            mInitialAnnotMap[key] = entity
+                        }
                     }
                     mDisposables.add(handleChildrenAdded(mInitialAnnotMap).subscribeOn(Schedulers.io()).subscribe())
                     annotationsRef!!.addChildEventListener(annotChildEventListener)
@@ -232,7 +236,7 @@ class Server(applicationContext: Context) : CustomService {
         }
     }
 
-    private fun convAnnotationToAnnotationEntity(annotId: String, annotationData: Annotation): AnnotationEntity {
+    private fun convAnnotationToAnnotationEntity(annotId: String, annotationData: Annotation): AnnotationEntity? {
         val userName = mUserMap[annotationData.authorId]
         val annotationEntity = AnnotationEntity().apply {
             id = annotId
@@ -244,7 +248,10 @@ class Server(applicationContext: Context) : CustomService {
 
         }
         XfdfUtils.fillAnnotationEntity(annotationEntity)
-        return annotationEntity
+        if (JsonUtils.isValidInsertEntity(annotationEntity)) {
+            return annotationEntity
+        }
+        return null
     }
 
     fun handleChildrenAdded(map: HashMap<String, AnnotationEntity>): Completable {
@@ -264,7 +271,11 @@ class Server(applicationContext: Context) : CustomService {
             return
         }
 
-        addAnnotation(mDatabase, convAnnotationToAnnotationEntity(annotId, annotationData))
+        val entity = convAnnotationToAnnotationEntity(annotId, annotationData)
+
+        if (entity != null) {
+            addAnnotation(mDatabase, entity)
+        }
     }
 
     fun handleChildChanged(annotId: String?, annotationData: Annotation?): Completable {

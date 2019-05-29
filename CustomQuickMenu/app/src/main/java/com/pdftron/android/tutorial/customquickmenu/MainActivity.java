@@ -9,8 +9,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.FileInfo;
@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
-        Bundle args = PdfViewCtrlTabFragment.createBasicPdfViewCtrlTabBundle(this, uri, "");
-        mPdfViewCtrlTabHostFragment = PdfViewCtrlTabHostFragment.newInstance(args);
+        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri).build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(new PdfViewCtrlTabHostFragment.TabHostListener() {
             @Override
             public void onTabHostShown() {
@@ -134,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
@@ -196,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
                                     items.add(item);
                                     quickMenu.addMenuEntries(items);
                                 }
-
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -215,8 +212,5 @@ public class MainActivity extends AppCompatActivity {
                         // Called when the quick menu is dismissed
                     }
                 });
-
     }
-
-
 }

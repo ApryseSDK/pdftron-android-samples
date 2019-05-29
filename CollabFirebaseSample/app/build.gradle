@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 apply plugin: 'kotlin-android'
 
@@ -47,6 +48,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-auth:16.2.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.0'
 
     implementation "com.pdftron:pdftron:$myPdftronVersion"
     implementation "com.pdftron:tools:$myPdftronVersion"

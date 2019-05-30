@@ -192,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void customizeAnnotationToolbar() {
+        // let's re-arrange items in the annotation toolbar grouping
         if (mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             AnnotationToolbar annotationToolbar = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getAnnotationToolbar();
             if (annotationToolbar == null) {
@@ -209,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void customizeQuickMenu() {
+        // let's add some new items in the quick menu
         mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment()
                 .addQuickMenuListener(new ToolManager.QuickMenuListener() {
                     @Override

@@ -1,25 +1,32 @@
 package com.pdftron.android.tutorial.customquickmenu;
 
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.model.GroupedItem;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.ViewerUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -130,12 +137,58 @@ public class MainActivity extends AppCompatActivity {
             public void onTabDocumentLoaded(String s) {
                 customizeQuickMenu();
                 customizeAnnotationToolbar();
+                customizeLinkClick();
             }
         });
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    private void customizeLinkClick() {
+        final PdfViewCtrlTabFragment fragment = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+        if (fragment != null) {
+            final PDFViewCtrl pdfViewCtrl = fragment.getPDFViewCtrl();
+            final ToolManager toolManager = fragment.getToolManager();
+            if (pdfViewCtrl != null && toolManager != null) {
+                toolManager.setBasicAnnotationListener(new ToolManager.BasicAnnotationListener() {
+                    @Override
+                    public void onAnnotationSelected(Annot annot, int i) {
+                        fragment.onAnnotationSelected(annot, i);
+                    }
+
+                    @Override
+                    public void onAnnotationUnselected() {
+                        fragment.onAnnotationUnselected();
+                    }
+
+                    @Override
+                    public boolean onInterceptAnnotationHandling(@Nullable Annot annot, Bundle bundle, ToolManager.ToolMode toolMode) {
+                        // custom link behaviour
+                        // instead of jumping to the destination, let's display a flashing view on top of the link
+                        try {
+                            if (annot != null && annot.isValid() && annot.getType() == Annot.e_Link) {
+                                int pageNum = bundle.getInt(Tool.PAGE_NUMBER);
+                                ViewerUtils.jumpToAnnotation(pdfViewCtrl, annot, pageNum);
+                                toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
+                                pdfViewCtrl.invalidate();
+                                return true;
+                            }
+                        } catch (PDFNetException e) {
+                            e.printStackTrace();
+                        }
+
+                        return fragment.onInterceptAnnotationHandling(annot, bundle, toolMode);
+                    }
+
+                    @Override
+                    public boolean onInterceptDialog(AlertDialog alertDialog) {
+                        return fragment.onInterceptDialog(alertDialog);
+                    }
+                });
+            }
+        }
     }
 
     private void customizeAnnotationToolbar() {

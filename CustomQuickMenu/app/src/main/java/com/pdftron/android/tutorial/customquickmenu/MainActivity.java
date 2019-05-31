@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.LongSparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,13 +21,13 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.model.GroupedItem;
+import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.Utils;
-import com.pdftron.pdf.utils.ViewerUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_TEXT;
 public class MainActivity extends AppCompatActivity {
 
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+
+    private LongSparseArray<CustomRelativeLayout> mLinkOverlayMap = new LongSparseArray<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +173,10 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             if (annot != null && annot.isValid() && annot.getType() == Annot.e_Link) {
                                 int pageNum = bundle.getInt(Tool.PAGE_NUMBER);
-                                ViewerUtils.jumpToAnnotation(pdfViewCtrl, annot, pageNum);
+
+                                // add custom on top of link
+                                addCustomViewOnLink(pdfViewCtrl, annot, pageNum);
+
                                 toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
                                 pdfViewCtrl.invalidate();
                                 return true;
@@ -188,6 +194,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+        }
+    }
+
+    private void addCustomViewOnLink(PDFViewCtrl pdfViewCtrl, Annot annot, int pageNum) {
+        try {
+            long annotObjNum = annot.getSDFObj().getObjNum();
+            if (mLinkOverlayMap.get(annotObjNum) != null) {
+                // already added
+                return;
+            }
+            CustomRelativeLayout overlay = new CustomRelativeLayout(this);
+            overlay.setBackgroundColor(getResources().getColor(R.color.orange));
+            overlay.setAnnot(pdfViewCtrl, annot, pageNum);
+            overlay.setZoomWithParent(true);
+            pdfViewCtrl.addView(overlay);
+            mLinkOverlayMap.put(annotObjNum, overlay);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

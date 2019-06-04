@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         toolManager.setTool(customTool);
     }
 
-    //@data {"m":true}//
     public void useCustomStamp(@NonNull PdfViewCtrlTabHostFragment fragment) {
         // Create our custom tool
         ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();

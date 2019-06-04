@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/myLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="136dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/centerPoint"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24dp"
+            android:backgroundTint="#EA7350"
+            android:onClick="cloudSq"
+            android:text="Cloud Square"
+            android:textColor="@color/tools_colors_white" />
+
+        <TextView
+            android:id="@+id/centerPoint"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="136dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/centerPoint"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24dp"
+            android:backgroundTint="#EA7350"
+            android:onClick="custStamp"
+            android:text="Custom Stamp"
+            android:textColor="@color/tools_colors_white" />
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

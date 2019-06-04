@@ -19,7 +19,9 @@ This repository contains sample projects using different features of the PDFTron
 |[CollabFirebaseSample](./CollabFirebaseSample)| Create a real-time document collaboration app as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-1) and customize as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-2) |
 
 ## Feature samples
-|[DemoHTML2PDF](./DemoHTML2PDF)| HTML to PDF conversion described [in this guide](https://www.pdftron.com/documentation/android/guides/basics/html-to-pdf)
+| Sample | Description |
+|--|--|
+|[DemoHTML2PDF](./DemoHTML2PDF)| HTML to PDF conversion as described [in this guide](https://www.pdftron.com/documentation/android/guides/basics/html-to-pdf)|
 
 ## Running the samples
 

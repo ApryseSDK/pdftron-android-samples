@@ -3,12 +3,8 @@ package com.example.customtoolsample;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.Annot;
-import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
-import com.pdftron.pdf.Rect;
-import com.pdftron.pdf.tools.SimpleShapeCreate;
 import com.pdftron.pdf.tools.Stamper;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;

@@ -1,7 +1,5 @@
 package com.example.customtoolsample;
 
-import com.pdftron.pdf.tools.RectCreate;
-
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 
@@ -10,14 +8,14 @@ import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.ColorPt;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.Point;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.annots.PolyLine;
 import com.pdftron.pdf.annots.Polygon;
 import com.pdftron.pdf.tools.RectCreate;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
-import com.pdftron.pdf.Point;
-import com.pdftron.pdf.Rect;
 
 public class CustomCloudSquare extends RectCreate {
 

@@ -1,5 +1,5 @@
 # PDFTron Android Samples
-This repository contains sample projects using different features of the PDFTron Android SDK. The guides for each sample can be found in the [PDFTron Android documentation](https://www.pdftron.com/documentation/android).
+This repository contains sample projects using different features of the PDFTron Android SDK. The guides for each sample can be found in the [PDFTron Android documentation](https://www.pdftron.com/documentation/android/guides).
 
 ## Integration samples
 | Sample | Description |

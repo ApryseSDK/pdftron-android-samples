@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val USER_NAME_REQUEST_CODE = 1000
 
-    private val DEFAULT_FILE_URL = "https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo-annotated.pdf"
+    private val DEFAULT_FILE_URL = "https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf"
 
     private lateinit var server: Server
 

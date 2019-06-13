@@ -11,7 +11,7 @@ This repository contains sample projects using different features of the PDFTron
 | Sample | Description |
 |--|--|
 |[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-color-picker#customize-the-icon-picker)
-|[CustomQuickMenu](./CustomQuickMenu)| Customize the quick menu icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-quick-menu)
+|[CustomUI](./CustomUI)| Various samples to customize the UI of PdfViewCtrlTabHostFragment which includes samples for: modifying the quick menu, modifying the annotation toolbar, modifying the options toolbar, and adding custom views to the viewer.
 |[CustomToolSample](./CustomToolSample)| Create a custom tool as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/custom-tool)
 
 ## Collaboration samples

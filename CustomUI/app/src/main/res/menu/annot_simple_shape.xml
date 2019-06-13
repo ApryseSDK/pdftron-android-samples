@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@id/qm_first_row_group">
+        <item android:id="@+id/qm_star"
+            android:title="@string/qm_star"
+            android:icon="@drawable/ic_star_white_24dp"/>
+        <item android:id="@id/qm_appearance"
+            android:title="@string/tools_qm_appearance"
+            android:icon="@drawable/ic_color_lens_black_24dp" />
+        <item android:id="@id/qm_note"
+            android:title="@string/tools_qm_note"
+            android:icon="@drawable/ic_chat_black_24dp"/>
+        <item android:id="@id/qm_copy"
+            android:title="@string/tools_qm_copy"
+            android:icon="@drawable/ic_copy_black_24dp"/>
+        <item android:id="@id/qm_delete"
+            android:title="@string/delete"
+            android:icon="@drawable/ic_delete_black_24dp"/>
+
+    </group>
+    <group android:id="@id/qm_overflow_row_group">
+        <item android:id="@id/qm_flatten"
+            android:title="@string/tools_qm_flatten"/>
+    </group>
+</menu>

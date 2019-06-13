@@ -15,7 +15,8 @@ import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_RECT;
 import static com.pdftron.pdf.controls.AnnotationToolbar.PREF_KEY_TEXT;
 
 /**
- * Delegate class that adds a custom annotation toolbar to a PdfViewCtrlTabHostFragment.
+ * Delegate class that adds a custom annotation toolbar to a PdfViewCtrlTabHostFragment. This sample
+ * re-arranges items in the annotation toolbar grouping.
  */
 public class CustomAnnotationToolbar extends CustomizationDelegate {
 

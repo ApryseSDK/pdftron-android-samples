@@ -14,7 +14,10 @@ import com.pdftron.pdf.utils.CommonToast;
 import java.util.ArrayList;
 
 /**
- * Delegate class that adds custom quick menu buttons when annotations are selected.
+ * Delegate class that adds custom quick menu buttons when annotations are selected. In particular,
+ * this sample adds a custom star to almost all of the annotation quick menus, adds a "Link" quick
+ * menu button when square annotations are selected, and adds an "UnLink" quick menu button when circle
+ * annotations are selected.
  */
 public class CustomQuickMenu extends CustomizationDelegate {
 

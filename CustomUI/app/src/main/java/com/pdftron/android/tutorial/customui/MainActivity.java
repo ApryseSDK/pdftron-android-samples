@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.pdf.config.ViewerBuilder;
@@ -29,7 +31,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
-        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri).build(this);
+        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
+                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
+                .usingNavIcon(R.drawable.ic_arrow_back_black_24dp)
+                .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Add the fragment to our activity
@@ -50,7 +55,15 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public void onTabDocumentLoaded(String s) {
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
         new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
+        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
+    }
+
+    @Override
+    public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.action_show_toast) {
+            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 
     @Override
@@ -105,11 +118,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean onToolbarPrepareOptionsMenu(Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         return false;
     }
 

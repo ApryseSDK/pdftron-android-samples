@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">CustomQuickMenu</string>
-    <string name="qm_star">Star</string>
-    <string name="qm_custom_link">Link</string>
-    <string name="qm_custom_unlink">Unlink</string>
-</resources>

@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         Uri uri = Uri.fromFile(f);
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_arrow_back_black_24dp)
+                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 

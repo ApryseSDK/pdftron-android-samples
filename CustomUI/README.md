@@ -1,6 +1,7 @@
 # Custom UI sample
 
 This sample demonstrates how to customize the UI of PdfViewCtrlTabHostFragment which includes samples for: 
+
 |Sample|Description|
 |--|--|
 |[Quick menu customization](https://www.pdftron.com/documentation/android/guides/advanced/customize-quick-menu)|Adds a custom star to almost all of the annotation quick menus, adds a "Link" quick menu button when square annotations are selected, and adds an "UnLink" quick menu button when circle annotations are selected.|

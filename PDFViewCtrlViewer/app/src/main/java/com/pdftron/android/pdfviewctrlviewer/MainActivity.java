@@ -4,18 +4,27 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
 import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
+import com.pdftron.pdf.tools.QuickMenu;
+import com.pdftron.pdf.tools.QuickMenuItem;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.ViewerUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -47,6 +56,87 @@ public class MainActivity extends AppCompatActivity {
     public void setupToolManager() {
         mToolManager = ToolManagerBuilder.from()
                 .build(this, mPdfViewCtrl);
+        mToolManager.setExternalAnnotationManagerListener(new ToolManager.ExternalAnnotationManagerListener() {
+            @Override
+            public String onGenerateKey() {
+                return UUID.randomUUID().toString();
+            }
+        });
+        mToolManager.setQuickMenuListener(new ToolManager.QuickMenuListener() {
+            @Override
+            public boolean onQuickMenuClicked(QuickMenuItem quickMenuItem) {
+                if (quickMenuItem.getItemId() == R.id.qm_publish) {
+                    // publish clicked
+                    Annot annot = ViewerUtils.getAnnotById(mPdfViewCtrl, mToolManager.getSelectedAnnotId(), mToolManager.getSelectedAnnotPageNum());
+                    if (null == annot) {
+                        return false;
+                    }
+                    boolean shouldUnlock = false;
+                    try {
+                        mPdfViewCtrl.docLock(true);
+                        shouldUnlock = true;
+
+                        // raise pre-modified event
+                        HashMap<Annot, Integer> annots = new HashMap<>(1);
+                        annots.put(annot, mToolManager.getSelectedAnnotPageNum());
+                        mToolManager.raiseAnnotationsPreModifyEvent(annots);
+
+                        // set print flag
+                        annot.setFlag(Annot.e_print, true);
+
+                        mToolManager.raiseAnnotationsModifiedEvent(annots, Tool.getAnnotationModificationBundle(null));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        if (shouldUnlock) {
+                            mPdfViewCtrl.docUnlock();
+                        }
+                    }
+                    mToolManager.deselectAll();
+
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onShowQuickMenu(QuickMenu quickMenu, Annot annot) {
+//                boolean shouldUnlockRead = false;
+//                boolean hasPrint = false;
+//                try {
+//                    mPdfViewCtrl.docLockRead();
+//                    shouldUnlockRead = true;
+//
+//                    hasPrint = annot != null && annot.getFlag(Annot.e_print);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                } finally {
+//                    if (shouldUnlockRead) {
+//                        mPdfViewCtrl.docUnlockRead();
+//                    }
+//                }
+//                if (hasPrint) {
+//                    // if already has print flag, hide publish menu
+//                    QuickMenuItem item = quickMenu.findMenuItem(R.id.qm_publish);
+//                    if (item != null) {
+//                        item.setVisible(false);
+//                    }
+//                    // fake an add so we can refresh the quick menu
+//                    quickMenu.addMenuEntries(new ArrayList<QuickMenuItem>());
+//                }
+                return false;
+            }
+
+            @Override
+            public void onQuickMenuShown() {
+
+            }
+
+            @Override
+            public void onQuickMenuDismissed() {
+
+            }
+        });
     }
 
     /**

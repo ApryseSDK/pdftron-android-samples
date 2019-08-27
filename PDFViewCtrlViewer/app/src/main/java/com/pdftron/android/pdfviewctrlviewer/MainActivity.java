@@ -4,13 +4,18 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.TextSearchResult;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
 import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
+import com.pdftron.pdf.controls.FindTextOverlay;
+import com.pdftron.pdf.controls.SearchResultsView;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
@@ -21,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
 
     private PDFViewCtrl mPdfViewCtrl;
+    private SearchResultsView mSearchResultsView;
+    private Button mSearchButton;
+    private FindTextOverlay mSearchOverlay;
     private PDFDoc mPdfDoc;
     private ToolManager mToolManager;
     private AnnotationToolbar mAnnotationToolbar;
@@ -31,6 +39,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
+        mSearchButton = findViewById(R.id.search_button);
+        mSearchOverlay = findViewById(R.id.search_overlay);
+        mSearchResultsView = findViewById(R.id.search_view);
+
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchText = "the";
+                mSearchOverlay.queryTextSubmit(searchText);
+                mSearchResultsView.findText(searchText);
+                mSearchOverlay.setVisibility(View.VISIBLE);
+                mSearchResultsView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mSearchResultsView.setSearchResultsListener(new SearchResultsView.SearchResultsListener() {
+            @Override
+            public void onSearchResultClicked(TextSearchResult textSearchResult) {
+                mSearchOverlay.highlightFullTextSearchResult(textSearchResult);
+                mPdfViewCtrl.setCurrentPage(textSearchResult.getPageNum());
+                mSearchResultsView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFullTextSearchStart() {
+
+            }
+
+            @Override
+            public void onSearchResultFound(TextSearchResult textSearchResult) {
+                mSearchOverlay.highlightFullTextSearchResult(textSearchResult);
+            }
+        });
+
         setupToolManager();
         setupAnnotationToolbar();
         try {
@@ -39,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        mSearchResultsView.setPdfViewCtrl(mPdfViewCtrl);
+        mSearchOverlay.setPdfViewCtrl(mPdfViewCtrl);
     }
 
     /**

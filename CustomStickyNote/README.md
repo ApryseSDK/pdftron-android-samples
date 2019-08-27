@@ -12,5 +12,8 @@ build.gradle                  - Project level Gradle build file.
 gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and credentials.
 ```
 
+## Resources
+- To create a PDF file from SVG image resource, see guide here: [SVG to PDF with Illustrator](https://pdftron.s3.amazonaws.com/custom/ID-zJWLuhTffd3c/mobilechannel_6D420A76/Android-4h7df%5E34jh/custom/galaxyweblinks/video%20-%20svg%20to%20pdf%20icon.mov)
+
 ## License
 See [License](./../LICENSE)

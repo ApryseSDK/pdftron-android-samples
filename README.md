@@ -4,7 +4,7 @@ This repository contains sample projects using different features of the PDFTron
 ## Integration samples
 | Sample | Description |
 |--|--|
-|[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/guides/getting-started/integrate-gradle)
+|[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/get-started/integration/gradle#integrating-standard-version)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
 
 ## Customization samples
@@ -35,3 +35,4 @@ See [Contributing](./CONTRIBUTING.md)
 
 ## License
 See [License](./LICENSE)
+![](https://onepixel.pdftron.com/pdftron-android-samples)

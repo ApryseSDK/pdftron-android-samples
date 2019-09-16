@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.android.tutorial.customui.custom.MyTabFragment;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
+                .usingTabClass(MyTabFragment.class)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 

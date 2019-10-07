@@ -14,6 +14,7 @@ import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.android.tutorial.customui.custom.MyTabFragment;
 import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
@@ -29,6 +30,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Create a ViewerConfig object with custom settings
+        ViewerConfig config = new ViewerConfig.Builder()
+                .multiTabEnabled(false) // disables multi-tabs
+                .build();
+
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingTabClass(MyTabFragment.class)
+                .usingConfig(config)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 

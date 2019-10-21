@@ -12,12 +12,16 @@ import android.widget.Toast;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
@@ -93,7 +97,13 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onNavButtonPressed() {
-
+        if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+            if (pdfViewCtrl != null) {
+                ArrayList<Annot> annots = pdfViewCtrl.getAnnotationsOnPage(pdfViewCtrl.getCurrentPage());
+                CommonToast.showText(this, "There are " + annots.size() + " annotations on this page!");
+            }
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.pdftron.android.tutorial.customui;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -12,7 +13,10 @@ import android.widget.Toast;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
@@ -31,9 +35,17 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+
+        PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(this);
+        pdfViewCtrlConfig.setMaintainZoomEnabled(false);
+        ViewerConfig config = new ViewerConfig.Builder()
+                .pdfViewCtrlConfig(pdfViewCtrlConfig)
+                .build();
+
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
+                .usingConfig(config)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
@@ -41,6 +53,28 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+            if (pdfViewCtrl != null) {
+                try {
+                    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        pdfViewCtrl.setPageViewMode(PDFViewCtrl.PageViewMode.FIT_WIDTH);
+                        pdfViewCtrl.setPageRefViewMode(PDFViewCtrl.PageViewMode.FIT_WIDTH);
+                    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        pdfViewCtrl.setPageViewMode(PDFViewCtrl.PageViewMode.FIT_PAGE);
+                        pdfViewCtrl.setPageRefViewMode(PDFViewCtrl.PageViewMode.FIT_PAGE);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.pdftron.android.tutorial.customui.custom;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.controls.AnnotationToolbar;

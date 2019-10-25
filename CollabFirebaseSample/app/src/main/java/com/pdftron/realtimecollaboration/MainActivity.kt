@@ -1,13 +1,13 @@
 package com.pdftron.realtimecollaboration
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import com.pdftron.collab.ui.viewer.CollabViewerBuilder
 import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createTabletViewerFragment(
-        activity: FragmentActivity,
+        activity: androidx.fragment.app.FragmentActivity,
         fileUri: Uri,
         config: ViewerConfig
     ): CollabViewerTabHostFragment {
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
             R.string.cancel
         )
         dialog.isCancelable = false
-        dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomAppTheme)
+        dialog.setStyle(androidx.fragment.app.DialogFragment.STYLE_NO_TITLE, R.style.CustomAppTheme)
         dialog.show(supportFragmentManager, TextInputDialog.TAG)
     }
 }

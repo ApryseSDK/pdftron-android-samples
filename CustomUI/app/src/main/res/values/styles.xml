@@ -1,11 +1,79 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="CustomAppTheme" parent="AppTheme">
+        <item name="actionMenuTextColor">@color/app_color_icon</item>
+        <!-- Drawer -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <!-- Action bar -->
+        <item name="actionModeBackground">?attr/colorPrimary</item>
+        <item name="windowActionModeOverlay">true</item>
+
+        <!--Style customization-->
+        <item name="toolbarNavigationButtonStyle">@style/ToolbarButtonNavigationStyle</item>
+        <item name="annotation_toolbar">@style/CustomAnnotationToolbarStyle</item>
+        <item name="thumbnail_slider">@style/CustomThumbnailSliderStyle</item>
+        <item name="custom_bookmarks_tab_layout">@style/CustomBookmarksTabLayoutStyle</item>
+
+        <!--If using non-NoActionBar theme as parent, uncomment below-->
+        <!--Disable action bar start-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--Disable action bar end-->
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="titleTextColor">@color/app_color_icon</item>
+        <item name="colorControlNormal">@color/app_color_icon</item>
+        <item name="iconTint">@color/app_color_icon</item>
+        <!--Search-->
+        <item name="android:editTextColor">@color/app_color_icon</item>
+        <item name="android:textColorHint">@color/app_color_icon_light</item>
+    </style>
+
+    <style name="ToolbarButtonNavigationStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:tint">@color/app_color_icon</item>
+    </style>
+
+    <style name="CustomAnnotationToolbarStyle" parent="AnnotationToolbarStyle">
+        <item name="colorToolBackground">@color/colorPrimaryDark</item>
+        <item name="colorToolIcon">@color/app_color_icon</item>
+        <item name="colorCloseIcon">@color/app_color_icon</item>
+    </style>
+
+    <style name="CustomThumbnailSliderStyle" parent="ThumbnailSliderStyle">
+        <item name="leftMenuItemColor">@color/app_color_icon</item>
+        <item name="rightMenuItemColor">@color/app_color_icon</item>
+        <item name="seekbarColor">@color/app_color_icon</item>
+        <item name="colorBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="CustomBookmarksTabLayoutStyle" parent="BookmarksTabLayoutStyle">
+        <item name="tabTintColorDialog">@color/app_color_icon</item>
+        <item name="tabTintSelectedColorDialog">@color/app_color_icon</item>
+    </style>
+
+    <style name="PdfTabLayoutStyle" parent="BasePdfTabLayoutStyle">
+        <item name="tabTextAppearance">@style/CustomPdfTabTextAppearance</item>
+    </style>
+
+    <style name="CustomPdfTabTextAppearance" parent="PdfTabTextAppearance">
+        <item name="android:textColor">@color/selector_tab_text_color</item>
+    </style>
+
+    <style name="FloatingButtonNavStyle" parent="BaseFloatingButtonNavStyle">
+        <item name="tint">@color/app_color_icon</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

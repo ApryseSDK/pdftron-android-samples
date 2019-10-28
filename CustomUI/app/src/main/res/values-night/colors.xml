@@ -5,4 +5,6 @@
 
     <color name="tab_color_selected">#828694</color>
 
+    <color name="annotation_tool_background">#3D4763</color>
+
 </resources>

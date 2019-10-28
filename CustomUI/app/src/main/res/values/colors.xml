@@ -10,4 +10,6 @@
     <color name="tab_color_selected">#404452</color>
     <color name="tab_color_unselected">#B3404452</color> <!-- 70% -->
 
+    <color name="annotation_tool_background">#D1D5E3</color>
+
 </resources>

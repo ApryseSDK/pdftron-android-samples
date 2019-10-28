@@ -1,5 +1,14 @@
 <resources>
 
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="titleTextColor">@color/app_color_icon</item>
+        <item name="colorControlNormal">@color/app_color_icon</item>
+        <item name="iconTint">@color/app_color_icon</item>
+        <!--Search-->
+        <item name="android:editTextColor">@color/app_color_icon</item>
+        <item name="android:textColorHint">@color/app_color_icon_light</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />

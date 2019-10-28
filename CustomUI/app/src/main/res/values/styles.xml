@@ -43,7 +43,7 @@
     </style>
 
     <style name="CustomAnnotationToolbarStyle" parent="AnnotationToolbarStyle">
-        <item name="colorToolBackground">@color/colorPrimaryDark</item>
+        <item name="colorToolBackground">@color/annotation_tool_background</item>
         <item name="colorToolIcon">@color/app_color_icon</item>
         <item name="colorCloseIcon">@color/app_color_icon</item>
     </style>

@@ -1,5 +1,9 @@
 # Custom UI sample
 
+|Light|Dark|
+|--|--|
+![light-theme](./art/light-theme.png) | ![dark-theme](./art/dark-theme.png)
+
 This sample demonstrates how to customize the UI of PdfViewCtrlTabHostFragment which includes samples for: 
 
 |Sample|Description|

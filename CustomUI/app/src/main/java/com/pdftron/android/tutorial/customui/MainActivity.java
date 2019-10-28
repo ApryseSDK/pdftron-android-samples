@@ -13,6 +13,7 @@ import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
@@ -31,9 +32,13 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+        ViewerConfig viewerConfig = new ViewerConfig.Builder()
+                .toolbarTitle("٩(◕‿◕｡)۶")
+                .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
+                .usingConfig(viewerConfig)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
@@ -133,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean canRecreateActivity() {
-        return false;
+        return true;
     }
 
     @Override

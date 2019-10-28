@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
-                .autoHideToolbarEnabled(false)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean canRecreateActivity() {
-        return false;
+        return true;
     }
 
     @Override

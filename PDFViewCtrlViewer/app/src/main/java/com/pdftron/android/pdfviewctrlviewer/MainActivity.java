@@ -4,8 +4,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
@@ -16,6 +20,7 @@ import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -39,6 +44,20 @@ public class MainActivity extends AppCompatActivity {
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        // Add button that shows a toast of number of annots when pressed
+        Button numAnnots = findViewById(R.id.num_of_annots);
+        numAnnots.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentPage = mPdfViewCtrl.getCurrentPage();
+                List<Annot> annots = mPdfViewCtrl.getAnnotationsOnPage(currentPage);
+                Toast.makeText(MainActivity.this,
+                        "There are " + annots.size() + " annotations on this page.",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
     }
 
     /**

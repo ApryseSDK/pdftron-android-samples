@@ -1,9 +1,13 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
@@ -24,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private PDFDoc mPdfDoc;
     private ToolManager mToolManager;
     private AnnotationToolbar mAnnotationToolbar;
+    private Button mButton;
+    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,31 @@ public class MainActivity extends AppCompatActivity {
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        mPdfViewCtrl.addThumbAsyncListener(new PDFViewCtrl.ThumbAsyncListener() {
+            @Override
+            public void onThumbReceived(int page, int[] buf, int width, int height) {
+                // buf if filled with "-1"
+                Log.d("Listener Called: ", "Thumb received");
+
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                bitmap.setPixels(buf, 0, width, 0, 0, width, height);
+                mImageView.setImageBitmap(bitmap);
+            }
+        });
+
+        mButton = findViewById(R.id.get_thumb);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mPdfViewCtrl.getThumbAsync(mPdfViewCtrl.getCurrentPage());
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mImageView = findViewById(R.id.thumbnail);
     }
 
     /**

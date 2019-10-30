@@ -1,7 +1,7 @@
 package com.example.customtoolsample;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.Annot;

@@ -1,20 +1,27 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
 import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
+import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,12 +33,61 @@ public class MainActivity extends AppCompatActivity {
     private ToolManager mToolManager;
     private AnnotationToolbar mAnnotationToolbar;
 
+    // Prevent adding duplicate views on a single annot
+    private LongSparseArray<CustomRelativeLayout> mLinkOverlayMap = new LongSparseArray<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
+        try {
+            mPdfViewCtrl.setHighlightFields(false);
+        } catch (PDFNetException e) {
+            e.printStackTrace();
+        }
+
+        mPdfViewCtrl.addPageChangeListener(new PDFViewCtrl.PageChangeListener() {
+
+            @Override
+            public void onPageChange(int oldPage, int newPage, PDFViewCtrl.PageChangeState pageChangeState) {
+                boolean shouldUnlockRead = false;
+                try {
+                    mPdfViewCtrl.docLockRead();
+                    shouldUnlockRead = true;
+                    ArrayList<Annot> annots = mPdfViewCtrl.getAnnotationsOnPage(newPage);
+
+                    // Loop through annots and find the signature fields
+                    for (Annot annot : annots) {
+                        if (annot != null && annot.getType() == Annot.e_Widget) {
+                            Field field = new Widget(annot).getField();
+                            if (field.isValid() && field.getType() == Field.e_signature) {
+                                long annotObjNum = annot.getSDFObj().getObjNum();
+                                // Keep a list of already added outlines so we do not add multiple views
+                                if (mLinkOverlayMap.get(annotObjNum) != null) {
+                                    continue;
+                                }
+                                // Create the custom border view and add it to PDFViewCtrl
+                                Context context = mPdfViewCtrl.getContext();
+                                CustomRelativeLayout overlay = new CustomRelativeLayout(context);
+                                overlay.setBackgroundResource(R.drawable.field_border);
+                                overlay.setAnnot(mPdfViewCtrl, annot, newPage);
+                                overlay.setZoomWithParent(true);
+                                mPdfViewCtrl.addView(overlay);
+                                mLinkOverlayMap.put(annotObjNum, overlay);
+                            }
+                        }
+                    }
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (shouldUnlockRead) {
+                        mPdfViewCtrl.docUnlockRead();
+                    }
+                }
+            }
+        });
         setupToolManager();
         setupAnnotationToolbar();
         try {

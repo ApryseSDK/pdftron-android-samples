@@ -1,14 +1,13 @@
 package com.pdftron.realtimecollaboration
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentActivity
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.pdftron.collab.ui.viewer.CollabViewerBuilder
 import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment
 import com.pdftron.collab.viewmodel.DocumentViewModel
@@ -28,7 +27,8 @@ class MainActivity : AppCompatActivity() {
 
     private val USER_NAME_REQUEST_CODE = 1000
 
-    private val DEFAULT_FILE_URL = "https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf"
+    private val DEFAULT_FILE_URL =
+        "https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf"
 
     private lateinit var server: Server
 
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createTabletViewerFragment(
-        activity: androidx.fragment.app.FragmentActivity,
+        activity: FragmentActivity,
         fileUri: Uri,
         config: ViewerConfig
     ): CollabViewerTabHostFragment {
@@ -137,7 +137,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showName(name: String) {
-        Utils.safeShowAlertDialog(this, String.format(getString(R.string.existing_user_name_body), name), getString(R.string.existing_user_name_title))
+        Utils.safeShowAlertDialog(
+            this,
+            String.format(getString(R.string.existing_user_name_body), name),
+            getString(R.string.existing_user_name_title)
+        )
     }
 
     private fun showInput() {

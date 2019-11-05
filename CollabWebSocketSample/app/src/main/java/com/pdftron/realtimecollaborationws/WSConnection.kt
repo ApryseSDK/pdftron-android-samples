@@ -54,11 +54,11 @@ class WSConnection : WebSocketListener() {
         mDisposables.clear()
     }
 
-    fun sendMessage(documentId: String, annotations: ArrayList<AnnotationEntity>) {
+    fun sendMessage(annotations: ArrayList<AnnotationEntity>) {
         for (annot in annotations) {
             val json = JSONObject()
             json.put("annotationId", annot.id)
-            json.put("documentId", documentId)
+            json.put("documentId", DOCUMENT_ID)
             json.put("xfdfString", XfdfUtils.validateXfdf(annot.xfdf))
             val result = json.toString()
             if (mWebSocket != null) {

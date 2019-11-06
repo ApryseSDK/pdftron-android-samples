@@ -1,33 +1,25 @@
 package com.pdftron.realtimecollaboration
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.pdftron.collab.db.CollabDatabase
 import com.pdftron.collab.db.entity.AnnotationEntity
-import com.pdftron.collab.service.CustomService
-import com.pdftron.collab.utils.JsonUtils
 import com.pdftron.collab.utils.XfdfUtils
+import com.pdftron.fdf.FDFDoc
 import com.pdftron.pdf.utils.Utils
 import com.pdftron.realtimecollaboration.model.Annotation
 import com.pdftron.realtimecollaboration.model.User
-import io.reactivex.*
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.FlowableEmitter
+import io.reactivex.FlowableOnSubscribe
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
+import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.set
 
-class Server(applicationContext: Context) : CustomService {
-
-    private var mDatabase: CollabDatabase? = null
-
-    init {
-        mDatabase = CollabDatabase.getInstance(applicationContext)
-    }
+class Server {
 
     private val TAG = "Server"
 
@@ -42,9 +34,8 @@ class Server(applicationContext: Context) : CustomService {
 
     private var mDisposables: CompositeDisposable = CompositeDisposable()
 
-
     private val mUserMap = HashMap<String, String?>()
-    private val mInitialAnnotMap = HashMap<String, AnnotationEntity>()
+    private val mInitialAnnotMap = HashMap<String, String>()
 
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var annotationsRef: DatabaseReference? = null
@@ -83,18 +74,6 @@ class Server(applicationContext: Context) : CustomService {
         annotationsRef?.removeEventListener(annotChildEventListener)
 
         mFlowableDisposable?.dispose()
-        mDisposables.add(
-            nukeDB()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { this.destroy() },
-                    { Log.e(TAG, "nukeDB failed") })
-        )
-    }
-
-    private fun destroy() {
-        Log.d(TAG, "nukeDB done")
         mDisposables.clear()
     }
 
@@ -140,7 +119,7 @@ class Server(applicationContext: Context) : CustomService {
             val newAnnot = p0.getValue(Annotation::class.java)
             Log.d(TAG, "modify {" + key + "}" + newAnnot.toString())
 
-            mDisposables.add(handleChildChanged(key, newAnnot).subscribeOn(Schedulers.io()).subscribe())
+            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(newAnnot!!.xfdf!!))
         }
 
         override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -153,7 +132,7 @@ class Server(applicationContext: Context) : CustomService {
             val newAnnot = p0.getValue(Annotation::class.java)
             Log.d(TAG, "add: {" + key + "}" + newAnnot.toString())
 
-            mDisposables.add(handleChildAdded(key, newAnnot).subscribeOn(Schedulers.io()).subscribe())
+            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(newAnnot!!.xfdf!!))
         }
 
         override fun onChildRemoved(p0: DataSnapshot) {
@@ -161,7 +140,8 @@ class Server(applicationContext: Context) : CustomService {
             val key = p0.key
             Log.d(TAG, "delete: {$key}")
 
-            mDisposables.add(handleChildRemoved(key).subscribeOn(Schedulers.io()).subscribe())
+            val xfdf = "<delete>${key}</delete>"
+            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdf))
         }
     }
 
@@ -169,12 +149,6 @@ class Server(applicationContext: Context) : CustomService {
         val database = FirebaseDatabase.getInstance()
         annotationsRef = database.getReference("annotations")
         authorsRef = database.getReference("authors")
-    }
-
-    private fun nukeDB(): Completable {
-        return Completable.fromAction {
-            cleanup(mDatabase)
-        }
     }
 
     fun updateAuthor(authorName: String) {
@@ -190,7 +164,7 @@ class Server(applicationContext: Context) : CustomService {
     fun fetchAnnotations(authorId: String, authorName: String) {
         if (auth.currentUser != null && authorsRef != null && annotationsRef != null) {
             // add user and sample document
-            mDisposables.add(addUserAndDocument(authorId, authorName).subscribeOn(Schedulers.io()).subscribe())
+            mBroadcaster.onNext(ServerEvent.SetUserAndDocument(authorId, authorName, DOCUMENT_ID))
 
             // subscribe to authors
             authorsRef!!.addChildEventListener(authorChildEventListener)
@@ -201,15 +175,24 @@ class Server(applicationContext: Context) : CustomService {
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
+                    val fdfDoc = FDFDoc()
+
                     for (child in p0.children) {
                         val key = child.key
                         val newAnnot = child.getValue(Annotation::class.java)
-                        val entity = convAnnotationToAnnotationEntity(key!!, newAnnot!!)
-                        if (entity != null) {
-                            mInitialAnnotMap[key] = entity
+                        if (key != null && newAnnot != null && newAnnot.xfdf != null && newAnnot.xfdf!!.contains("<add>")) {
+                            mInitialAnnotMap[key] = key
+                            fdfDoc.mergeAnnots(XfdfUtils.validateXfdf(newAnnot.xfdf!!))
                         }
                     }
-                    mDisposables.add(handleChildrenAdded(mInitialAnnotMap).subscribeOn(Schedulers.io()).subscribe())
+
+                    var xfdfCommands = fdfDoc.saveAsXFDF()
+                    // turn into command
+                    xfdfCommands = xfdfCommands.replace("<annots>", "<add>")
+                    xfdfCommands = xfdfCommands.replace("</annots>", "</add>")
+
+                    mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdfCommands))
+
                     annotationsRef!!.addChildEventListener(annotChildEventListener)
                 }
             })
@@ -228,97 +211,14 @@ class Server(applicationContext: Context) : CustomService {
         annotationsRef!!.child(annotationId).removeValue()
     }
 
-    private fun addUserAndDocument(authorId: String, authorName: String): Completable {
-        return Completable.fromAction {
-            addUser(mDatabase, authorId, authorName)
-
-            addDocument(mDatabase, DOCUMENT_ID)
-        }
-    }
-
-    private fun convAnnotationToAnnotationEntity(annotId: String, annotationData: Annotation): AnnotationEntity? {
-        val userName = mUserMap[annotationData.authorId]
-        val annotationEntity = AnnotationEntity().apply {
-            id = annotId
-            documentId = DOCUMENT_ID
-            authorId = annotationData.authorId
-            authorName = userName
-            xfdf = annotationData.xfdf
-            at = "create"
-
-        }
-        XfdfUtils.fillAnnotationEntity(annotationEntity)
-        if (JsonUtils.isValidInsertEntity(annotationEntity)) {
-            return annotationEntity
-        }
-        return null
-    }
-
-    fun handleChildrenAdded(map: HashMap<String, AnnotationEntity>): Completable {
-        return Completable.fromAction { handleChildrenAddedImpl(map) }
-    }
-
-    private fun handleChildrenAddedImpl(map: HashMap<String, AnnotationEntity>) {
-        addAnnotations(mDatabase, map)
-    }
-
-    fun handleChildAdded(annotId: String?, annotationData: Annotation?): Completable {
-        return Completable.fromAction { handleChildAddedImpl(annotId, annotationData) }
-    }
-
-    private fun handleChildAddedImpl(annotId: String?, annotationData: Annotation?) {
-        if (null == annotId || null == annotationData) {
-            return
-        }
-
-        val entity = convAnnotationToAnnotationEntity(annotId, annotationData)
-
-        if (entity != null) {
-            addAnnotation(mDatabase, entity)
-        }
-    }
-
-    fun handleChildChanged(annotId: String?, annotationData: Annotation?): Completable {
-        return Completable.fromAction { handleChildChangedImpl(annotId, annotationData) }
-    }
-
-    private fun handleChildChangedImpl(annotId: String?, annotationData: Annotation?) {
-        if (null == annotId || null == annotationData) {
-            return
-        }
-        val annotationEntity = AnnotationEntity().apply {
-            id = annotId
-            documentId = DOCUMENT_ID
-            authorId = annotationData.authorId
-            xfdf = annotationData.xfdf
-            at = "modify"
-
-        }
-        XfdfUtils.fillAnnotationEntity(annotationEntity)
-        modifyAnnotation(mDatabase, annotationEntity)
-    }
-
-    fun handleChildRemoved(annotId: String?): Completable {
-        return Completable.fromAction { handleChildRemovedImpl(annotId) }
-    }
-
-    private fun handleChildRemovedImpl(annotId: String?) {
-        if (null == annotId) {
-            return
-        }
-        deleteAnnotation(mDatabase, annotId)
-    }
-
     private val OP_ADD = "add"
     private val OP_MODIFY = "modify"
     private val OP_REMOVE = "remove"
 
     // CustomService start
-    override fun sendAnnotation(
+    fun sendAnnotation(
         action: String?,
-        annotations: ArrayList<AnnotationEntity>?,
-        documentId: String?,
-        userName: String?
+        annotations: ArrayList<AnnotationEntity>?
     ) {
         if (Utils.isNullOrEmpty(action)) {
             return

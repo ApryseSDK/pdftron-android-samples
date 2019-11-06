@@ -19,8 +19,8 @@ buildscript {
     }
 }
 
-ext.myPdftronRepo = "https://pdftron-maven.s3.amazonaws.com/release"
-ext.myPdftronVersion = file("${rootDir}/../pdftron-version.txt").text.trim()
+ext.myPdftronRepo = "https://pdftron-maven.s3.amazonaws.com/snapshot"
+ext.myPdftronVersion = "7.0.4-beta1"
 
 allprojects {
     repositories {

@@ -110,7 +110,7 @@ class WSConnection : WebSocketListener() {
             for (i in 0 until rows.length()) {
                 val row = rows.getJSONObject(i)
                 val xfdfCommand = row.optString("xfdfString")
-                fdfDoc.mergeAnnots(xfdfCommand)
+                fdfDoc.mergeAnnots(XfdfUtils.validateXfdf(xfdfCommand))
             }
 
             var xfdfCommands = fdfDoc.saveAsXFDF()

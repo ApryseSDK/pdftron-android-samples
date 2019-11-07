@@ -16,7 +16,7 @@ buildscript {
 }
 
 ext.myPdftronRepo = "https://pdftron-maven.s3.amazonaws.com/snapshot"
-ext.myPdftronVersion = "7.0.4-beta1"
+ext.myPdftronVersion = "7.0.4-beta3"
 
 allprojects {
     repositories {

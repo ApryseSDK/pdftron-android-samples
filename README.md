@@ -18,6 +18,7 @@ This repository contains sample projects using different features of the PDFTron
 ## Collaboration samples
 | Sample | Description |
 |--|--|
+[CollabWebSocketSample](./CollabWebSocketSample) | Create a real-time document collaboration app with Node.js + SQLite3 + WebSocket
 |[CollabFirebaseSample](./CollabFirebaseSample)| Create a real-time document collaboration app as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-1) and customize as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-2) |
 
 ## Feature samples

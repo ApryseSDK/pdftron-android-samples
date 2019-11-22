@@ -555,24 +555,25 @@ public class FormFill extends Tool {
 
     private void adjustFontSize(EditText editText) {
         if (mPdfViewCtrl != null && mField != null) {
-            try {
-                float font_sz = 12 * (float) mPdfViewCtrl.getZoom();
-                GState gs = mField.getDefaultAppearance();
-                if (gs != null) {
-                    font_sz = (float) gs.getFontSize();
-                    if (font_sz <= 0) {
-                        // Auto size
-                        font_sz = 12 * (float) mPdfViewCtrl.getZoom();
-                    } else {
-                        font_sz *= (float) mPdfViewCtrl.getZoom();
-                    }
-                }
-
-                editText.setPadding(0, 0, 0, 0);
-                editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, font_sz);
-            } catch (PDFNetException e) {
-                AnalyticsHandlerAdapter.getInstance().sendException(e);
-            }
+            editText.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+//            try {
+//                float font_sz = 12 * (float) mPdfViewCtrl.getZoom();
+//                GState gs = mField.getDefaultAppearance();
+//                if (gs != null) {
+//                    font_sz = (float) gs.getFontSize();
+//                    if (font_sz <= 0) {
+//                        // Auto size
+//                        font_sz = 12 * (float) mPdfViewCtrl.getZoom();
+//                    } else {
+//                        font_sz *= (float) mPdfViewCtrl.getZoom();
+//                    }
+//                }
+//
+//                editText.setPadding(0, 0, 0, 0);
+//                editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, font_sz);
+//            } catch (PDFNetException e) {
+//                AnalyticsHandlerAdapter.getInstance().sendException(e);
+//            }
         }
     }
 
@@ -886,7 +887,8 @@ public class FormFill extends Tool {
                         mEditor.getEditText().setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     }
                 }
-                mEditor.setAnnot(mPdfViewCtrl, mAnnot, mAnnotPageNum);
+//                mEditor.setAnnot(mPdfViewCtrl, mAnnot, mAnnotPageNum);
+                mEditor.setRect(mPdfViewCtrl, mAnnot.getRect(), mAnnotPageNum);
                 ViewerUtils.scrollToAnnotRect(mPdfViewCtrl, mAnnot.getRect(), mAnnotPageNum);
 
                 // Compute font size

@@ -887,8 +887,7 @@ public class FormFill extends Tool {
                         mEditor.getEditText().setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     }
                 }
-//                mEditor.setAnnot(mPdfViewCtrl, mAnnot, mAnnotPageNum);
-                mEditor.setRect(mPdfViewCtrl, mAnnot.getRect(), mAnnotPageNum);
+                mEditor.setAnnot(mPdfViewCtrl, mAnnot, mAnnotPageNum);
                 ViewerUtils.scrollToAnnotRect(mPdfViewCtrl, mAnnot.getRect(), mAnnotPageNum);
 
                 // Compute font size

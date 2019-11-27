@@ -555,25 +555,24 @@ public class FormFill extends Tool {
 
     private void adjustFontSize(EditText editText) {
         if (mPdfViewCtrl != null && mField != null) {
-            editText.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-//            try {
-//                float font_sz = 12 * (float) mPdfViewCtrl.getZoom();
-//                GState gs = mField.getDefaultAppearance();
-//                if (gs != null) {
-//                    font_sz = (float) gs.getFontSize();
-//                    if (font_sz <= 0) {
-//                        // Auto size
-//                        font_sz = 12 * (float) mPdfViewCtrl.getZoom();
-//                    } else {
-//                        font_sz *= (float) mPdfViewCtrl.getZoom();
-//                    }
-//                }
-//
-//                editText.setPadding(0, 0, 0, 0);
-//                editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, font_sz);
-//            } catch (PDFNetException e) {
-//                AnalyticsHandlerAdapter.getInstance().sendException(e);
-//            }
+            try {
+                float font_sz = 12 * (float) mPdfViewCtrl.getZoom();
+                GState gs = mField.getDefaultAppearance();
+                if (gs != null) {
+                    font_sz = (float) gs.getFontSize();
+                    if (font_sz <= 0) {
+                        // Auto size
+                        font_sz = 12 * (float) mPdfViewCtrl.getZoom();
+                    } else {
+                        font_sz *= (float) mPdfViewCtrl.getZoom();
+                    }
+                }
+
+                editText.setPadding(0, 0, 0, 0);
+                editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, font_sz);
+            } catch (PDFNetException e) {
+                AnalyticsHandlerAdapter.getInstance().sendException(e);
+            }
         }
     }
 
@@ -1171,13 +1170,15 @@ public class FormFill extends Tool {
             PdfDocument document = new PdfDocument();
 
             PdfDocument.PageInfo pageInfo = (new PdfDocument.PageInfo.Builder(
-                    ((int) (convPixelToPoint(annotPixWidth) * pagePixWidth / convPixelToPoint(pagePixWidth))),
-                    ((int) (convPixelToPoint(annotPixHeight) * pagePixHeight / convPixelToPoint(pagePixHeight))), 1)).create();
+                    ((int) (content.getScrollX() + content.getWidth())),
+                    ((int) (content.getScrollY() + content.getHeight())), 1))
+                    .create();
 
             // start a page
             PdfDocument.Page page = document.startPage(pageInfo);
 
             // draw something on the page
+
             content.draw(page.getCanvas());
 
             // finish the page
@@ -1193,6 +1194,14 @@ public class FormFill extends Tool {
 
             // close the document
             document.close();
+
+            // crop
+            PDFDoc pdfDoc = new PDFDoc(testFile.getAbsolutePath());
+            Page p1 = pdfDoc.getPage(1);
+            Rect visible = p1.getVisibleContentBox();
+            p1.setMediaBox(visible);
+            p1.setCropBox(visible);
+            pdfDoc.save();
 
             return testFile;
         } catch (Exception ex) {

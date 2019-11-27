@@ -119,7 +119,7 @@ class Server {
             val newAnnot = p0.getValue(Annotation::class.java)
             Log.d(TAG, "modify {" + key + "}" + newAnnot.toString())
 
-            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(newAnnot!!.xfdf!!))
+            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(newAnnot!!.xfdf!!, false))
         }
 
         override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -132,7 +132,7 @@ class Server {
             val newAnnot = p0.getValue(Annotation::class.java)
             Log.d(TAG, "add: {" + key + "}" + newAnnot.toString())
 
-            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(newAnnot!!.xfdf!!))
+            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(newAnnot!!.xfdf!!, false))
         }
 
         override fun onChildRemoved(p0: DataSnapshot) {
@@ -141,7 +141,7 @@ class Server {
             Log.d(TAG, "delete: {$key}")
 
             val xfdf = "<delete>${key}</delete>"
-            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdf))
+            mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdf, false))
         }
     }
 
@@ -191,7 +191,7 @@ class Server {
                     xfdfCommands = xfdfCommands.replace("<annots>", "<add>")
                     xfdfCommands = xfdfCommands.replace("</annots>", "</add>")
 
-                    mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdfCommands))
+                    mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdfCommands, true))
 
                     annotationsRef!!.addChildEventListener(annotChildEventListener)
                 }

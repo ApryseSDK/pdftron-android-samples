@@ -7,5 +7,5 @@ sealed class ServerEvent {
     class SignUp(val response: Task<AuthResult>) : ServerEvent()
     class SignIn(val name: String) : ServerEvent()
     class SetUserAndDocument(val authorId: String, val authorName: String, val documentId: String) : ServerEvent()
-    class ImportXfdfCommand(val xfdfCommand: String) : ServerEvent()
+    class ImportXfdfCommand(val xfdfCommand: String, val initial: Boolean) : ServerEvent()
 }

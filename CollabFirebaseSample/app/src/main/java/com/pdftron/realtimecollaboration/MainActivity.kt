@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                             collabManager!!.setCurrentDocument(it.documentId)
                         } else if (it is ServerEvent.ImportXfdfCommand) {
                             Log.d(TAG, "import xfdf command: " + it.xfdfCommand)
-                            collabManager!!.importAnnotationCommand(it.xfdfCommand)
+                            collabManager!!.importAnnotationCommand(it.xfdfCommand, it.initial)
                         }
                     }
             }

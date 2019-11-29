@@ -88,8 +88,6 @@ public class FormFill extends Tool {
 
     private boolean mUseEditTextAppearance = true;
 
-    private boolean mDelayClose;
-
     /**
      * Class constructor
      */
@@ -988,9 +986,6 @@ public class FormFill extends Tool {
     }
 
     private void applyFormFieldEditBoxAndQuit(final boolean hideKeyboard, String str) {
-        if (mDelayClose) {
-            return;
-        }
         if (!mHasClosed && mPdfViewCtrl != null && mEditor != null) {
             boolean shouldUnlock = false;
             boolean hasModification = false;
@@ -1018,56 +1013,26 @@ public class FormFill extends Tool {
                             // apply edit text appearance instead
                             final long annotImpl = mAnnot.__GetHandle();
                             final int annotPageNum = mAnnotPageNum;
-                            mDelayClose = true;
-                            // add a space to remove auto correct underline
-                            mEditor.getEditText().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
-                            mEditor.getEditText().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SPACE));
-                            mEditor.getEditText().clearFocus();
-                            mEditor.getEditText().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    boolean shouldUnlock = false;
-                                    boolean changes = false;
-                                    try {
-                                        mPdfViewCtrl.docLock(true);
-                                        shouldUnlock = true;
+                            mEditor.getEditText().setCursorVisible(false);
+                            mEditor.getEditText().clearComposingText();
 
-                                        Annot annot = Annot.__Create(annotImpl, mPdfViewCtrl.getDoc());
-                                        setAnnot(annot, annotPageNum);
-                                        com.pdftron.pdf.Rect annotRectScreen = mPdfViewCtrl.getScreenRectForAnnot(annot, annotPageNum);
-                                        RectF pageRectScreen = Utils.buildPageBoundBoxOnClient(mPdfViewCtrl, annotPageNum);
-                                        File ret = createPdfFromView(mEditor.getEditText(), annotRectScreen.getWidth(), annotRectScreen.getHeight(),
-                                                pageRectScreen.width(), pageRectScreen.height());
-                                        if (ret != null) {
-                                            refreshCustomWidgetAppearance(ret, annot);
-                                            mPdfViewCtrl.update(annot, annotPageNum);
-                                        }
-                                        mDelayClose = false;
-
-                                        changes = postApplyFormFieldEditBoxAndQuit(hideKeyboard, true, annot, annotPageNum);
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    } finally {
-                                        unsetAnnot();
-                                        safeSetNextToolMode();
-                                        if (shouldUnlock) {
-                                            mPdfViewCtrl.docUnlock();
-                                        }
-                                        if (changes) {
-                                            raiseAnnotationActionEvent();
-                                        }
-                                    }
-                                }
-                            }, 500);
+                            Annot annot = Annot.__Create(annotImpl, mPdfViewCtrl.getDoc());
+                            setAnnot(annot, annotPageNum);
+                            com.pdftron.pdf.Rect annotRectScreen = mPdfViewCtrl.getScreenRectForAnnot(annot, annotPageNum);
+                            RectF pageRectScreen = Utils.buildPageBoundBoxOnClient(mPdfViewCtrl, annotPageNum);
+                            File ret = createPdfFromView(mEditor.getEditText(), annotRectScreen.getWidth(), annotRectScreen.getHeight(),
+                                    pageRectScreen.width(), pageRectScreen.height());
+                            if (ret != null) {
+                                refreshCustomWidgetAppearance(ret, annot);
+                                mPdfViewCtrl.update(annot, annotPageNum);
+                            }
                         }
                     }
 
                     executeAction(mField, Annot.e_action_trigger_annot_blur);
                     executeAction(mField, Annot.e_action_trigger_annot_exit);
                 }
-                if (!mDelayClose) {
-                    hasOnlyExecutionChanges = postApplyFormFieldEditBoxAndQuit(hideKeyboard, hasModification, mAnnot, mAnnotPageNum);
-                }
+                hasOnlyExecutionChanges = postApplyFormFieldEditBoxAndQuit(hideKeyboard, hasModification, mAnnot, mAnnotPageNum);
             } catch (Exception e) {
                 AnalyticsHandlerAdapter.getInstance().sendException(e);
             } finally {
@@ -1086,9 +1051,6 @@ public class FormFill extends Tool {
     }
 
     private boolean postApplyFormFieldEditBoxAndQuit(boolean hideKeyboard, boolean hasModification, Annot annot, int pageNum) throws PDFNetException {
-        if (mDelayClose) {
-            return false;
-        }
         if (hideKeyboard) {
             // Hide soft keyboard
             InputMethodManager imm = (InputMethodManager) mPdfViewCtrl.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1163,7 +1125,6 @@ public class FormFill extends Tool {
         if (!Utils.isKitKat()) {
             return null;
         }
-        // test start
 
         try {
             // create a new document
@@ -1208,7 +1169,5 @@ public class FormFill extends Tool {
             ex.printStackTrace();
         }
         return null;
-
-        // test end
     }
 }

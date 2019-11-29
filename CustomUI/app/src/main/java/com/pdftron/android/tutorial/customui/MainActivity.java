@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -34,10 +35,16 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+        PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(this);
+        android.graphics.Point displaySize = new android.graphics.Point(0, 0);
+        Utils.getDisplaySize(this, displaySize);
+        pdfViewCtrlConfig.setThumbnailMaxSideLength(Math.max(displaySize.x, displaySize.y));
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from()
                 .addCustomizedTool(ToolManager.ToolMode.FORM_FILL, FormFill.class);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .permanentTopToolbar(true)
+                .pdfViewCtrlConfig(pdfViewCtrlConfig)
                 .toolManagerBuilder(toolManagerBuilder)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)

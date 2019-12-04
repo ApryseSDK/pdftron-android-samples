@@ -599,7 +599,7 @@ public class FormFill extends Tool {
                         g = (int) Math.floor(color.get(1) * 255 + 0.5);
                         b = (int) Math.floor(color.get(2) * 255 + 0.5);
                     }
-                    color_int = Color.argb(255, r, g, b);
+                    color_int = Color.argb(25, r, g, b);
                     editText.setBackgroundColor(color_int);
 
                     // Set the font of the EditBox to match the PDF form field's. In order to do this,
@@ -676,6 +676,10 @@ public class FormFill extends Tool {
                 if (mEditor != null) {
                     applyFormFieldEditBoxAndQuit(false);
                 }
+
+                // hide field
+                mPdfViewCtrl.hideAnnotation(mAnnot);
+                mPdfViewCtrl.update(mAnnot, mAnnotPageNum);
 
                 mEditor = new AutoScrollEditor(mPdfViewCtrl.getContext());
                 mEditor.getEditText().setSingleLine(!mIsMultiLine);
@@ -991,6 +995,9 @@ public class FormFill extends Tool {
             boolean hasModification = false;
             boolean hasOnlyExecutionChanges = false;
             try {
+                if (null == mAnnot || !mAnnot.isValid()) {
+                    return;
+                }
                 mPdfViewCtrl.docLock(true);
                 shouldUnlock = true;
                 if (str == null && !isDialogShowing()) {
@@ -1033,6 +1040,10 @@ public class FormFill extends Tool {
                     executeAction(mField, Annot.e_action_trigger_annot_exit);
                 }
                 hasOnlyExecutionChanges = postApplyFormFieldEditBoxAndQuit(hideKeyboard, hasModification, mAnnot, mAnnotPageNum);
+
+                // show field
+                mPdfViewCtrl.showAnnotation(mAnnot);
+                mPdfViewCtrl.update(mAnnot, mAnnotPageNum);
             } catch (Exception e) {
                 AnalyticsHandlerAdapter.getInstance().sendException(e);
             } finally {

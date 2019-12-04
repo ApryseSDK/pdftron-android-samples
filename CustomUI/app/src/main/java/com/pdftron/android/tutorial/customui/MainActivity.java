@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addCustomizedTool(ToolManager.ToolMode.FORM_FILL, FormFill.class);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
-                .permanentTopToolbar(true)
                 .pdfViewCtrlConfig(pdfViewCtrlConfig)
                 .toolManagerBuilder(toolManagerBuilder)
                 .build();

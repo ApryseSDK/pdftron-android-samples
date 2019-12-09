@@ -42,6 +42,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
+        // Apply customizations to tab host fragment
+        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
+        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
+        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
@@ -58,9 +63,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
     }
 
     @Override

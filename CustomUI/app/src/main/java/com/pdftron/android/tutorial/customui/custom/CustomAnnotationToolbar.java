@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.controls.AnnotationToolbar;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.GroupedItem;
@@ -25,25 +26,23 @@ public class CustomAnnotationToolbar extends CustomizationDelegate {
     }
 
     @Override
-    public void applyCustomization() {
-        customizeAnnotationToolbar(mTabHostFragment);
+    public void applyCustomization(@NonNull PdfViewCtrlTabFragment tabFragment) {
+        customizeAnnotationToolbar(tabFragment);
     }
 
-    private static void customizeAnnotationToolbar(@NonNull PdfViewCtrlTabHostFragment tabHostFragment) {
+    private static void customizeAnnotationToolbar(@NonNull PdfViewCtrlTabFragment tabFragment) {
         // let's re-arrange items in the annotation toolbar grouping
-        if (tabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
-            AnnotationToolbar annotationToolbar = tabHostFragment.getCurrentPdfViewCtrlFragment().getAnnotationToolbar();
-            if (annotationToolbar == null) {
-                tabHostFragment.getCurrentPdfViewCtrlFragment().createAnnotationToolbar();
-                annotationToolbar = tabHostFragment.getCurrentPdfViewCtrlFragment().getAnnotationToolbar();
-            }
-            if (annotationToolbar != null) {
-                annotationToolbar.getGroupItems().clear();
-                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_LINE, new int[]{Annot.e_Polyline, Annot.e_Line, AnnotStyle.CUSTOM_ANNOT_TYPE_ARROW, AnnotStyle.CUSTOM_ANNOT_TYPE_RULER, AnnotStyle.CUSTOM_ANNOT_TYPE_PERIMETER_MEASURE}));
-                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_RECT, new int[]{Annot.e_Circle, Annot.e_Square, Annot.e_Polygon, AnnotStyle.CUSTOM_ANNOT_TYPE_CLOUD, AnnotStyle.CUSTOM_ANNOT_TYPE_AREA_MEASURE}));
-                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_TEXT, new int[]{Annot.e_FreeText, AnnotStyle.CUSTOM_ANNOT_TYPE_CALLOUT}));
-                annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_NOTE, new int[]{Annot.e_Sound, Annot.e_Text}));
-            }
+        AnnotationToolbar annotationToolbar = tabFragment.getAnnotationToolbar();
+        if (annotationToolbar == null) {
+            tabFragment.createAnnotationToolbar();
+            annotationToolbar = tabFragment.getAnnotationToolbar();
+        }
+        if (annotationToolbar != null) {
+            annotationToolbar.getGroupItems().clear();
+            annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_LINE, new int[]{Annot.e_Polyline, Annot.e_Line, AnnotStyle.CUSTOM_ANNOT_TYPE_ARROW, AnnotStyle.CUSTOM_ANNOT_TYPE_RULER, AnnotStyle.CUSTOM_ANNOT_TYPE_PERIMETER_MEASURE}));
+            annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_RECT, new int[]{Annot.e_Circle, Annot.e_Square, Annot.e_Polygon, AnnotStyle.CUSTOM_ANNOT_TYPE_CLOUD, AnnotStyle.CUSTOM_ANNOT_TYPE_AREA_MEASURE}));
+            annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_TEXT, new int[]{Annot.e_FreeText, AnnotStyle.CUSTOM_ANNOT_TYPE_CALLOUT}));
+            annotationToolbar.getGroupItems().add(new GroupedItem(annotationToolbar, PREF_KEY_NOTE, new int[]{Annot.e_Sound, Annot.e_Text}));
         }
     }
 }

@@ -11,7 +11,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
+        manifestPlaceholders = [pdftronLicenseKey: PDFTRON_LICENSE_KEY]
     }
     configurations.all {
         resolutionStrategy.force "androidx.appcompat:appcompat:1.0.0"
@@ -33,7 +33,12 @@ dependencies {
     implementation "com.pdftron:pdftron:$myPdftronVersion"
     implementation "com.pdftron:tools:$myPdftronVersion"
     implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    debugImplementation ("androidx.test:core:1.2.0")
+    debugImplementation ("androidx.test:rules:1.2.0")
+    debugImplementation ("androidx.test:runner:1.2.0")
+    debugImplementation ("androidx.fragment:fragment-testing:1.1.0")
 }

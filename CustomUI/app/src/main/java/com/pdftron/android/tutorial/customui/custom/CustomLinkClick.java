@@ -3,8 +3,8 @@ package com.pdftron.android.tutorial.customui.custom;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.LongSparseArray;
 
 import com.pdftron.android.tutorial.customui.R;
@@ -29,57 +29,56 @@ public class CustomLinkClick extends CustomizationDelegate {
     }
 
     @Override
-    public void applyCustomization() {
-        customizeLinkClick(mContext, mTabHostFragment, mLinkOverlayMap);
+    public void applyCustomization(@NonNull PdfViewCtrlTabFragment tabFragment) {
+        customizeLinkClick(mContext, tabFragment, mLinkOverlayMap);
     }
 
     private static void customizeLinkClick(@NonNull final Context context,
-            @NonNull final PdfViewCtrlTabHostFragment tabHostFragment,
+            @NonNull final PdfViewCtrlTabFragment tabFragment,
             @NonNull final LongSparseArray<CustomRelativeLayout> mLinkOverlayMap) {
-        final PdfViewCtrlTabFragment fragment = tabHostFragment.getCurrentPdfViewCtrlFragment();
-        if (fragment != null) {
-            final PDFViewCtrl pdfViewCtrl = fragment.getPDFViewCtrl();
-            final ToolManager toolManager = fragment.getToolManager();
-            if (pdfViewCtrl != null && toolManager != null) {
-                toolManager.setBasicAnnotationListener(new ToolManager.BasicAnnotationListener() {
-                    @Override
-                    public void onAnnotationSelected(Annot annot, int i) {
-                        fragment.onAnnotationSelected(annot, i);
-                    }
 
-                    @Override
-                    public void onAnnotationUnselected() {
-                        fragment.onAnnotationUnselected();
-                    }
+        final PDFViewCtrl pdfViewCtrl = tabFragment.getPDFViewCtrl();
+        final ToolManager toolManager = tabFragment.getToolManager();
 
-                    @Override
-                    public boolean onInterceptAnnotationHandling(@Nullable Annot annot, Bundle bundle, ToolManager.ToolMode toolMode) {
-                        // custom link behaviour
-                        // instead of jumping to the destination, let's display a flashing view on top of the link
-                        try {
-                            if (annot != null && annot.isValid() && annot.getType() == Annot.e_Link) {
-                                int pageNum = bundle.getInt(Tool.PAGE_NUMBER);
+        if (pdfViewCtrl != null && toolManager != null) {
+            toolManager.setBasicAnnotationListener(new ToolManager.BasicAnnotationListener() {
+                @Override
+                public void onAnnotationSelected(Annot annot, int i) {
+                    tabFragment.onAnnotationSelected(annot, i);
+                }
 
-                                // add custom on top of link
-                                addCustomViewOnLink(context, mLinkOverlayMap, pdfViewCtrl, annot, pageNum);
+                @Override
+                public void onAnnotationUnselected() {
+                    tabFragment.onAnnotationUnselected();
+                }
 
-                                toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
-                                pdfViewCtrl.invalidate();
-                                return true;
-                            }
-                        } catch (PDFNetException e) {
-                            e.printStackTrace();
+                @Override
+                public boolean onInterceptAnnotationHandling(@Nullable Annot annot, Bundle bundle, ToolManager.ToolMode toolMode) {
+                    // custom link behaviour
+                    // instead of jumping to the destination, let's display a flashing view on top of the link
+                    try {
+                        if (annot != null && annot.isValid() && annot.getType() == Annot.e_Link) {
+                            int pageNum = bundle.getInt(Tool.PAGE_NUMBER);
+
+                            // add custom on top of link
+                            addCustomViewOnLink(context, mLinkOverlayMap, pdfViewCtrl, annot, pageNum);
+
+                            toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
+                            pdfViewCtrl.invalidate();
+                            return true;
                         }
-
-                        return fragment.onInterceptAnnotationHandling(annot, bundle, toolMode);
+                    } catch (PDFNetException e) {
+                        e.printStackTrace();
                     }
 
-                    @Override
-                    public boolean onInterceptDialog(AlertDialog alertDialog) {
-                        return fragment.onInterceptDialog(alertDialog);
-                    }
-                });
-            }
+                    return tabFragment.onInterceptAnnotationHandling(annot, bundle, toolMode);
+                }
+
+                @Override
+                public boolean onInterceptDialog(AlertDialog alertDialog) {
+                    return tabFragment.onInterceptDialog(alertDialog);
+                }
+            });
         }
     }
 

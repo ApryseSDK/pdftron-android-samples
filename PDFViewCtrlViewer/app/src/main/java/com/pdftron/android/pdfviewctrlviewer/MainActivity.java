@@ -3,7 +3,6 @@ package com.pdftron.android.pdfviewctrlviewer;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +19,8 @@ import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();

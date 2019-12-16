@@ -6,6 +6,7 @@ This repository contains sample projects using different features of the PDFTron
 |--|--|
 |[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/get-started/integration/gradle#integrating-standard-version)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
+|[QuickStartPDFViewer](./QuickStartPDFViewer)| Quick start viewer integration using Gradle as described [in this guide](https://www.pdftron.com/documentation/android/guides/getting-started/try-demo/)|
 
 ## Customization samples
 | Sample | Description |
@@ -17,6 +18,7 @@ This repository contains sample projects using different features of the PDFTron
 ## Collaboration samples
 | Sample | Description |
 |--|--|
+[CollabWebSocketSample](./CollabWebSocketSample) | Create a real-time document collaboration app with Node.js + SQLite3 + WebSocket
 |[CollabFirebaseSample](./CollabFirebaseSample)| Create a real-time document collaboration app as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-1) and customize as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-2) |
 
 ## Feature samples

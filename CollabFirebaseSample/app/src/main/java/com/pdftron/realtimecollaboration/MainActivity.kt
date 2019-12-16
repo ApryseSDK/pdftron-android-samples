@@ -1,17 +1,15 @@
 package com.pdftron.realtimecollaboration
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.pdftron.collab.ui.viewer.CollabViewerBuilder
 import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment
-import com.pdftron.collab.viewmodel.DocumentViewModel
 import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.dialog.simpleinput.TextInputDialog
@@ -28,17 +26,16 @@ class MainActivity : AppCompatActivity() {
 
     private val USER_NAME_REQUEST_CODE = 1000
 
-    private val DEFAULT_FILE_URL = "https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf"
+    private val DEFAULT_FILE_URL =
+        "https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf"
 
-    private lateinit var server: Server
+    private val server = Server()
 
     private var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        server = Server(this.application)
 
         val textInputViewModel = ViewModelProviders.of(this).get(TextInputViewModel::class.java)
         textInputViewModel.observeOnComplete(this, Observer<Event<TextInputResult>> {
@@ -51,9 +48,6 @@ class MainActivity : AppCompatActivity() {
                 server.updateAuthor("Guest")
             }
         })
-
-        val documentViewModel = ViewModelProviders.of(this).get(DocumentViewModel::class.java)
-        documentViewModel.setCustomConnection(server)
 
         setUpSampleView()
     }
@@ -113,6 +107,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTabDocumentLoaded(p0: String?) {
+
+                val collabManager = mPdfViewCtrlTabHostFragment!!.collabManager
+                collabManager!!.setCollabManagerListener { action, annotations, documentId, userName ->
+                    // local change, send info to server here
+                    server.sendAnnotation(action, annotations)
+                }
+
                 server.signIn().subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
@@ -126,6 +127,12 @@ class MainActivity : AppCompatActivity() {
                         } else if (it is ServerEvent.SignIn) {
                             Log.d(TAG, "signInAnonymously:success as: " + it.name)
                             showName(it.name)
+                        } else if (it is ServerEvent.SetUserAndDocument) {
+                            collabManager!!.setCurrentUser(it.authorId, it.authorName)
+                            collabManager!!.setCurrentDocument(it.documentId)
+                        } else if (it is ServerEvent.ImportXfdfCommand) {
+                            Log.d(TAG, "import xfdf command: " + it.xfdfCommand)
+                            collabManager!!.importAnnotationCommand(it.xfdfCommand, it.initial)
                         }
                     }
             }
@@ -137,7 +144,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showName(name: String) {
-        Utils.safeShowAlertDialog(this, String.format(getString(R.string.existing_user_name_body), name), getString(R.string.existing_user_name_title))
+        Utils.safeShowAlertDialog(
+            this,
+            String.format(getString(R.string.existing_user_name_body), name),
+            getString(R.string.existing_user_name_title)
+        )
     }
 
     private fun showInput() {
@@ -149,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             R.string.cancel
         )
         dialog.isCancelable = false
-        dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomAppTheme)
+        dialog.setStyle(androidx.fragment.app.DialogFragment.STYLE_NO_TITLE, R.style.CustomAppTheme)
         dialog.show(supportFragmentManager, TextInputDialog.TAG)
     }
 }

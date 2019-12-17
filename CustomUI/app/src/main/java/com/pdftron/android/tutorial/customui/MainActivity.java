@@ -19,6 +19,7 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.ThumbnailSlider;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
 
@@ -27,6 +28,8 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+
+    private ThumbnailSlider mThumbnailSlider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingConfig(getViewerConfig())
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
+
+        mThumbnailSlider = findViewById(R.id.thumbnailSlider);
 
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .documentEditingEnabled(true)
                 .longPressQuickMenuEnabled(false)
                 .showSearchView(true)
-                .toolbarTitle("some name")
+                .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
     }
 
@@ -102,6 +107,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
+        if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+            mThumbnailSlider.setPdfViewCtrl(pdfViewCtrl);
+            mThumbnailSlider.handleDocumentLoaded();
+        }
     }
 
     @Override

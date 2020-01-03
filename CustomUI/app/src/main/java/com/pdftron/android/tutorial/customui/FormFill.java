@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -1180,5 +1181,18 @@ public class FormFill extends Tool {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    @Nullable
+    public Annot getAnnot() {
+        return mAnnot;
+    }
+
+    public int getPage() {
+        return mAnnotPageNum;
+    }
+
+    public boolean isEditing() {
+        return mEditor != null;
     }
 }

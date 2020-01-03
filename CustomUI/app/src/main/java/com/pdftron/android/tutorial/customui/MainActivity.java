@@ -1,17 +1,22 @@
 package com.pdftron.android.tutorial.customui;
 
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
-import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
@@ -25,7 +30,105 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
+    final int MIN_KEYBOARD_HEIGHT_PX = 150;
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+    private boolean mNeedToResetMargin;
+    ViewTreeObserver.OnGlobalLayoutListener mOnGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        private final Rect windowVisibleDisplayFrame = new Rect();
+        private int lastVisibleDecorViewHeight;
+
+        @Override
+        public void onGlobalLayout() {
+            final View decorView = getWindow().getDecorView();
+            decorView.getWindowVisibleDisplayFrame(windowVisibleDisplayFrame);
+            final int visibleDecorViewHeight = windowVisibleDisplayFrame.height();
+
+            if (lastVisibleDecorViewHeight != 0) {
+                if (lastVisibleDecorViewHeight > visibleDecorViewHeight + MIN_KEYBOARD_HEIGHT_PX) {
+                    int currentKeyboardHeight = decorView.getHeight() - windowVisibleDisplayFrame.bottom;
+                    // keyboard shown
+
+                    if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+                        final PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+
+                        // first check if the field is in view
+                        try {
+                            ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+                            if (tm != null && tm.getTool() instanceof FormFill) {
+                                FormFill formFill = (FormFill) tm.getTool();
+                                Annot ann = formFill.getAnnot();
+                                int page = formFill.getPage();
+                                if (ann != null) {
+                                    com.pdftron.pdf.Rect bbox = pdfViewCtrl.getScreenRectForAnnot(ann, page);
+                                    int totalHeight = pdfViewCtrl.getHeight();
+                                    int diff = totalHeight - currentKeyboardHeight;
+                                    if (bbox.getY1() < diff) {
+                                        mNeedToResetMargin = false;
+                                        return;
+                                    }
+                                }
+                            } else {
+                                // not in form filling
+                                return;
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+
+                        pdfViewCtrl.setPageViewMode(PDFViewCtrl.PageViewMode.ZOOM);
+
+                        View root = findViewById(R.id.fragment_container);
+                        if (root != null) {
+                            if (root.getLayoutParams() != null && root.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                                ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
+                                mlp.bottomMargin = currentKeyboardHeight;
+                                root.requestLayout();
+
+                                mNeedToResetMargin = true;
+                            }
+
+                            root.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+                                        if (tm != null && tm.getTool() instanceof FormFill) {
+                                            Annot ann = ((FormFill) tm.getTool()).getAnnot();
+                                            int page = ((FormFill) tm.getTool()).getPage();
+                                            if (ann != null) {
+                                                com.pdftron.pdf.Rect bbox = pdfViewCtrl.getScreenRectForAnnot(ann, page);
+                                                pdfViewCtrl.scrollTo(pdfViewCtrl.getScrollX(), (int) (pdfViewCtrl.getScrollY() + bbox.getY1()));
+                                            }
+                                        }
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }, 100);
+                        }
+                    }
+                } else if (lastVisibleDecorViewHeight + MIN_KEYBOARD_HEIGHT_PX < visibleDecorViewHeight) {
+                    // keyboard hidden
+
+                    if (mNeedToResetMargin) {
+                        mNeedToResetMargin = false;
+                        if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+                            mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().setPageViewMode(PDFViewCtrl.PageViewMode.ZOOM);
+                        }
+                        View root = findViewById(R.id.fragment_container);
+                        if (root != null) {
+                            if (root.getLayoutParams() != null && root.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                                ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
+                                mlp.bottomMargin = 0;
+                                root.requestLayout();
+                            }
+                        }
+                    }
+                }
+            }
+            lastVisibleDecorViewHeight = visibleDecorViewHeight;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .toolManagerBuilder(toolManagerBuilder)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
-                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
+                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .build(this);
@@ -61,10 +164,14 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (mPdfViewCtrlTabHostFragment != null) {
             mPdfViewCtrlTabHostFragment.removeHostListener(this);
         }
+
+        final View decorView = getWindow().getDecorView();
+        decorView.getViewTreeObserver().removeOnGlobalLayoutListener(mOnGlobalLayoutListener);
+
+        super.onDestroy();
     }
 
     @Override
@@ -72,6 +179,9 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
 //        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
         new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment).applyCustomization();
+
+        final View decorView = getWindow().getDecorView();
+        decorView.getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
     }
 
     @Override

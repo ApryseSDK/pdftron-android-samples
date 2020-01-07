@@ -101,7 +101,7 @@ abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment.TabHo
 
     @Override
     public boolean canRecreateActivity() {
-        return false;
+        return true;
     }
 
     @Override

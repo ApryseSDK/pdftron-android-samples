@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#212634</color>
-    <color name="colorPrimaryDark">#3D4763</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FFFFFF</color>
 
-    <color name="tab_color_selected">#828694</color>
+    <color name="app_color_icon">#FFFFFF</color>
+    <color name="app_color_icon_light">#80FFFFFF</color> <!-- 50% -->
+
+    <color name="tab_color_selected">#FFFFFF</color>
+    <color name="tab_color_unselected">#B3FFFFFF</color> <!-- 70% -->
 
     <color name="annotation_tool_background">#3D4763</color>
 

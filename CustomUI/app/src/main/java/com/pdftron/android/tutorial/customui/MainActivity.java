@@ -16,6 +16,7 @@ import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PdfViewCtrlSettingsManager.setFollowSystemDarkMode(this, false);
 
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");

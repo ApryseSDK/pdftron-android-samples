@@ -72,6 +72,14 @@
         <item name="tint">@color/app_color_icon</item>
     </style>
 
+    <style name="FloatingActionMenuStyle" parent="BaseFloatingActionMenuStyle">
+        <item name="android:tint">?attr/colorPrimary</item>
+    </style>
+
+    <style name="FloatingActionButtonStyle" parent="BaseFloatingActionButtonStyle">
+        <item name="android:tint">?attr/colorPrimary</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

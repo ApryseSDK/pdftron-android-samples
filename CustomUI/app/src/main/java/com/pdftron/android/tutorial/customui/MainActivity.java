@@ -2,12 +2,12 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
@@ -15,6 +15,7 @@ import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.SearchToolbar;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
 
@@ -23,6 +24,8 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+
+    protected SearchToolbar mSearchToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,34 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        mSearchToolbar = mPdfViewCtrlTabHostFragment.getView().findViewById(com.pdftron.pdf.tools.R.id.searchToolbar);
+        mSearchToolbar.getMenu().findItem(R.id.pdf)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(MainActivity.this, "pdf clicked", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
+
+        mSearchToolbar.getMenu().findItem(R.id.web)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(MainActivity.this, "web clicked", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
     }
 
     @Override

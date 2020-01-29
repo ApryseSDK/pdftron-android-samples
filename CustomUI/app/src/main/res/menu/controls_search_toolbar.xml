@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search_progress"
+        android:title="@string/searching_wait"
+        android:visible="false"
+        app:actionLayout="@layout/actionbar_indeterminate_progress"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_list_all"
+        android:title="@string/action_list_all"
+        android:icon="@drawable/ic_list_white_24dp"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/empty"
+        android:icon="@drawable/ic_overflow_white_24dp"
+        android:orderInCategory="101"
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/action_match_case"
+                android:checkable="true"
+                android:title="@string/action_match_case"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/action_whole_word"
+                android:checkable="true"
+                android:title="@string/action_whole_word"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/action_search_web"
+                android:title="@string/action_search_web"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/pdf"
+                android:title="pdf"
+                android:icon="@drawable/ic_attach_file_black_24dp"
+                app:showAsAction="always|withText"/>
+            <item
+                android:id="@+id/web"
+                android:title="web"
+                android:icon="@drawable/ic_download"
+                app:showAsAction="always|withText"/>
+        </menu>
+    </item>
+
+</menu>

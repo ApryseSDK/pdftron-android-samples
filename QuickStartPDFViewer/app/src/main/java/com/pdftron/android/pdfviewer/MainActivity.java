@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Open our sample document in the 'res/raw' resource folder
-        openRawResourceDocument(this, R.raw.sample);
+        openHttpDocument(this, "https://pdftron.s3.amazonaws.com/custom/downloadertest/sg/samplepptx.pptx");
 
         finish();
     }

@@ -2,50 +2,102 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
-import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
-import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+    private boolean editingEnabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
-        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
-        Uri uri = Uri.fromFile(f);
-        ViewerConfig viewerConfig = new ViewerConfig.Builder()
-                .toolbarTitle("٩(◕‿◕｡)۶")
-                .build();
-        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
-                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
-                .usingConfig(viewerConfig)
-                .build(this);
-        mPdfViewCtrlTabHostFragment.addHostListener(this);
+        // Copy the ppt file to our files directory
+        int fileRes = R.raw.samplepptx; // test for sample pptx
+        String filename = "samplepptx";
+        String fileExt = ".pptx";
 
-        // Apply customizations to tab host fragment
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        int fileRes = R.raw.sampletxt; // test for sample txt file with emoji filename, currently this does not work
+//        String filename = "hdusjd udi 😎😋🤣";
+//        String fileExt = ".txt";
+
+        File copiedFile = Utils.copyResourceToLocal(this, fileRes, filename, fileExt);
+        File folder = new File(this.getFilesDir(), "root/users/user1/");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        File f = new File(folder, filename + fileExt);
+        try {
+            Utils.copy(copiedFile, f);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Get Uri to our pptx file, initialize the viewer, and pass in our file
+        String uriString = Uri.fromFile(f).toString();
+        // file:///data/user/0/com.pdftron.android.tutorial.customui/files/root/users/user1/samplepptx.pptx
+        Uri uri = Uri.parse(uriString);
+        ViewerConfig.Builder builder = new ViewerConfig.Builder()
+                .multiTabEnabled(false)
+                .showAnnotationsList(true)
+                .showUserBookmarksList(false)
+                .showOutlineList(false)
+                .showSaveCopyOption(false)
+                .annotationsListEditingEnabled(this.editingEnabled)
+                .thumbnailViewEditingEnabled(this.editingEnabled)
+                .showEditPagesOption(this.editingEnabled)
+                .showAnnotationToolbarOption(this.editingEnabled)
+                .showFormToolbarOption(this.editingEnabled)
+                .showPrintOption(this.editingEnabled)
+                .openUrlCachePath(getCacheDir().getAbsolutePath())
+                .documentEditingEnabled(this.editingEnabled)
+                .showCloseTabOption(false)
+                .showViewLayersToolbarOption(false)
+                .toolManagerBuilder(
+                        ToolManagerBuilder.from()
+                                .disableToolModes(new ToolManager.ToolMode[]{
+                                                ToolManager.ToolMode.SOUND_CREATE,
+                                                ToolManager.ToolMode.RUBBER_STAMPER,
+                                                ToolManager.ToolMode.SIGNATURE,
+                                                ToolManager.ToolMode.FORM_SIGNATURE_CREATE,
+                                                ToolManager.ToolMode.FILE_ATTACHMENT_CREATE
+                                        }
+                                ));
+
+        if (!this.editingEnabled) {
+            builder.hideViewModeItems(new ViewModePickerDialogFragment.ViewModePickerItems[]{
+                    ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP
+            });
+        }
+
+        ViewerConfig viewerConfig = builder.build();
+        ViewerBuilder viewerBuilder = ViewerBuilder
+//                .withUri(uri) // will also work
+                .withFile(f)
+                .usingConfig(viewerConfig)
+                .usingNavIcon(R.drawable.ic_arrow_back_white_24dp);
+
+        mPdfViewCtrlTabHostFragment = PdfViewCtrlTabHostFragment.newInstance(viewerBuilder.createBundle(this));
+        mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

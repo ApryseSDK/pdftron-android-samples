@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements
                             Page newPage = tempDoc.pageCreate(pageRect);
                             tempDoc.pagePushBack(newPage);
 
-                            final String text = "THIS IS A TEST\nTHIS IS A LONGER LINE TEST\nTHIS IS A EVEN LONGERRRRRRR LINE TEST";
+                            final String text = "THIS IS A TEST\nTHIS IS A LONGER LINE TEST";
 
                             // add the free text that you will be adding to the actual document
                             FreeText txtannot = createFreeText(tempDoc, textRect, text);

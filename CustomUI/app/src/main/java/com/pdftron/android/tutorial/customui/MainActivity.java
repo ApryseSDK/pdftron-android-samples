@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements
                             textRect.setX2(pageRect.getX2());
                             textRect.setY1(pageRect.getY1());
                             textRect.setY2(annotRect.getY2());
+                            textRect.normalize();
 
                             // create new temp doc and temp page
                             PDFDoc tempDoc = new PDFDoc();
@@ -222,15 +223,20 @@ public class MainActivity extends AppCompatActivity implements
 
                             // crop out the visible content, which in this case is a tight bounding box around the text
                             Rect visibleRect = newPage.getVisibleContentBox();
+                            visibleRect.normalize();
                             newPage.setCropBox(visibleRect);
                             newPage.setMediaBox(visibleRect);
+
+                            // take account into padding
+                            double actualWidth = visibleRect.getX2() - textRect.getX1();
+                            double actualHeight = textRect.getY2() - visibleRect.getY1();
 
                             // create the actual annotation with the tight bounding box in the actual document
                             Rect finalRect = new Rect();
                             finalRect.setX1(annotRect.getX1());
-                            finalRect.setX2(annotRect.getX1() + visibleRect.getWidth());
+                            finalRect.setX2(annotRect.getX1() + actualWidth);
                             finalRect.setY1(annotRect.getY1());
-                            finalRect.setY2(annotRect.getY1() + visibleRect.getHeight());
+                            finalRect.setY2(annotRect.getY1() + actualHeight);
 
                             FreeText toAddToPage = createFreeText(pdfViewCtrl.getDoc(), finalRect, text);
                             p.annotPushBack(toAddToPage);

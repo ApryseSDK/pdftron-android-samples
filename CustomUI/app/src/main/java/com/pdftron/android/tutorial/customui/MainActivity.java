@@ -28,7 +28,9 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.sdf.SDFDoc;
 
 import java.io.File;
 import java.util.Map;
@@ -214,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements
                             Page newPage = tempDoc.pageCreate(pageRect);
                             tempDoc.pagePushBack(newPage);
 
-                            final String text = "THIS IS A TEST\nTHIS IS A LONGER LINE TEST";
+                            final String text = "Why this";
 
                             // add the free text that you will be adding to the actual document
                             FreeText txtannot = createFreeText(tempDoc, textRect, text);
@@ -227,19 +229,20 @@ public class MainActivity extends AppCompatActivity implements
                             newPage.setCropBox(visibleRect);
                             newPage.setMediaBox(visibleRect);
 
-                            // take account into padding
-                            double actualWidth = visibleRect.getX2() - textRect.getX1();
-                            double actualHeight = textRect.getY2() - visibleRect.getY1();
-
                             // create the actual annotation with the tight bounding box in the actual document
                             Rect finalRect = new Rect();
                             finalRect.setX1(annotRect.getX1());
-                            finalRect.setX2(annotRect.getX1() + actualWidth);
+                            finalRect.setX2(annotRect.getX1() + visibleRect.getWidth());
                             finalRect.setY1(annotRect.getY1());
-                            finalRect.setY2(annotRect.getY1() + actualHeight);
+                            finalRect.setY2(annotRect.getY1() + visibleRect.getHeight());
+
+                            File testFile = new File(this.getCacheDir(), "custom-FreeText.pdf");
+                            tempDoc.save(testFile.getAbsolutePath(), SDFDoc.SaveMode.REMOVE_UNUSED, null);
 
                             FreeText toAddToPage = createFreeText(pdfViewCtrl.getDoc(), finalRect, text);
                             p.annotPushBack(toAddToPage);
+                            AnnotUtils.refreshCustomRichFreeTextAppearance(testFile, toAddToPage);
+
                             pdfViewCtrl.update(toAddToPage, pageNum);
                         }
                     }

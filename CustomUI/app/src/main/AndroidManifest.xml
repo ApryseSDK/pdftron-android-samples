@@ -11,8 +11,12 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:theme="@style/CustomAppTheme"
-            android:windowSoftInputMode="adjustPan">
+        <activity android:name=".MainActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
+            android:launchMode="standard"
+            android:theme="@style/CustomAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize|adjustPan">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

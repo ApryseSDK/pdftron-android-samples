@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.CustomAppTheme);
         setContentView(R.layout.activity_main);
 
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri

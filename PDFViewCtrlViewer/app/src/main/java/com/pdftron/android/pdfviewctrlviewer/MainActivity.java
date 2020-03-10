@@ -3,6 +3,8 @@ package com.pdftron.android.pdfviewctrlviewer;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
@@ -40,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        Button sig = findViewById(R.id. signature);
+        sig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToolManager.Tool mTManager = mToolManager.createTool(ToolManager.ToolMode.SIGNATURE, mToolManager.getTool());
+                mToolManager.setTool(mTManager);
+            }
+        });
     }
 
     /**

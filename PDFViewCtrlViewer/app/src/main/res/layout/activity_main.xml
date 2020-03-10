@@ -24,4 +24,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/annotationToolbar" />
 
+    <Button
+        android:id="@+id/signature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Signature"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

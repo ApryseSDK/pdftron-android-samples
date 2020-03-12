@@ -9,9 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
-import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
-import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.android.tutorial.customui.custom.CustomView;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
@@ -43,9 +41,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Apply customizations to tab host fragment
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+        new CustomView(MainActivity.this, mPdfViewCtrlTabHostFragment);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

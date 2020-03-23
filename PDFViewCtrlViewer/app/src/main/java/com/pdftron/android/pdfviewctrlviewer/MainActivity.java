@@ -3,6 +3,7 @@ package com.pdftron.android.pdfviewctrlviewer;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
@@ -17,6 +18,8 @@ import com.pdftron.pdf.utils.Utils;
 import java.io.File;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -25,13 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private PDFDoc mPdfDoc;
     private ToolManager mToolManager;
     private AnnotationToolbar mAnnotationToolbar;
-
+    private AppCompatButton mButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
+        mButton = findViewById(R.id.button);
         setupToolManager();
         setupAnnotationToolbar();
         try {
@@ -40,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToolManager.Tool mTManager =   mToolManager.createTool(ToolManager.ToolMode.TEXT_CREATE, mToolManager.getTool());
+                mToolManager.setTool(mTManager);
+            }
+        });
     }
 
     /**

@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Open our sample document in the 'res/raw' resource folder
-        openRawResourceDocument(this, R.raw.sample);
+//        openRawResourceDocument(this, R.raw.sample);
+
+        openHttpDocument(this, "https://assets.gates.com/content/dam/cortex/gc20/knowledge-center/training-docs/en/safe-hydraulics-training-presentation-v1.pdf");
 
         finish();
     }

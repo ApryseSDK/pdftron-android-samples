@@ -1,29 +1,28 @@
 package com.pdftron.android.tutorial.customui.custom;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.os.Bundle;
-import android.util.LongSparseArray;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.pdftron.android.tutorial.customui.R;
-import com.pdftron.common.PDFNetException;
-import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.CustomRelativeLayout;
-import com.pdftron.pdf.tools.Stamper;
-import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class CustomView extends CustomizationDelegate {
+
+    // Maps page to custom layout
+    HashMap<Integer, List<CustomRelativeLayout>> customLayoutPageMap = new HashMap<>();
 
     public CustomView(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment tabHostFragment) {
         super(context, tabHostFragment);
@@ -41,6 +40,25 @@ public class CustomView extends CustomizationDelegate {
         final ToolManager toolManager = tabFragment.getToolManager();
 
         if (pdfViewCtrl != null && toolManager != null) {
+            pdfViewCtrl.addPageChangeListener(new PDFViewCtrl.PageChangeListener() {
+                @Override
+                public void onPageChange(int oldPage, int currentPage, PDFViewCtrl.PageChangeState pageChangeState) {
+                    // Hide views in other pages
+                    List<CustomRelativeLayout> layoutsToHide = customLayoutPageMap.get(oldPage);
+                    if (layoutsToHide != null) {
+                        for (CustomRelativeLayout customRelativeLayout : layoutsToHide) {
+                            customRelativeLayout.setVisibility(View.GONE);
+                        }
+                    }
+                    // Show views in current page
+                    List<CustomRelativeLayout> layoutsToShow = customLayoutPageMap.get(currentPage);
+                    if (layoutsToShow != null) {
+                        for (CustomRelativeLayout customRelativeLayout : layoutsToShow) {
+                            customRelativeLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
             toolManager.setPreToolManagerListener(new ToolManager.PreToolManagerListener() {
                 @Override
                 public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
@@ -122,6 +140,14 @@ public class CustomView extends CustomizationDelegate {
             overlay.setRect(pdfViewCtrl, new Rect(x - 25, y - 25, x + 25, y + 25), pageNum);
             overlay.setZoomWithParent(true);
             pdfViewCtrl.addView(overlay);
+
+            // Cache out custom views so we can cleanup appropriately if needed
+            List<CustomRelativeLayout> customRelativeLayouts = customLayoutPageMap.get(pageNum);
+            if (customRelativeLayouts == null) {
+                customRelativeLayouts = new ArrayList<>();
+            }
+            customRelativeLayouts.add(overlay);
+            customLayoutPageMap.put(pageNum, customRelativeLayouts);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -20,6 +20,8 @@ import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
 
+import static android.view.View.GONE;
+
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .showBottomNavBar(false)
+                .multiTabEnabled(false)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingConfig(viewerConfig)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
+        mPdfViewCtrlTabHostFragment.setToolbarTimerDisabled(true);
 
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
@@ -51,6 +56,15 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mPdfViewCtrlTabHostFragment != null) {
+            mPdfViewCtrlTabHostFragment.getToolbar().setVisibility(GONE);
+        }
     }
 
     @Override

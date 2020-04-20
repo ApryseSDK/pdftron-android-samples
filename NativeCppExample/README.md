@@ -20,14 +20,21 @@ gradle.properties             - Project-wide Gradle settings. Contains PDFTron l
     2. Extract and navigate to `/lib/full/` and extract `pdftron.aar` (7-zip or any archiving software will work)
     3. Copy the `libs` folder in to the `app` folder in the projects root
     4. Copy the folders in the `jni` directory into the `PDFTron` folder in the projects root
-    5. Navigate back to the root of the Android SDK download, and copy the `headers` folder into the `app` folder in the projects root
+    5. Copy the `headers` folder found in the root of the SDK download into the `app` folder in the projects root
 
 After the above steps have been followed, your project structure should look like the following:
 ```
 app/
   src/
   libs/PDFNet.jar
-  headers/   - C++ headers in the subdirs 
+  headers/
+    C/
+    Common/
+    FDF/
+    Filters/
+    Impl/
+    PDF/
+    SDF/
   build.gradle
 PDFTron/
   arm64-v8a/libPDFNetC.so
@@ -42,7 +49,7 @@ gradle.properties
 4. Clean and run the project and you should see the installed fonts displaying in your simulator/device. Note that you can attach a debugger and step through the C++ code in `cpp/native-lib.cpp`
 
 ## Resources
-- Access  the C++ API [here](https://pdftron.s3.amazonaws.com/custom/ID-zJWLuhTffd3c/mobilechannel_6D420A76/Android-4h7df%5E34jh/custom/galaxyweblinks/video%20-%20svg%20to%20pdf%20icon.mov)
+- Access  the C++ API [here](https://www.pdftron.com/api/PDFTronSDK/cpp/index.html)
 
 ## License
 See [License](./../LICENSE)

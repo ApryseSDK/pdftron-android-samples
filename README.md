@@ -7,6 +7,7 @@ This repository contains sample projects using different features of the PDFTron
 |[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/get-started/integration/gradle#integrating-standard-version)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
 |[QuickStartPDFViewer](./QuickStartPDFViewer)| Quick start viewer integration using Gradle as described [in this guide](https://www.pdftron.com/documentation/android/guides/getting-started/try-demo/)|
+|[NativeCPPExample](./NativeCppExample)| Native C++ PDFTron library on Android|
 
 ## Customization samples
 | Sample | Description |

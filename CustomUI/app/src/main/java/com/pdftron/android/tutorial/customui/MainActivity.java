@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
@@ -32,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         setContentView(R.layout.activity_main);
 
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
-        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+        final File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
@@ -58,9 +61,36 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try {
+                    boolean password = isPasswordProtected(f);
+                    Toast.makeText(MainActivity.this, "Has password = " + password, Toast.LENGTH_SHORT).show();
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Error: " + e, Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    private static boolean isPasswordProtected(final File file) throws PDFNetException {
+
+        PDFDoc tempDoc = null;
+        boolean shouldUnlock = false;
+        try {
+            tempDoc = new PDFDoc(file.getAbsolutePath());
+            tempDoc.lock();
+            shouldUnlock = true;
+            if (!tempDoc.initSecurityHandler()) {
+                if (!tempDoc.initStdSecurityHandler("")) {
+                    return true;
+                }
+            }
+            return false;
+        } finally {
+            if (shouldUnlock) {
+                tempDoc.unlock();
+            }
+        }
     }
 
     @Override

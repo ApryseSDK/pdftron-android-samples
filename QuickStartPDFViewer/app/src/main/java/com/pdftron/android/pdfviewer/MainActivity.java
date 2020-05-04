@@ -20,8 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Open our sample document in the 'res/raw' resource folder
         openRawResourceDocument(this, R.raw.sample);
-
-        finish();
     }
 
     /**

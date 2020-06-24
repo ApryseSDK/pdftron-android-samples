@@ -12,6 +12,11 @@
         android:title="@string/action_view_mode"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@id/action_fill_and_sign_toolbar"
+        android:title="@string/action_fill_and_sign_toolbar"
+        android:icon="@drawable/ic_fill_and_sign"
+        app:showAsAction="always" />
+    <item
         android:id="@id/action_annotation_toolbar"
         android:icon="@drawable/ic_mode_edit_white"
         android:title="@string/action_annotation_toolbar"

@@ -141,7 +141,7 @@ class Server {
             val key = p0.key
             Log.d(TAG, "delete: {$key}")
 
-            val xfdf = "<delete>${key}</delete>"
+            val xfdf = XfdfUtils.wrapDeleteXfdf(key)
             mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdf, false))
         }
     }

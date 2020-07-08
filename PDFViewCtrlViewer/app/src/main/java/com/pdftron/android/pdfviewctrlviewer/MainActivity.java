@@ -1,8 +1,10 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
@@ -14,17 +16,27 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
 
+import com.pdftron.pdf.controls.FindTextOverlay;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
 
+    private static final String FILE_LINK = "https://s3.amazonaws.com/pdftron/files/pdf/linearization/50mb-linearized.pdf";
+
     private PDFViewCtrl mPdfViewCtrl;
     private PDFDoc mPdfDoc;
     private ToolManager mToolManager;
     private AnnotationToolbar mAnnotationToolbar;
+
+    private FindTextOverlay mFindTextOverlay;
+
+    private static final int sINITIAL_PAGE = 10;
+    private int mInitialPage = sINITIAL_PAGE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +48,29 @@ public class MainActivity extends AppCompatActivity {
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
-            viewFromResource(R.raw.sample, "sample_file");
-        } catch (PDFNetException e) {
+
+            final String term = "the";
+
+            mPdfViewCtrl.openPDFUri(Uri.parse(FILE_LINK), "", null, null);
+            mPdfViewCtrl.addDocumentDownloadListener(new PDFViewCtrl.DocumentDownloadListener() {
+                @Override
+                public void onDownloadEvent(PDFViewCtrl.DownloadState downloadState, int page_num, int page_downloaded, int page_count, String message) {
+                    if (downloadState == PDFViewCtrl.DownloadState.PAGE && mInitialPage > 0) {
+                        mPdfViewCtrl.setCurrentPage(mInitialPage);
+                        mInitialPage = 0;
+                    }
+                    if (downloadState == PDFViewCtrl.DownloadState.PAGE && page_num == sINITIAL_PAGE) {
+                        mFindTextOverlay.setVisibility(View.VISIBLE);
+                        mFindTextOverlay.setSearchQuery(term);
+                        mFindTextOverlay.findText(page_num);
+                        mFindTextOverlay.highlightSearchResults();
+                    }
+                }
+            });
+
+            mFindTextOverlay = findViewById(R.id.find_text_view);
+            mFindTextOverlay.setPdfViewCtrl(mPdfViewCtrl);
+        } catch (PDFNetException | FileNotFoundException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
     }
@@ -54,11 +87,11 @@ public class MainActivity extends AppCompatActivity {
      * Helper method to set up and initialize the AnnotationToolbar.
      */
     public void setupAnnotationToolbar() {
-        mAnnotationToolbar = findViewById(R.id.annotationToolbar);
+//        mAnnotationToolbar = findViewById(R.id.annotationToolbar);
         // Remember to initialize your ToolManager before calling setup
-        mAnnotationToolbar.setup(mToolManager);
-        mAnnotationToolbar.hideButton(AnnotationToolbarButtonId.CLOSE);
-        mAnnotationToolbar.show();
+//        mAnnotationToolbar.setup(mToolManager);
+//        mAnnotationToolbar.hideButton(AnnotationToolbarButtonId.CLOSE);
+//        mAnnotationToolbar.show();
     }
 
     /**
@@ -81,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Handle configuration changes from the toolbar here
-        mAnnotationToolbar.onConfigurationChanged(newConfig);
+//        mAnnotationToolbar.onConfigurationChanged(newConfig);
     }
 
     /**

@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     }
 
     @Override
-    public void onOpenDocError() {
-
+    public boolean onOpenDocError() {
+        return false;
     }
 
     @Override

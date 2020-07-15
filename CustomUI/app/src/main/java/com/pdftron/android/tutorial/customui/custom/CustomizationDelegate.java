@@ -50,8 +50,8 @@ abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment.TabHo
     }
 
     @Override
-    public void onOpenDocError() {
-
+    public boolean onOpenDocError() {
+        return false;
     }
 
     @Override

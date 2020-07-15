@@ -2,27 +2,30 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
-import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
-import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
-import com.pdftron.pdf.utils.Utils;
+import com.pdftron.sdf.SDFDoc;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
     private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+    private AppCompatButton mSaveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,27 +33,40 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         setContentView(R.layout.activity_main);
 
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
-        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
-        Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
-        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
+        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(Uri.parse("http://pdftron.s3.amazonaws.com/files/pdf.pdf"))
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
-        // Apply customizations to tab host fragment
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+        mSaveButton = findViewById(R.id.save_button);
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    setPdfLocally(MainActivity.this.getCacheDir());
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    private void setPdfLocally(@NonNull File saveFolder) throws PDFNetException {
+        // Get the document that is currently opened in the viewer
+        PDFDoc pdfDoc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
+
+        // Save the doc to some folder
+        pdfDoc.save(new File(saveFolder, "mySavedPdf.pdf").getAbsolutePath(), SDFDoc.SaveMode.INCREMENTAL, null);
     }
 
     @Override

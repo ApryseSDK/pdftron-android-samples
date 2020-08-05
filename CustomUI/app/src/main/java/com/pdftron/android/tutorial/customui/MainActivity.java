@@ -2,20 +2,25 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.Page;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
@@ -36,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
-                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
+                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .build(this);
@@ -63,6 +68,30 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
+
+        PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+
+        for (int i = 1; i <= pdfViewCtrl.getPageCount(); i++) {
+            // add image view
+            try {
+                ImageView iv = new ImageView(this);
+                iv.setImageResource(R.drawable.pika);
+                iv.setScaleType(ImageView.ScaleType.FIT_XY);
+                // Layout
+                CustomRelativeLayout overlay = new CustomRelativeLayout(this);
+                overlay.setZoomWithParent(true);
+                overlay.addView(iv);
+
+                Page page = pdfViewCtrl.getDoc().getPage(i);
+                Rect cropbox = page.getCropBox();
+                Rect bbox = new Rect(100, cropbox.getY2() - 200, 200, cropbox.getY2() - 100);
+
+                overlay.setRect(pdfViewCtrl, bbox, i);
+                pdfViewCtrl.addView(overlay);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     @Override

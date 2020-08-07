@@ -37,5 +37,6 @@ public class MainActivity extends AppCompatActivity {
                 .usingNewUi(newUi)
                 .build();
         startActivity(intent);
+        finish();
     }
 }

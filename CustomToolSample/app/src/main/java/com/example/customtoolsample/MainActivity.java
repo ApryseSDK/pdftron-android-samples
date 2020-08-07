@@ -2,12 +2,12 @@ package com.example.customtoolsample;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
+import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
@@ -29,14 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
         File resource = Utils.copyResourceToLocal(this, R.raw.gettingstarted, "GettingStarted", "pdf");
         fr = addViewerFragment(R.id.myLayout, this, Uri.fromFile(resource), "");
-
     }
 
     // Add a viewer fragment to the layout container in the specified
-// activity, and returns the added fragment
+    // activity, and returns the added fragment
     public PdfViewCtrlTabHostFragment addViewerFragment(@IdRes int fragmentContainer,
-                                                        @NonNull FragmentActivity activity, @NonNull Uri fileUri, @Nullable String password) {
-
+            @NonNull FragmentActivity activity, @NonNull Uri fileUri, @Nullable String password) {
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder
                 .from()
@@ -71,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         useCustomStamp(fr);
     }
 
-
     public void useCloudSquare(@NonNull PdfViewCtrlTabHostFragment fragment) {
         // Create our custom tool
         ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
@@ -87,5 +84,4 @@ public class MainActivity extends AppCompatActivity {
         // Then set it in ToolManager
         toolManager.setTool(customTool);
     }
-
 }

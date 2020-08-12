@@ -18,6 +18,11 @@
         <item name="replyTheme">@style/MyCustomReplyTheme</item>
     </style>
 
+    <style name="MyAppTheme" parent="PDFTronAppTheme">
+        <!-- Specify your custom annotation reply theme with the replyTheme attribute -->
+        <item name="replyTheme">@style/MyCustomReplyTheme</item>
+    </style>
+
     <!-- Custom theme used by the reply UI components -->
     <style name="MyCustomReplyTheme" parent="ReplyBaseTheme.DayNight">
         <!-- Component wide attributes used by the reply UI -->

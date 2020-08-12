@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
             .setAutoSelect(true)
         return ViewerConfig.Builder()
             .multiTabEnabled(false)
-            .fullscreenModeEnabled(false)
             .showCloseTabOption(false)
             .saveCopyExportPath(this.filesDir.absolutePath)
             .openUrlCachePath(this.filesDir.absolutePath)

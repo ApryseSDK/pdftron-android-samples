@@ -6,13 +6,17 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- Specify your custom annotation reply theme with the replyTheme attribute -->
-        <item name="replyTheme">@style/MyCustomReplyTheme</item>
     </style>
 
     <!-- We'll also customize the viewer Fragment to use the sample color palette
         by defining CustomAppTheme and extending AppTheme -->
-    <style name="CustomAppTheme" parent="AppTheme"/>
+    <style name="CustomAppTheme" parent="CustomAppThemeBase">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Specify your custom annotation reply theme with the replyTheme attribute -->
+        <item name="replyTheme">@style/MyCustomReplyTheme</item>
+    </style>
 
     <!-- Custom theme used by the reply UI components -->
     <style name="MyCustomReplyTheme" parent="ReplyBaseTheme.DayNight">

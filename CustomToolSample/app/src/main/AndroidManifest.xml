@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/CustomAppTheme"
+            android:theme="@style/PDFTronAppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>

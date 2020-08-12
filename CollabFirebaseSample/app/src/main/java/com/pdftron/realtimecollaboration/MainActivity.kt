@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
             R.string.cancel
         )
         dialog.isCancelable = false
-        dialog.setStyle(androidx.fragment.app.DialogFragment.STYLE_NO_TITLE, R.style.CustomAppTheme)
+        dialog.setStyle(androidx.fragment.app.DialogFragment.STYLE_NO_TITLE, R.style.MyAppTheme)
         dialog.show(supportFragmentManager, TextInputDialog.TAG)
     }
 }

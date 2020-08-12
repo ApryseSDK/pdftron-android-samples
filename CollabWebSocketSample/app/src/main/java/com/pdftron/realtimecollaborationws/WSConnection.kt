@@ -149,7 +149,7 @@ class WSConnection : WebSocketListener() {
     companion object {
         internal val TAG = WSConnection::class.java.simpleName
 
-        internal const val LOCALHOST_IP = "192.168.0.111"
+        internal const val LOCALHOST_IP = "MY_LOCAL_HOST_IP"
 
         internal const val WS_URL = "ws://$LOCALHOST_IP:8080/"
 

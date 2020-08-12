@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.pdftron.collab.ui.viewer.CollabViewerBuilder
-import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment
+import com.pdftron.collab.ui.viewer.CollabViewerBuilder2
+import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment2
 import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.dialog.simpleinput.TextInputDialog
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private val server = Server()
 
-    private var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment? = null
+    private var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment2? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +62,8 @@ class MainActivity : AppCompatActivity() {
         context: Context,
         fileUri: Uri,
         config: ViewerConfig
-    ): CollabViewerTabHostFragment {
-        return CollabViewerBuilder.withUri(fileUri)
+    ): CollabViewerTabHostFragment2 {
+        return CollabViewerBuilder2.withUri(fileUri)
             .usingConfig(config)
             .build(context)
     }
@@ -72,8 +72,8 @@ class MainActivity : AppCompatActivity() {
         activity: FragmentActivity,
         fileUri: Uri,
         config: ViewerConfig
-    ): CollabViewerTabHostFragment {
-        return CollabViewerBuilder.withUri(fileUri)
+    ): CollabViewerTabHostFragment2 {
+        return CollabViewerBuilder2.withUri(fileUri)
             .usingConfig(config)
             .usingTabClass(CustomTabFragment::class.java)
             .build(activity)
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 createPdfViewerFragment(this, Uri.parse(DEFAULT_FILE_URL), getViewerConfig())
 
         mPdfViewCtrlTabHostFragment!!.addCollabHostListener(object :
-            CollabViewerTabHostFragment.CollabTabHostListener {
+            CollabViewerTabHostFragment2.CollabTabHostListener {
             override fun onNavButtonPressed() {
                 finish()
             }

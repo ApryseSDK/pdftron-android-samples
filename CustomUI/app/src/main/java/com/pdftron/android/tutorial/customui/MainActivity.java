@@ -2,19 +2,19 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
-import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
 
@@ -22,7 +22,7 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
-    private PdfViewCtrlTabHostFragment mPdfViewCtrlTabHostFragment;
+    private PdfViewCtrlTabHostFragment2 mPdfViewCtrlTabHostFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
-        mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
-                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
+        mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
+//                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .build(this);
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
         new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

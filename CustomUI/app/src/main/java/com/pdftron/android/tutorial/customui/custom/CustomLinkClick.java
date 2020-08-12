@@ -3,16 +3,16 @@ package com.pdftron.android.tutorial.customui.custom;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.LongSparseArray;
 
 import com.pdftron.android.tutorial.customui.R;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFViewCtrl;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
@@ -24,17 +24,17 @@ import com.pdftron.pdf.tools.ToolManager;
 public class CustomLinkClick extends CustomizationDelegate {
     private LongSparseArray<CustomRelativeLayout> mLinkOverlayMap = new LongSparseArray<>();
 
-    public CustomLinkClick(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment tabHostFragment) {
+    public CustomLinkClick(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment2 tabHostFragment) {
         super(context, tabHostFragment);
     }
 
     @Override
-    public void applyCustomization(@NonNull PdfViewCtrlTabFragment tabFragment) {
+    public void applyCustomization(@NonNull PdfViewCtrlTabFragment2 tabFragment) {
         customizeLinkClick(mContext, tabFragment, mLinkOverlayMap);
     }
 
     private static void customizeLinkClick(@NonNull final Context context,
-            @NonNull final PdfViewCtrlTabFragment tabFragment,
+            @NonNull final PdfViewCtrlTabFragment2 tabFragment,
             @NonNull final LongSparseArray<CustomRelativeLayout> mLinkOverlayMap) {
 
         final PDFViewCtrl pdfViewCtrl = tabFragment.getPDFViewCtrl();

@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
      * @param fileResId resource id to a document in res/raw
      */
     private void openRawResourceDocument(Context context, @IdRes int fileResId) {
-        DocumentActivity.openDocument(context, fileResId);
         Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
                 .withFileRes(fileResId)
                 .usingNewUi(true)

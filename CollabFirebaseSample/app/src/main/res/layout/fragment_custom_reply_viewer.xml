@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <!-- Reference the open source viewer layout XML from the Open Source viewer fragment -->
     <include
-        layout="@layout/controls_collab_fragment_tabbed_pdfviewctrl_tab_content"
+        layout="@layout/controls_fragment_tabbed_pdfviewctrl_tab_content"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="5" />

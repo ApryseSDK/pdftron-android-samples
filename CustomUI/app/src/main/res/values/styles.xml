@@ -8,7 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="CustomAppTheme" parent="AppTheme">
+    <style name="CustomAppTheme" parent="CustomAppThemeBase">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
         <item name="actionMenuTextColor">@color/app_color_icon</item>
         <!-- Drawer -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -21,12 +25,18 @@
         <item name="annotation_toolbar">@style/CustomAnnotationToolbarStyle</item>
         <item name="thumbnail_slider">@style/CustomThumbnailSliderStyle</item>
         <item name="custom_bookmarks_tab_layout">@style/CustomBookmarksTabLayoutStyle</item>
+        <item name="pt_pdf_tab_layout_style">@style/CustomPdfTabLayoutStyle</item>
 
         <!--If using non-NoActionBar theme as parent, uncomment below-->
         <!--Disable action bar start-->
         <!--<item name="windowActionBar">false</item>-->
         <!--<item name="windowNoTitle">true</item>-->
         <!--Disable action bar end-->
+    </style>
+
+    <style name="CustomPdfTabLayoutStyle" parent="PdfTabLayoutStyle">
+        <item name="tabSelectedTextColor">@color/app_color_icon</item>
+        <item name="tabTextColor">@color/app_color_icon</item>
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -58,6 +68,8 @@
     <style name="CustomBookmarksTabLayoutStyle" parent="BookmarksTabLayoutStyle">
         <item name="tabTintColorDialog">@color/app_color_icon</item>
         <item name="tabTintSelectedColorDialog">@color/app_color_icon</item>
+        <item name="tabBackgroundSheet">@color/annot_toolbar_background_primary</item>
+        <item name="tabBackgroundDialog">@color/colorPrimary</item>
     </style>
 
     <style name="PdfTabLayoutStyle" parent="BasePdfTabLayoutStyle">

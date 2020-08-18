@@ -27,7 +27,13 @@ abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment2.TabH
         mTabHostFragment.addHostListener(this);
     }
 
-    abstract protected void applyCustomization(@NonNull PdfViewCtrlTabFragment2 tabFragment);
+    protected void applyCustomization(@NonNull PdfViewCtrlTabFragment2 tabFragment) {
+        // Implement to customize using tab fragment ...
+    }
+
+    protected void applyCustomization(@NonNull PdfViewCtrlTabHostFragment2 tabHostFragment) {
+        // Implement to customize using host fragment ...
+    }
 
     @Override
     public void onTabHostShown() {
@@ -117,6 +123,7 @@ abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment2.TabH
     @Override
     public void onTabDocumentLoaded(String s) {
         applyCustomization(mTabHostFragment.getCurrentPdfViewCtrlFragment());
+        applyCustomization(mTabHostFragment);
     }
 
 }

@@ -3,8 +3,9 @@ package com.pdftron.android.tutorial.customui.custom;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.android.tutorial.customui.MainActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 /**
  * Delegate class that adds a custom annotation toolbar to a PdfViewCtrlTabHostFragment. This sample
@@ -17,8 +18,11 @@ public class CustomAnnotationToolbar extends CustomizationDelegate {
     }
 
     @Override
-    public void applyCustomization(@NonNull PdfViewCtrlTabFragment2 tabFragment) {
-//        customizeToolGroups(tabFragment);
-//        customizePrecedenceTools(tabFragment);
+    public void applyCustomization(@NonNull PdfViewCtrlTabHostFragment2 tabHostFragment2) {
+        // When document loaded, launch the shapes toolbar
+        tabHostFragment2.openToolbarWithTag(MainActivity.SHAPES_TOOLBAR_TAG);
+        // Then automatically select the rectangle tool
+        tabHostFragment2.selectToolbarButton(DefaultToolbars.ButtonId.SQUARE);
+
     }
 }

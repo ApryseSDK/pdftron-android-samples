@@ -20,6 +20,7 @@ import com.pdftron.pdf.widget.toolbar.ToolManagerViewModel;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.AnnotationToolbarComponent;
+import com.pdftron.pdf.widget.toolbar.component.AnnotationToolbarViewModel;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 import com.pdftron.pdf.widget.toolbar.component.view.AnnotationToolbarView;
 
@@ -69,10 +70,12 @@ public class MainActivity extends AppCompatActivity {
         ToolManagerViewModel toolManagerViewModel = ViewModelProviders.of(this).get(ToolManagerViewModel.class);
         toolManagerViewModel.setToolManager(mToolManager);
         PresetBarViewModel presetViewModel = ViewModelProviders.of(this).get(PresetBarViewModel.class);
+        AnnotationToolbarViewModel annotationToolbarViewModel = ViewModelProviders.of(this).get(AnnotationToolbarViewModel.class);
 
         // Create our UI components for the annotation toolbar annd preset bar
         mAnnotationToolbarComponent = new AnnotationToolbarComponent(
                 this,
+                annotationToolbarViewModel,
                 presetViewModel,
                 toolManagerViewModel,
                 new AnnotationToolbarView(mToolbarContainer)

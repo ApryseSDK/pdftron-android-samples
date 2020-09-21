@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final OkHttpClient client = new OkHttpClient();
 
-    private static final String BASE_URL = "https://demo.pdftron.com/";
+    private static final String BASE_URL = "https://demo.pdftron.com/"; // Your server root
 
     private static final String SAMPLE_URL = "https://pdftron.s3.amazonaws.com/downloads/pl/visualization_condominium_with_skylight.dwg";
 

@@ -9,5 +9,7 @@ build.gradle                  - Project level Gradle build file.
 gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and credentials.
 ```
 
+To test your own files, replace the `SAMPLE_URL` link to your own CAD file link in `MainActivity.java`.
+
 ## License
 See [License](./../LICENSE)

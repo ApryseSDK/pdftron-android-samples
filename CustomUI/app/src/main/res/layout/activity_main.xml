@@ -23,7 +23,8 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" >
+        app:layout_constraintTop_toBottomOf="@+id/fragment_container"
+        app:layout_constraintBottom_toTopOf="@+id/tool_layout">
 
         <View
             android:id="@+id/btn_red"
@@ -49,6 +50,33 @@
             android:background="@color/yellow"
             android:layout_marginHorizontal="8dp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tool_layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_layout"
+        app:layout_constraintBottom_toBottomOf="parent" >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_ink"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tint="@color/annot_toolbar_icon"
+            android:layout_marginHorizontal="8dp"
+            app:srcCompat="@drawable/ic_annotation_freehand_black_24dp"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_highlight"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tint="@color/annot_toolbar_icon"
+            android:layout_marginHorizontal="8dp"
+            app:srcCompat="@drawable/ic_annotation_highlight_black_24dp"/>
 
     </LinearLayout>
 

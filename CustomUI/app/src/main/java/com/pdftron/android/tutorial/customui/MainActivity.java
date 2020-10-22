@@ -2,8 +2,10 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,14 +16,22 @@ import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Field;
+import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.annots.Widget;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.AnnotEdit;
 import com.pdftron.pdf.tools.AnnotEditTextMarkup;
+import com.pdftron.pdf.tools.FreehandCreate;
+import com.pdftron.pdf.tools.TextHighlightCreate;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
@@ -85,10 +95,49 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
             }
         });
 
+        View inkBtn = findViewById(R.id.btn_ink);
+        View highlightBtn = findViewById(R.id.btn_highlight);
+
+        inkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startInk();
+            }
+        });
+        highlightBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startHighlight();
+            }
+        });
+
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
         ft.commit();
+    }
+
+    private void startInk() {
+        if (mPdfViewCtrlTabHostFragment != null) {
+            ToolManager toolManager = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            FreehandCreate freehandCreate = (FreehandCreate) toolManager.createTool(ToolManager.ToolMode.INK_CREATE, toolManager.getTool());
+            freehandCreate.setMultiStrokeMode(false);
+            freehandCreate.setTimedModeEnabled(false);
+            freehandCreate.setForceSameNextToolMode(true);
+            freehandCreate.setAllowTapToSelect(true);
+
+            toolManager.setTool(freehandCreate);
+        }
+    }
+
+    private void startHighlight() {
+        if (mPdfViewCtrlTabHostFragment != null) {
+            ToolManager toolManager = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            TextHighlightCreate highlightCreate = (TextHighlightCreate) toolManager.createTool(ToolManager.ToolMode.TEXT_HIGHLIGHT, toolManager.getTool());
+            highlightCreate.setForceSameNextToolMode(true);
+
+            toolManager.setTool(highlightCreate);
+        }
     }
 
     private void editColor(int color) {
@@ -104,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                     Integer page = entry.getValue();
                     if (currentTool instanceof AnnotEdit) {
                         AnnotEdit tool = (AnnotEdit) currentTool;
-                         if (annot.getType() == Annot.e_Ink) {
+                        if (annot.getType() == Annot.e_Ink) {
                             tool.onChangeAnnotStrokeColor(color);
                         } else if (annot.getType() == Annot.e_FreeText) {
                             tool.onChangeAnnotTextColor(color);
@@ -114,8 +163,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                         if (annot.getType() == Annot.e_Highlight) {
                             annotEdit.onChangeAnnotStrokeColor(color);
                         }
-                        toolManager.selectAnnot(annot, page);
                     }
+                    toolManager.selectAnnot(annot, page);
                 }
             }
         } catch (Exception ex) {
@@ -134,10 +183,42 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null) {
+            final PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+            ToolManager toolManager = (ToolManager) pdfViewCtrl.getToolManager();
+            toolManager.setSkipSameToolCreation(true);
             mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager().addAnnotationsSelectionListener(new ToolManager.AnnotationsSelectionListener() {
                 @Override
                 public void onAnnotationsSelectionChanged(HashMap<Annot, Integer> hashMap) {
+                    int type = Annot.e_Unknown;
+                    ToolManager toolManager = (ToolManager) pdfViewCtrl.getToolManager();
+
+                    if (hashMap != null && !hashMap.isEmpty()) {
+                        // change tool to last selected annotation
+                        for (Map.Entry<Annot, Integer> entry : hashMap.entrySet()) {
+                            boolean shouldUnlockRead = false;
+                            try {
+                                pdfViewCtrl.docLockRead();
+                                shouldUnlockRead = true;
+
+                                Annot annot = entry.getKey();
+                                type = annot.getType();
+                                break;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                if (shouldUnlockRead) {
+                                    pdfViewCtrl.docUnlockRead();
+                                }
+                            }
+                        }
+                    }
                     mSelectedAnnots = hashMap;
+
+                    if (type == Annot.e_Ink) {
+                        ((Tool) toolManager.getTool()).setCurrentDefaultToolModeHelper(ToolManager.ToolMode.INK_CREATE);
+                    } else if (type == Annot.e_Highlight) {
+                        ((Tool) toolManager.getTool()).setCurrentDefaultToolModeHelper(ToolManager.ToolMode.TEXT_HIGHLIGHT);
+                    }
                 }
             });
         }
@@ -145,9 +226,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
-        }
         return false;
     }
 

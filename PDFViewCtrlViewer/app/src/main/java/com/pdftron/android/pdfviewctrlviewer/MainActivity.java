@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
-            viewFromResource(R.raw.sample, "sample_file");
+            viewFromRemoteLink("https://pdftron.s3.amazonaws.com/downloads/pl/4gb-sample-file.pdf");
+//            viewFromRemoteLink("https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf");
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
@@ -75,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         // Alternatively, you can open the document using Uri:
         // Uri fileUri = Uri.fromFile(file);
         // mPdfDoc = mPdfViewCtrl.openPDFUri(fileUri, null);
+    }
+
+    public void viewFromRemoteLink(String link) throws PDFNetException {
+        PDFViewCtrl.HTTPRequestOptions options = new PDFViewCtrl.HTTPRequestOptions();
+        options.restrictDownloadUsage(true);
+        mPdfViewCtrl.openUrlAsync(link, null, null, options);
     }
 
     @Override

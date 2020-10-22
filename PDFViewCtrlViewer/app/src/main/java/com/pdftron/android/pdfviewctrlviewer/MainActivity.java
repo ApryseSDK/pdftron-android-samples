@@ -3,6 +3,8 @@ package com.pdftron.android.pdfviewctrlviewer;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
@@ -10,6 +12,7 @@ import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
 import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
@@ -48,6 +51,66 @@ public class MainActivity extends AppCompatActivity {
     public void setupToolManager() {
         mToolManager = ToolManagerBuilder.from()
                 .build(this, mPdfViewCtrl);
+
+        mToolManager.setPreToolManagerListener(new ToolManager.PreToolManagerListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+                return false;
+            }
+
+            @Override
+            public boolean onMove(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+                return false;
+            }
+
+            @Override
+            public boolean onDown(MotionEvent motionEvent) {
+                return false;
+            }
+
+            @Override
+            public boolean onUp(MotionEvent motionEvent, PDFViewCtrl.PriorEventMode priorEventMode) {
+                return false;
+            }
+
+            @Override
+            public boolean onScaleBegin(float v, float v1) {
+                return false;
+            }
+
+            @Override
+            public boolean onScale(float v, float v1) {
+                return false;
+            }
+
+            @Override
+            public boolean onScaleEnd(float v, float v1) {
+                return false;
+            }
+
+            @Override
+            public boolean onLongPress(MotionEvent motionEvent) {
+                Tool tool = (Tool)mToolManager.createTool(ToolManager.ToolMode.RECT_CREATE, null);
+                mToolManager.setTool(tool);
+                tool.onDown(motionEvent);
+                return true;
+            }
+
+            @Override
+            public void onScrollChanged(int i, int i1, int i2, int i3) {
+
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent motionEvent) {
+                return false;
+            }
+
+            @Override
+            public boolean onKeyUp(int i, KeyEvent keyEvent) {
+                return false;
+            }
+        });
     }
 
     /**

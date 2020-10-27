@@ -3,10 +3,14 @@ package com.pdftron.android.pdfviewctrlviewer;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.controls.AnnotationToolbar;
 import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
@@ -15,8 +19,8 @@ import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
-
-import androidx.appcompat.app.AppCompatActivity;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -36,9 +40,38 @@ public class MainActivity extends AppCompatActivity {
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
-            viewFromResource(R.raw.sample, "sample_file");
+            viewFromResource(R.raw.sample_file, "sample_file");
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
+        }
+    }
+
+    private void extractFirstSignature(Annot destAnnot) {
+        boolean shouldUnlock = false;
+        try {
+            mPdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            ArrayList<Annot> annots = mPdfViewCtrl.getAnnotationsOnPage(1);
+            for (Annot annot : annots) {
+                if (annot.isValid() && annot.getType() == Annot.e_Widget) {
+                    Widget widget = new Widget(annot);
+                    Field field = widget.getField();
+                    if (field.getType() == Field.e_signature) {
+                        // found first signature
+                        com.pdftron.sdf.Obj importedContents = destAnnot.getSDFObj().getDoc().importObj(annot.getAppearance(), true);
+                        // use first signature appearance on new signature field
+                        destAnnot.setAppearance(importedContents);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                mPdfViewCtrl.docUnlock();
+            }
         }
     }
 
@@ -48,6 +81,47 @@ public class MainActivity extends AppCompatActivity {
     public void setupToolManager() {
         mToolManager = ToolManagerBuilder.from()
                 .build(this, mPdfViewCtrl);
+
+        mToolManager.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+            @Override
+            public void onAnnotationsAdded(Map<Annot, Integer> map) {
+                for (Map.Entry<Annot, Integer> entry : map.entrySet()) {
+                    Annot annot = entry.getKey();
+
+                    extractFirstSignature(annot);
+                }
+            }
+
+            @Override
+            public void onAnnotationsPreModify(Map<Annot, Integer> map) {
+
+            }
+
+            @Override
+            public void onAnnotationsModified(Map<Annot, Integer> map, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onAnnotationsPreRemove(Map<Annot, Integer> map) {
+
+            }
+
+            @Override
+            public void onAnnotationsRemoved(Map<Annot, Integer> map) {
+
+            }
+
+            @Override
+            public void onAnnotationsRemovedOnPage(int i) {
+
+            }
+
+            @Override
+            public void annotationsCouldNotBeAdded(String s) {
+
+            }
+        });
     }
 
     /**

@@ -11,9 +11,9 @@ import com.pdftron.pdf.tools.ToolManager;
 
 public class CustomTool extends RectCreate {
 
-    // Since this tool creates polygon annotation, use Annot.e_Polygon as parameter.
+    // Since this tool creates rect annotation, use Annot.e_Square as parameter.
     public static ToolManager.ToolModeBase MODE =
-            ToolManager.ToolMode.addNewMode(Annot.e_Polygon);
+            ToolManager.ToolMode.addNewMode(Annot.e_Square);
 
     public CustomTool(@androidx.annotation.NonNull PDFViewCtrl ctrl) {
         super(ctrl);

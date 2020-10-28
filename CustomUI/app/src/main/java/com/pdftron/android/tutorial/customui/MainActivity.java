@@ -2,20 +2,24 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
@@ -32,8 +36,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+        ToolManagerBuilder tmb = ToolManagerBuilder.from()
+                .addCustomizedTool(CustomTool.MODE, CustomTool.class);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .toolManagerBuilder(tmb)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
@@ -46,6 +53,19 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
         new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
         new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+
+        // Set custom tool when pressed
+        Button customTool = findViewById(R.id.custom_tool);
+        customTool.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create our custom tool
+                ToolManager toolManager = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+                ToolManager.Tool customTool = toolManager.createTool(CustomTool.MODE, toolManager.getTool());
+                // Then set it in ToolManager
+                toolManager.setTool(customTool);
+            }
+        });
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

@@ -1,8 +1,8 @@
 package com.pdftron.android.tutorial.customui;
 
 import android.content.Context;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.Annot;
@@ -21,7 +21,8 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class SampleAnnotTest {

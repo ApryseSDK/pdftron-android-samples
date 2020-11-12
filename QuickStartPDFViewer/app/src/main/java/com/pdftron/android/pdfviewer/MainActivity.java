@@ -18,8 +18,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Open our sample document in the 'res/raw' resource folder
-        openRawResourceDocument(this, R.raw.sample);
+//        openLocalDocument(this, "/data/data/com.pdftron.android.pdfviewer/files/aa.pdf");
+//        openLocalDocument(this, "/data/data/com.pdftron.android.pdfviewer/files/aa_t2.pdf");
+        openLocalDocument(this, "/data/data/com.pdftron.android.pdfviewer/files/拼包2.1.0需求文档.docx");
 
         finish();
     }

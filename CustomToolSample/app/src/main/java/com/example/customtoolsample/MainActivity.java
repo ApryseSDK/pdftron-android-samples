@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTabDocumentLoaded(String s) {
                 if (fr != null && fr.getCurrentPdfViewCtrlFragment() != null) {
                     fr.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().setCurrentPage(8);
+                    fr.getCurrentPdfViewCtrlFragment().getToolManager().setSignSignatureFieldsWithStamps(true);
                 }
             }
         });

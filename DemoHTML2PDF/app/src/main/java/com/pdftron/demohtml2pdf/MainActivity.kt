@@ -1,12 +1,13 @@
 package com.pdftron.demohtml2pdf
 
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.DocumentActivity
 import com.pdftron.pdf.utils.HTML2PDF
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,6 +67,15 @@ class MainActivity : AppCompatActivity() {
     fun openDocument(filepath: String) {
         val config = ViewerConfig.Builder()
             .build()
-        DocumentActivity.openDocument(this, Uri.parse(filepath), config)
+
+        val intent = DocumentActivity.IntentBuilder.fromActivityClass(
+            this,
+            DocumentActivity::class.java
+        )
+            .withUri(Uri.parse(filepath))
+            .usingConfig(config)
+            .usingNewUi(true)
+            .build()
+        startActivity(intent)
     }
 }

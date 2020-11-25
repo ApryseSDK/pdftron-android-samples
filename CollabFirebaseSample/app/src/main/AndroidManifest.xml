@@ -16,7 +16,7 @@
                 android:value="${pdftronLicenseKey}"/>
 
         <activity android:name=".MainActivity"
-                  android:theme="@style/CustomAppTheme"
+                  android:theme="@style/MyAppTheme"
                   android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

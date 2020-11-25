@@ -1,8 +1,10 @@
 package com.pdftron.android.pdfviewer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void openLocalDocument(Context context, String localFilePath) {
         final Uri localFile = Uri.fromFile(new File(localFilePath));
-        DocumentActivity.openDocument(context, localFile);
+        presentDocument(localFile);
     }
 
     /**
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
      * @param contentUri a content URI that references a document
      */
     private void openContentUriDocument(Context context, Uri contentUri) {
-        DocumentActivity.openDocument(context, contentUri);
+        presentDocument(contentUri);
     }
 
     /**
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private void openHttpDocument(Context context, String url) {
         final Uri fileLink = Uri.parse(url);
         ViewerConfig config = new ViewerConfig.Builder().openUrlCachePath(this.getCacheDir().getAbsolutePath()).build();
-        DocumentActivity.openDocument(context, fileLink, config);
+        presentDocument(fileLink, config);
     }
 
     /**
@@ -63,6 +65,26 @@ public class MainActivity extends AppCompatActivity {
      * @param fileResId resource id to a document in res/raw
      */
     private void openRawResourceDocument(Context context, @IdRes int fileResId) {
-        DocumentActivity.openDocument(context, fileResId);
+        Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
+                .withFileRes(fileResId)
+                .usingNewUi(true)
+                .build();
+        startActivity(intent);
+    }
+
+    private void presentDocument(Uri uri) {
+        presentDocument(uri, null);
+    }
+
+    private void presentDocument(Uri uri, @Nullable ViewerConfig config) {
+        if (config == null) {
+            config = new ViewerConfig.Builder().saveCopyExportPath(this.getCacheDir().getAbsolutePath()).build();
+        }
+        Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
+                .withUri(uri)
+                .usingConfig(config)
+                .usingNewUi(true)
+                .build();
+        startActivity(intent);
     }
 }

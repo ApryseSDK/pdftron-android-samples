@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 //            ex.printStackTrace();
 //        }
 
-        boolean newUi = false;
+        boolean newUi = true;
 
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .useStandardLibrary(true)
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
                 .withUri(Uri.parse("https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"))
                 .usingConfig(builder.build())
-                .usingTheme(newUi ? R.style.PDFTronAppTheme : R.style.CustomAppTheme)
                 .usingNewUi(newUi)
                 .build();
         startActivity(intent);

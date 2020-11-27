@@ -1,5 +1,7 @@
 package com.example.customtoolsample;
 
+import android.content.SharedPreferences;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,13 +12,22 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ToolStyleConfig;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.AnnotStyleDialogFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.dialog.signature.SignatureDialogFragment;
+import com.pdftron.pdf.dialog.signature.SignatureDialogFragmentBuilder;
+import com.pdftron.pdf.interfaces.OnCreateSignatureListener;
+import com.pdftron.pdf.interfaces.OnDialogDismissListener;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.Signature;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 
@@ -166,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void custStamp(View view) {
-        useCustomStamp(fr);
+//        useCustomStamp(fr);
+        openSignatureDialog();
     }
 
     public void useCloudSquare(@NonNull PdfViewCtrlTabHostFragment2 fragment) {
@@ -177,7 +189,33 @@ public class MainActivity extends AppCompatActivity {
         toolManager.setTool(customTool);
     }
 
-    public void useCustomStamp(@NonNull PdfViewCtrlTabHostFragment2 fragment) {
+    public void openSignatureDialog() {
+        fr.getCurrentPdfViewCtrlFragment().getToolManager().setShowSavedSignatures(false);
+        Signature signature = new Signature(fr.getCurrentPdfViewCtrlFragment().getPDFViewCtrl());
+        signature.showSignaturePickerDialog(new OnCreateSignatureListener() {
+            @Override
+            public void onSignatureCreated(@Nullable String s, boolean b) {
+                useCustomStamp(fr, new File(s));
+            }
+
+            @Override
+            public void onSignatureFromImage(@Nullable PointF pointF, int i, @Nullable Long aLong) {
+
+            }
+
+            @Override
+            public void onAnnotStyleDialogFragmentDismissed(AnnotStyleDialogFragment annotStyleDialogFragment) {
+
+            }
+        }, new OnDialogDismissListener() {
+            @Override
+            public void onDialogDismiss() {
+
+            }
+        });
+    }
+
+    public void useCustomStamp(@NonNull PdfViewCtrlTabHostFragment2 fragment, File signatureFile) {
 //        // Create our custom tool
 //        ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
 //        ToolManager.Tool customTool = toolManager.createTool(CustomStamp.MODE, toolManager.getTool());
@@ -188,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
         ToolManager.Tool customTool = toolManager.createTool(CustomSignature.MODE, toolManager.getTool());
         if (customTool instanceof CustomSignature) {
-            ((CustomSignature) customTool).signLastSavedSignatureToField(8);
+            ((CustomSignature) customTool).signLastSavedSignatureToField(8, signatureFile);
         }
     }
 }

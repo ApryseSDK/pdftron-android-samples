@@ -1,6 +1,7 @@
 package com.example.customtoolsample;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.Annot;
@@ -36,7 +37,7 @@ public class CustomSignature extends Signature {
         return AnnotStyle.CUSTOM_ANNOT_TYPE_SIGNATURE;
     }
 
-    public void signLastSavedSignatureToField(int pageNum) {
+    public void signLastSavedSignatureToField(int pageNum, @Nullable File signatureFile) {
         // this method will add the last signed signature to all field on the given page
         boolean shouldUnlock = false;
         try {
@@ -50,9 +51,12 @@ public class CustomSignature extends Signature {
                     int field_type = field.getType();
                     if (field_type == Field.e_signature) {
                         // found signature field
-                        File[] files = StampManager.getInstance().getSavedSignatures(mPdfViewCtrl.getContext());
-                        File lastFile = files[files.length - 1];
-                        create(lastFile.getAbsolutePath(), w);
+                        if (signatureFile == null) {
+                            File[] files = StampManager.getInstance().getSavedSignatures(mPdfViewCtrl.getContext());
+                            signatureFile = files[files.length - 1];
+                        }
+                        setAnnot(annot, pageNum);
+                        create(signatureFile.getAbsolutePath(), w);
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package com.example.customtoolsample;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,30 +12,31 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ToolStyleConfig;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.AnnotStyleDialogFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
-import com.pdftron.pdf.dialog.signature.SignatureDialogFragment;
-import com.pdftron.pdf.dialog.signature.SignatureDialogFragmentBuilder;
 import com.pdftron.pdf.interfaces.OnCreateSignatureListener;
 import com.pdftron.pdf.interfaces.OnDialogDismissListener;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.Signature;
-import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.RequestCode;
+import com.pdftron.pdf.utils.StampManager;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.ViewerUtils;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    PdfViewCtrlTabHostFragment2 fr = null;
+    private PdfViewCtrlTabHostFragment2 fr = null;
+
+    private Uri mImageSignature = null;
+    private File mSignatureFileToSign = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +172,31 @@ public class MainActivity extends AppCompatActivity {
         return fragment;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RequestCode.DIGITAL_SIGNATURE_IMAGE) { // If signature from image file picker
+            Uri uri = ViewerUtils.getImageUriFromIntent(data, this, mImageSignature);
+            if (uri != null) {
+                String signatureFilePath = StampManager.getInstance().createSignatureFromImage(this, uri);
+                if (signatureFilePath != null) {
+                    mSignatureFileToSign = new File(signatureFilePath);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+
+        if (mSignatureFileToSign != null) {
+            useCustomStamp(fr, mSignatureFileToSign);
+            mSignatureFileToSign = null;
+        }
+    }
+
     public void cloudSq(View view) {
 
         useCloudSquare(fr);
@@ -199,8 +225,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSignatureFromImage(@Nullable PointF pointF, int i, @Nullable Long aLong) {
-
+            public void onSignatureFromImage(@Nullable PointF targetPoint, int targetPage, @Nullable Long widget) {
+                mImageSignature = ViewerUtils.openImageIntent(MainActivity.this, RequestCode.DIGITAL_SIGNATURE_IMAGE);
             }
 
             @Override

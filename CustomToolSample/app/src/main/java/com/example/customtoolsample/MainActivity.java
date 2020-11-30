@@ -242,17 +242,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void useCustomStamp(@NonNull PdfViewCtrlTabHostFragment2 fragment, File signatureFile) {
-//        // Create our custom tool
-//        ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
-//        ToolManager.Tool customTool = toolManager.createTool(CustomStamp.MODE, toolManager.getTool());
-//        // Then set it in ToolManager
-//        toolManager.setTool(customTool);
-
         // demo custom signature
         ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
         ToolManager.Tool customTool = toolManager.createTool(CustomSignature.MODE, toolManager.getTool());
         if (customTool instanceof CustomSignature) {
-            ((CustomSignature) customTool).signLastSavedSignatureToField(8, signatureFile);
+            // sign on field
+//            ((CustomSignature) customTool).signLastSavedSignatureToField(8, signatureFile);
+            // sign at location
+            ((CustomSignature) customTool).signAtLocation(signatureFile, 8, 0, 0);
         }
     }
 }

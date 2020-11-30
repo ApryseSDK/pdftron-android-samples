@@ -1,5 +1,6 @@
 package com.example.customtoolsample;
 
+import android.graphics.PointF;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -60,6 +61,30 @@ public class CustomSignature extends Signature {
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                mPdfViewCtrl.docUnlock();
+            }
+        }
+        mNextToolMode = ToolManager.ToolMode.PAN;
+    }
+
+    public void signAtLocation(@Nullable File signatureFile, int pageNum, int x, int y) {
+        // this method will add the last signed signature to all field on the given page
+        boolean shouldUnlock = false;
+        try {
+            mPdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            if (signatureFile == null) {
+                File[] files = StampManager.getInstance().getSavedSignatures(mPdfViewCtrl.getContext());
+                signatureFile = files[files.length - 1];
+            }
+            mSignatureFilePath = signatureFile.getAbsolutePath();
+            setTargetPoint(new PointF(x, y), pageNum);
+            create(mSignatureFilePath, null);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

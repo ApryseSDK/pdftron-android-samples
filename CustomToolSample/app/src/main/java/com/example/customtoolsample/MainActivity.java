@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -30,6 +34,7 @@ import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
 
 import java.io.File;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -165,6 +170,54 @@ public class MainActivity extends AppCompatActivity {
                 if (fr != null && fr.getCurrentPdfViewCtrlFragment() != null) {
                     fr.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().setCurrentPage(8);
                     fr.getCurrentPdfViewCtrlFragment().getToolManager().setSignSignatureFieldsWithStamps(true);
+
+                    fr.getCurrentPdfViewCtrlFragment().getToolManager().addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+                        @Override
+                        public void onAnnotationsAdded(Map<Annot, Integer> map) {
+                            for (Map.Entry<Annot, Integer> entry : map.entrySet()) {
+                                Annot annot = entry.getKey();
+
+                                try {
+                                    Rect bbox = annot.getRect();
+                                    Log.d("pdftron", "Annotation location: " +
+                                            bbox.getX1() + "|" + bbox.getY1() + "|" + bbox.getX2() + "|" + bbox.getY2()
+                                    );
+                                } catch (PDFNetException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onAnnotationsPreModify(Map<Annot, Integer> map) {
+
+                        }
+
+                        @Override
+                        public void onAnnotationsModified(Map<Annot, Integer> map, Bundle bundle) {
+
+                        }
+
+                        @Override
+                        public void onAnnotationsPreRemove(Map<Annot, Integer> map) {
+
+                        }
+
+                        @Override
+                        public void onAnnotationsRemoved(Map<Annot, Integer> map) {
+
+                        }
+
+                        @Override
+                        public void onAnnotationsRemovedOnPage(int i) {
+
+                        }
+
+                        @Override
+                        public void annotationsCouldNotBeAdded(String s) {
+
+                        }
+                    });
                 }
             }
         });

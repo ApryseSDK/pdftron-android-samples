@@ -7,6 +7,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
@@ -14,15 +16,22 @@ import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.AnnotationDialogFragment;
+import com.pdftron.pdf.controls.BookmarksTabLayout;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.dialog.BookmarksDialogFragment;
+import com.pdftron.pdf.dialog.annotlist.AnnotationListSortOrder;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.utils.DialogFragmentTab;
+import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
@@ -96,6 +105,41 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
     }
 
+    private void showAnnotListDialog() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(AnnotationDialogFragment.BUNDLE_KEY_SORT_MODE,
+                PdfViewCtrlSettingsManager.getAnnotListSortOrder(this,
+                        AnnotationListSortOrder.DATE_ASCENDING) // default sort order
+        );
+
+        DialogFragmentTab annotationsDialog = new DialogFragmentTab(AnnotationDialogFragment.class,
+                BookmarksTabLayout.TAG_TAB_ANNOTATION,
+                Utils.getDrawable(this, com.pdftron.pdf.tools.R.drawable.ic_annotations_white_24dp),
+                null,
+                getString(com.pdftron.pdf.tools.R.string.bookmark_dialog_fragment_annotation_tab_title),
+                bundle,
+                com.pdftron.pdf.tools.R.menu.fragment_annotlist_sort);
+
+        ArrayList<DialogFragmentTab> tabs = new ArrayList<>();
+        tabs.add(annotationsDialog);
+
+        showBookmarksDialog(tabs, getSupportFragmentManager());
+    }
+
+    private void showBookmarksDialog(ArrayList<DialogFragmentTab> dialogFragmentTabs,
+            FragmentManager fragmentManager) {
+        if (mPdfViewCtrlTabHostFragment == null || mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() == null) {
+            return;
+        }
+        BookmarksDialogFragment fragment = BookmarksDialogFragment.newInstance();
+        fragment.setPdfViewCtrl(mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl())
+                .setDialogFragmentTabs(dialogFragmentTabs);
+        // Set a custom style for this fragment
+        fragment.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.PDFTronAppTheme);
+        // Show the dialog
+        fragment.show(fragmentManager, "bookmarks_dialog");
+    }
+
     @Override
     public void onTabDocumentLoaded(String s) {
     }
@@ -103,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            showAnnotListDialog();
         }
         return false;
     }

@@ -30,8 +30,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation "com.pdftron:pdftron:$myPdftronVersion"
-    implementation "com.pdftron:tools:$myPdftronVersion"
+    implementation "com.pdftron:pdftron:8.1.1-beta02"
+    implementation "com.pdftron:tools:8.1.1-beta02"
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

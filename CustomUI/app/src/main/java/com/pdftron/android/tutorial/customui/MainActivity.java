@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     private PdfViewCtrlTabHostFragment2 mPdfViewCtrlTabHostFragment;
 
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
-    public static final String SHAPES_TOOLBAR_TAG = "\"shapes_toolbar\"";
+    public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

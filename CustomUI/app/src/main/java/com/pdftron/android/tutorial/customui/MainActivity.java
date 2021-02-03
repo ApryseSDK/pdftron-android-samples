@@ -2,27 +2,38 @@ package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
+import com.pdftron.fdf.FDFDoc;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
@@ -30,6 +41,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
+
+    public static final String KEY_ACTION = "action";
+    public static final String KEY_ACTION_ADD = "add";
+    public static final String KEY_ACTION_MODIFY = "modify";
+    public static final String KEY_ACTION_DELETE = "delete";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +82,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ToolManager tm = getToolManager();
+        if (tm != null) {
+            tm.removeAnnotationModificationListener(mAnnotationModificationListener);
+        }
         if (mPdfViewCtrlTabHostFragment != null) {
             mPdfViewCtrlTabHostFragment.removeHostListener(this);
         }
@@ -96,8 +116,82 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
     }
 
+    private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
+        @Override
+        public void onAnnotationsAdded(Map<Annot, Integer> map) {
+            handleExportAnnotationCommand(KEY_ACTION_ADD, map);
+        }
+
+        @Override
+        public void onAnnotationsPreModify(Map<Annot, Integer> map) {
+
+        }
+
+        @Override
+        public void onAnnotationsModified(Map<Annot, Integer> map, Bundle bundle) {
+            handleExportAnnotationCommand(KEY_ACTION_MODIFY, map);
+        }
+
+        @Override
+        public void onAnnotationsPreRemove(Map<Annot, Integer> map) {
+            handleExportAnnotationCommand(KEY_ACTION_DELETE, map);
+        }
+
+        @Override
+        public void onAnnotationsRemoved(Map<Annot, Integer> map) {
+
+        }
+
+        @Override
+        public void onAnnotationsRemovedOnPage(int i) {
+
+        }
+
+        @Override
+        public void annotationsCouldNotBeAdded(String s) {
+
+        }
+    };
+
+    private void handleExportAnnotationCommand(String action, Map<Annot, Integer> map) {
+        ArrayList<Annot> annots = new ArrayList<>(map.keySet());
+        String xfdfCommand = null;
+        try {
+            if (KEY_ACTION_ADD.equals(action)) {
+                xfdfCommand = generateXfdfCommand(annots, null, null);
+            } else if (KEY_ACTION_MODIFY.equals(action)) {
+                xfdfCommand = generateXfdfCommand(null, annots, null);
+            } else {
+                xfdfCommand = generateXfdfCommand(null, null, annots);
+            }
+        } catch (PDFNetException e) {
+            e.printStackTrace();
+        }
+
+        if (xfdfCommand != null) {
+            Log.d("demo", "xfdfCommand: " + xfdfCommand);
+        }
+    }
+
+    // helper
+    @Nullable
+    private String generateXfdfCommand(@Nullable ArrayList<Annot> added,
+            @Nullable ArrayList<Annot> modified,
+            @Nullable ArrayList<Annot> removed) throws PDFNetException {
+        PDFDoc pdfDoc = getPdfDoc();
+        if (pdfDoc != null) {
+            FDFDoc fdfDoc = pdfDoc.fdfExtract(added, modified, removed);
+            return fdfDoc.saveAsXFDF();
+        }
+        return null;
+    }
+
     @Override
     public void onTabDocumentLoaded(String s) {
+        ToolManager tm = getToolManager();
+        if (tm != null) {
+            tm.addAnnotationModificationListener(mAnnotationModificationListener);
+        }
     }
 
     @Override
@@ -186,5 +280,37 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public void onJumpToSdCardFolder() {
 
+    }
+
+    @Nullable
+    private PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment() {
+        if (mPdfViewCtrlTabHostFragment != null) {
+            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+        }
+        return null;
+    }
+
+    @Nullable
+    private PDFViewCtrl getPdfViewCtrl() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getPDFViewCtrl();
+        }
+        return null;
+    }
+
+    @Nullable
+    private PDFDoc getPdfDoc() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getPdfDoc();
+        }
+        return null;
+    }
+
+    @Nullable
+    private ToolManager getToolManager() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getToolManager();
+        }
+        return null;
     }
 }

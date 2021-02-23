@@ -35,6 +35,11 @@
         <!--<item name="windowActionBar">false</item>-->
         <!--<item name="windowNoTitle">true</item>-->
         <!--Disable action bar end-->
+        <item name="thumbnail_browser">@style/CustomThumbnailBrowserStyle</item>
+    </style>
+
+    <style name="CustomThumbnailBrowserStyle" parent="ThumbnailBrowserStyle">
+        <item name="showAddBookmarkMenuItem">false</item>
     </style>
 
     <style name="CustomPdfTabLayoutStyle" parent="PdfTabLayoutStyle">

@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         val webView = WebView(this)
         webView.loadUrl("file://" + htmlFile.absolutePath)
+        webView.settings.allowFileAccess = true
 
         val html2PDF = HTML2PDF(webView)
         html2PDF.setOutputFolder(this.cacheDir)
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onConversionFailed(error: String?) {
                 // Handle callback if conversion failed
-                Log.e("html2pdf", error)
+                Log.e("html2pdf", error!!)
             }
         })
         html2PDF.doHtml2Pdf()

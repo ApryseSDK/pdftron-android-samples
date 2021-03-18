@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.pdf.config.ViewerBuilder2;
@@ -40,9 +38,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
-                .addToolbarBuilder(buildNotesToolbar())
-                .addToolbarBuilder(buildShapesToolbar())
-                .toolbarTitle("٩(◕‿◕｡)۶")
+                .addToolbarBuilder(DefaultToolbars.defaultViewToolbar)
+                .documentEditingEnabled(false)
+                .showToolbarSwitcher(false)
+                .multiTabEnabled(false)
+                .toolbarTitle("sample.pdf")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
         new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -102,8 +101,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+        if (menuItem.getItemId() == R.id.search_text) {
+            mPdfViewCtrlTabHostFragment.onSearchOptionSelected();
+        } else if (menuItem.getItemId() == R.id.viewmode_dialog) {
+            mPdfViewCtrlTabHostFragment.onViewModeOptionSelected();
         }
         return false;
     }

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
@@ -20,13 +19,15 @@ import com.google.firebase.ktx.Firebase
 import com.pdftron.pdf.config.ViewerBuilder2
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
+import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType
+import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars
 import com.pdftron.pdftronsignapp.util.FirebaseControl
 import com.pdftron.pdftronsignapp.R
 import com.pdftron.pdftronsignapp.login.LoginFragment
 import com.pdftron.pdftronsignapp.util.CustomButtonId
-import com.pdftron.pdftronsignapp.util.MyTabHostListener
+import com.pdftron.pdftronsignapp.listeners.MyTabHostListener
 import com.pdftron.pdftronsignapp.util.RequestCode
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -106,8 +107,12 @@ class HomeFragment : Fragment() {
             .addToolButton(ToolbarButtonType.SIGNATURE_FIELD, CustomButtonId.SIGNATURE_FIELD)
             .addToolButton(ToolbarButtonType.FREE_TEXT, CustomButtonId.FREE_TEXT)
             .addToolButton(ToolbarButtonType.DATE, CustomButtonId.DATE)
+            .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
+            .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
 
-
+        val bottomBarBuilder = BottomBarBuilder
+            .withTag("Bottom Bar")
+            .addCustomButton(R.string.save_as_wait, R.drawable.serif_a_letter_black, CustomButtonId.SAVE)
 
         val config = ViewerConfig.Builder()
             .fullscreenModeEnabled(true)
@@ -116,19 +121,19 @@ class HomeFragment : Fragment() {
             .longPressQuickMenuEnabled(true)
             .showSearchView(true)
             .addToolbarBuilder(annotationToolbarBuilder)
-            .showBottomToolbar(false)
+            .showBottomToolbar(true)
+            .bottomBarBuilder(bottomBarBuilder)
             .build()
 
         // Create the viewer fragment
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(fileUri).usingConfig(config).build(activity)
-        mPdfViewCtrlTabHostFragment.addHostListener(MyTabHostListener())
+        mPdfViewCtrlTabHostFragment.addHostListener(MyTabHostListener(mPdfViewCtrlTabHostFragment))
 
         // Add the fragment to the layout fragment container
         activity.supportFragmentManager.beginTransaction()
             .replace(fragmentContainer, mPdfViewCtrlTabHostFragment)
             .addToBackStack("PdfViewCtrlTabHostFragment2")
             .commit()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

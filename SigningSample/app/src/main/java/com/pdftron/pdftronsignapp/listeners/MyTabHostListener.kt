@@ -1,4 +1,4 @@
-package com.pdftron.pdftronsignapp.util
+package com.pdftron.pdftronsignapp.listeners
 
 import android.view.Menu
 import android.view.MenuInflater
@@ -6,8 +6,9 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
 import com.pdftron.pdf.model.FileInfo
+import com.pdftron.pdftronsignapp.util.CustomButtonId
 
-class MyTabHostListener: PdfViewCtrlTabHostFragment2.TabHostListener {
+class MyTabHostListener(private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2): PdfViewCtrlTabHostFragment2.TabHostListener {
     override fun onTabHostShown() {
 
     }
@@ -57,6 +58,10 @@ class MyTabHostListener: PdfViewCtrlTabHostFragment2.TabHostListener {
             Toast.makeText(item.actionView.context, "ToDo: change user", Toast.LENGTH_SHORT).show()
             return true
         }
+        if (item?.itemId == CustomButtonId.SAVE) {
+            Toast.makeText(item.actionView.context, "ToDo: Save and send to firebase", Toast.LENGTH_SHORT).show()
+            return true
+        }
         return false
     }
 
@@ -81,6 +86,6 @@ class MyTabHostListener: PdfViewCtrlTabHostFragment2.TabHostListener {
     }
 
     override fun onTabDocumentLoaded(p0: String?) {
-
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.setBasicAnnotationListener(MyBasicAnnotationListener())
     }
 }

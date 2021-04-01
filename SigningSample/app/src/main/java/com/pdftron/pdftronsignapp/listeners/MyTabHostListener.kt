@@ -8,7 +8,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
 import com.pdftron.pdf.model.FileInfo
 import com.pdftron.pdftronsignapp.util.CustomButtonId
 
-class MyTabHostListener(private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2): PdfViewCtrlTabHostFragment2.TabHostListener {
+class MyTabHostListener(private val showBottomBar:()->Unit, private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2, private val mBasicAnnotationListener: MyBasicAnnotationListener, private val mAnnotationModificationListener: MyAnnotationModificationListener): PdfViewCtrlTabHostFragment2.TabHostListener {
     override fun onTabHostShown() {
 
     }
@@ -54,14 +54,6 @@ class MyTabHostListener(private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabH
     }
 
     override fun onToolbarOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == CustomButtonId.PROFILE) {
-            Toast.makeText(item.actionView.context, "ToDo: change user", Toast.LENGTH_SHORT).show()
-            return true
-        }
-        if (item?.itemId == CustomButtonId.SAVE) {
-            Toast.makeText(item.actionView.context, "ToDo: Save and send to firebase", Toast.LENGTH_SHORT).show()
-            return true
-        }
         return false
     }
 
@@ -86,6 +78,8 @@ class MyTabHostListener(private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabH
     }
 
     override fun onTabDocumentLoaded(p0: String?) {
-        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.setBasicAnnotationListener(MyBasicAnnotationListener())
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.setBasicAnnotationListener(mBasicAnnotationListener)
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.addAnnotationModificationListener(mAnnotationModificationListener)
+        showBottomBar()
     }
 }

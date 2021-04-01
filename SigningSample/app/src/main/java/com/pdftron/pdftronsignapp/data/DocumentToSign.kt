@@ -1,15 +1,16 @@
-package com.pdftron.pdftronsignapp.model
+package com.pdftron.pdftronsignapp.data
 
 import com.google.firebase.Timestamp
 
 data class DocumentToSign(
+    var docId: String = "",
     val uid: String,
     val email: String,
     val docRef: String,
     val emails: List<String>,
     val requestedTime: Timestamp,
-    val signed: Boolean,
-    val signedBy: List<String>,
-    val signedTime: String,
-    val xfdf: List<String>
+    var signed: Boolean,
+    val signedBy: MutableList<String>,
+    var signedTime: Timestamp?,
+    val xfdf: MutableList<String>
     )

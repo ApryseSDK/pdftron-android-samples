@@ -2,11 +2,13 @@ package com.pdftron.pdftronsignapp.listeners
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import com.pdftron.pdf.Annot
 import com.pdftron.pdf.tools.ToolManager
+import com.pdftron.pdftronsignapp.data.User
 
 class MyBasicAnnotationListener: ToolManager.BasicAnnotationListener {
+    private lateinit var currentUser: User
+
     override fun onAnnotationSelected(p0: Annot?, p1: Int) {
 
     }
@@ -20,12 +22,9 @@ class MyBasicAnnotationListener: ToolManager.BasicAnnotationListener {
         toolMode: ToolManager.ToolMode?
     ): Boolean {
         try {
-            // Intercept clicking widget annotation by return true
-            if (annot!!.type == Annot.e_Widget) {
-                Log.d("InterceptAnnot", "handling widget annotation")
-                val userEmail = annot.getCustomData("email")
-                if(userEmail.isNullOrEmpty())
-                    annot.setCustomData("email", "email@email.com")
+            val userEmail = annot?.getCustomData("email")
+            if (userEmail.isNullOrEmpty()) {
+                annot?.setCustomData("email", currentUser.email)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -36,5 +35,9 @@ class MyBasicAnnotationListener: ToolManager.BasicAnnotationListener {
 
     override fun onInterceptDialog(p0: AlertDialog?): Boolean {
         return false
+    }
+
+    fun setCurrentUser(selectedUser: User){
+        currentUser = selectedUser
     }
 }

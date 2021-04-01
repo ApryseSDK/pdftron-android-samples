@@ -3,11 +3,11 @@ package com.pdftron.pdftronsignapp.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -16,9 +16,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.pdftron.pdftronsignapp.util.FirebaseControl
 import com.pdftron.pdftronsignapp.R
 import com.pdftron.pdftronsignapp.home.HomeFragment
+import com.pdftron.pdftronsignapp.util.FirebaseControl
 import com.pdftron.pdftronsignapp.util.RequestCode
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -57,20 +57,87 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         google_login_btn.setOnClickListener { googleSignIn() }
-
+        register_btn.setOnClickListener { registerUser() }
+        login_btn.setOnClickListener { emailLogin() }
     }
 
-    override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if(currentUser != null)
-            activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.content_frame, HomeFragment.newInstance(), HomeFragment.TAG)?.commit()
-        //updateUI(currentUser)
+    private fun registerUser() {
+        if (!isEmailOrPasswordBlank()) {
+            return
+        }
+        val email = editTextTextEmailAddress.text.toString()
+        val password = editTextTextPassword.text.toString()
+        auth
+            .createUserWithEmailAndPassword(
+                email,
+                password
+            )
+            .addOnCompleteListener { task ->
+                activity?.let { activity ->
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+                        FirebaseControl().generateUserDocument(user)
+                        activity.supportFragmentManager.beginTransaction()
+                            .replace(
+                                R.id.content_frame,
+                                HomeFragment.newInstance(),
+                                HomeFragment.TAG
+                            )
+                            .commit()
+
+                    } else {
+                        Log.w(TAG, "registerUser:failure", task.exception)
+                        Toast.makeText(activity, "registerUser:failure", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
     }
 
-    private fun googleSignIn(){
+    private fun emailLogin() {
+        if (!isEmailOrPasswordBlank()) {
+            return
+        }
+        val email = editTextTextEmailAddress.text.toString()
+        val password = editTextTextPassword.text.toString()
+        auth.signInWithEmailAndPassword(
+            email,
+            password
+        )
+            .addOnCompleteListener { task ->
+                activity?.let { activity ->
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+                        FirebaseControl().generateUserDocument(user)
+                        activity.supportFragmentManager.beginTransaction()
+                            .replace(
+                                R.id.content_frame,
+                                HomeFragment.newInstance(),
+                                HomeFragment.TAG
+                            )
+                            .commit()
+                    } else {
+                        Log.w(TAG, "emailLogin:failure", task.exception)
+                        Toast.makeText(activity, "emailLogin:failure", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+    }
+
+    private fun isEmailOrPasswordBlank(): Boolean {
+        if (editTextTextEmailAddress.text.toString().isEmpty()) {
+            Toast.makeText(requireContext(), "Email required", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (editTextTextPassword.text.toString().isEmpty()) {
+            Toast.makeText(requireContext(), "Password required", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    private fun googleSignIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RequestCode.GOOGLE_SIGN_IN)
     }
@@ -85,11 +152,17 @@ class LoginFragment : Fragment() {
                         Log.d(TAG, "signInWithCredential:success")
                         val user = auth.currentUser
                         FirebaseControl().generateUserDocument(user)
-                        it.supportFragmentManager.beginTransaction().replace(R.id.content_frame, HomeFragment.newInstance(), HomeFragment.TAG).commitAllowingStateLoss()
+                        it.supportFragmentManager.beginTransaction().replace(
+                            R.id.content_frame,
+                            HomeFragment.newInstance(),
+                            HomeFragment.TAG
+                        )
+                            .commit()
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        Toast.makeText(it, "signInWithCredential:failure", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(it, "signInWithCredential:failure", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
         }

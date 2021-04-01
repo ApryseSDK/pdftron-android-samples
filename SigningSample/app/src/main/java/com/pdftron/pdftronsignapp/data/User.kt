@@ -1,6 +1,6 @@
-package com.pdftron.pdftronsignapp.model
+package com.pdftron.pdftronsignapp.data
 
-class User (
+data class User (
     val displayName: String,
     val email: String,
     val photoURL: String

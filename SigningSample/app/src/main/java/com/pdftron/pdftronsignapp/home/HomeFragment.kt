@@ -6,9 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IdRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -16,26 +15,24 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.ktx.Firebase
-import com.pdftron.pdf.config.ViewerBuilder2
-import com.pdftron.pdf.config.ViewerConfig
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
-import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder
-import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder
-import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType
-import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars
-import com.pdftron.pdftronsignapp.util.FirebaseControl
+import com.pdftron.pdftronsignapp.MainActivity
 import com.pdftron.pdftronsignapp.R
+import com.pdftron.pdftronsignapp.addusertodoc.AddUserToDocFragment
+import com.pdftron.pdftronsignapp.data.DocumentToSign
 import com.pdftron.pdftronsignapp.login.LoginFragment
-import com.pdftron.pdftronsignapp.util.CustomButtonId
-import com.pdftron.pdftronsignapp.listeners.MyTabHostListener
+import com.pdftron.pdftronsignapp.util.FirebaseControl
 import com.pdftron.pdftronsignapp.util.RequestCode
 import kotlinx.android.synthetic.main.fragment_home.*
-
+import java.io.File
 
 class HomeFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
-    private lateinit var mPdfViewCtrlTabHostFragment : PdfViewCtrlTabHostFragment2
+    private var mDocumentToSignAdapter: DocumentToSignAdapter? = null
+    private var mSignedDocumentsAdapter: SignedDocumentAdapter? = null
+    private val mFireBaseControl = FirebaseControl()
+    private val documentReferences = mutableListOf<DocumentToSign>()
+    private val signedDocuments = mutableListOf<DocumentToSign>()
 
     companion object {
         val TAG = HomeFragment::class.java.name
@@ -55,7 +52,7 @@ class HomeFragment : Fragment() {
             auth = Firebase.auth
         }
 
-        FirebaseControl().getUserDocument { updateUi(it) }
+        mFireBaseControl.getUserDocument { updateUi(it) }
     }
 
     override fun onCreateView(
@@ -77,6 +74,10 @@ class HomeFragment : Fragment() {
             }
             startActivityForResult(intent, RequestCode.FILE_REQUEST_CODE)
         }
+
+        setUpRecyclerview()
+        getDocumentsToSign()
+        getSignedDocuments()
     }
 
     private fun logout() {
@@ -92,60 +93,87 @@ class HomeFragment : Fragment() {
     private fun updateUi(document: DocumentSnapshot?) {
         if (document == null)
             return
-        //todo: update ui?
+
     }
 
-    private fun addViewerFragment(
-        @IdRes fragmentContainer: Int,
-        activity: AppCompatActivity,
-        fileUri: Uri
-    ) {
+    private fun setUpRecyclerview() {
+        mDocumentToSignAdapter = DocumentToSignAdapter(documentReferences) { documentToSign ->
+            mFireBaseControl.getDocumentUriFromFb(documentToSign.docRef) { uri ->
+                showDocument(
+                    documentToSign.docId,
+                    uri
+                )
+            }
+        }
+        home_recycler.layoutManager =
+            LinearLayoutManager(home_recycler.context, LinearLayoutManager.VERTICAL, false)
+        home_recycler.adapter = mDocumentToSignAdapter
 
-        val annotationToolbarBuilder = AnnotationToolbarBuilder
-            .withTag("Sign Sample")
-            .addCustomButton(R.string.custom, R.drawable.ic_annotation_caret_black_24dp, CustomButtonId.PROFILE)
-            .addToolButton(ToolbarButtonType.SIGNATURE_FIELD, CustomButtonId.SIGNATURE_FIELD)
-            .addToolButton(ToolbarButtonType.FREE_TEXT, CustomButtonId.FREE_TEXT)
-            .addToolButton(ToolbarButtonType.DATE, CustomButtonId.DATE)
-            .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
-            .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
+        mSignedDocumentsAdapter = SignedDocumentAdapter(signedDocuments) { documentToSign ->
+            mFireBaseControl.getDocumentUriFromFb(documentToSign.docRef) { uri ->
+                showDocument(
+                    documentToSign.docId,
+                    uri
+                )
+            }
+        }
+        home_recycler_signed_docs.layoutManager =
+            LinearLayoutManager(home_recycler.context, LinearLayoutManager.VERTICAL, false)
+        home_recycler_signed_docs.adapter = mSignedDocumentsAdapter
 
-        val bottomBarBuilder = BottomBarBuilder
-            .withTag("Bottom Bar")
-            .addCustomButton(R.string.save_as_wait, R.drawable.serif_a_letter_black, CustomButtonId.SAVE)
+        swipeContainer.setOnRefreshListener {
+            getDocumentsToSign()
+            swipeContainer.isRefreshing = false
+        }
+        swipeContainerSigned.setOnRefreshListener {
+            getSignedDocuments()
+            swipeContainerSigned.isRefreshing = false
+        }
+    }
 
-        val config = ViewerConfig.Builder()
-            .fullscreenModeEnabled(true)
-            .multiTabEnabled(false)
-            .documentEditingEnabled(true)
-            .longPressQuickMenuEnabled(true)
-            .showSearchView(true)
-            .addToolbarBuilder(annotationToolbarBuilder)
-            .showBottomToolbar(true)
-            .bottomBarBuilder(bottomBarBuilder)
-            .build()
+    private fun getDocumentsToSign() {
+        mFireBaseControl.searchForDocumentToSign {
+            val originalItemsCount = documentReferences.count()
+            documentReferences.clear()
+            if (originalItemsCount > 0) {
+                mDocumentToSignAdapter?.notifyItemRangeRemoved(0, originalItemsCount)
+            }
+            documentReferences.addAll(it)
+            if (documentReferences.count() > 0) {
+                mDocumentToSignAdapter?.notifyItemRangeInserted(0, it.count())
+            }
+        }
+    }
 
-        // Create the viewer fragment
-        mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(fileUri).usingConfig(config).build(activity)
-        mPdfViewCtrlTabHostFragment.addHostListener(MyTabHostListener(mPdfViewCtrlTabHostFragment))
+    private fun getSignedDocuments() {
+        mFireBaseControl.searchForDocumentsSigned {
+            val originalItemsCount = signedDocuments.count()
+            signedDocuments.clear()
+            if (originalItemsCount > 0) {
+                mSignedDocumentsAdapter?.notifyItemRangeRemoved(0, originalItemsCount)
+            }
+            signedDocuments.addAll(it)
+            if (signedDocuments.count() > 0)
+                mSignedDocumentsAdapter?.notifyItemRangeInserted(0, it.count())
+        }
+    }
 
-        // Add the fragment to the layout fragment container
-        activity.supportFragmentManager.beginTransaction()
-            .replace(fragmentContainer, mPdfViewCtrlTabHostFragment)
-            .addToBackStack("PdfViewCtrlTabHostFragment2")
-            .commit()
+    private fun showDocument(docId: String, file: File) {
+        (activity as MainActivity).showDocument(docId, file)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == RequestCode.FILE_REQUEST_CODE) {
-            if (data != null && data.data != null)
-                addViewerFragment(
-                    R.id.content_frame,
-                    activity as AppCompatActivity,
+            if (data != null && data.data != null) {
+                (activity as MainActivity).buildViewerFragment(
                     data.data as Uri
                 )
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.content_frame, AddUserToDocFragment.newInstance())
+                    ?.addToBackStack("AddUserToDocFragment")?.commit()
+            }
         }
     }
 }

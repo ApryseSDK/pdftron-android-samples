@@ -7,6 +7,9 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.utils.DialogFragmentTab;
 import com.pdftron.pdf.utils.Utils;
 
+/**
+ * Our custom PdfViewCtrlTabHostFragment2 class that will have a custom annotation list
+ */
 public class CustomPdfViewCtrlTabHostFragment extends PdfViewCtrlTabHostFragment2 {
 
     public CustomPdfViewCtrlTabHostFragment() {
@@ -30,7 +33,7 @@ public class CustomPdfViewCtrlTabHostFragment extends PdfViewCtrlTabHostFragment
                 Utils.getDrawable(context, com.pdftron.pdf.tools.R.drawable.ic_annotations_white_24dp),
                 null,
                 "CustomFragment",
-                null,  // can supplya bundle to pass information to the fragment
+                null,  // can supply a bundle to pass information to the fragment
                 0); // can supply a custom menu
     }
 }

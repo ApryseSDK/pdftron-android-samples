@@ -22,7 +22,6 @@ import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.ToolManager;
@@ -35,7 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
+public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment2.TabHostListener {
 
     private PdfViewCtrlTabHostFragment2 mPdfViewCtrlTabHostFragment;
 
@@ -197,7 +196,37 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "XFDF import!!", Toast.LENGTH_SHORT).show();
+
+            final String xfdf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                    "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+                    "    \t<add>\n" +
+                    "    \t\t<polygon intensity=\"2\" style=\"cloudy\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20210406154359Z\" flags=\"print\" date=\"D:20210406154359Z\" name=\"4220c0ef-c5f8-435c-8bb4-7a226f3ff51c\" page=\"0\" rect=\"60.1483,478.889,266.608,710.935\" title=\"Chloe\">\n" +
+                    "    \t\t\t<vertices>71.9667,607.748;131.467,490.961;254.433,547.654;242.533,700.157</vertices>\n" +
+                    "    \t\t</polygon>\n" +
+                    "    \t</add>\n" +
+                    "    \t<modify />\n" +
+                    "    \t<delete />\n" +
+                    "    \t<pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+                    "    </xfdf>";
+            if (mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+                try {
+                    mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().docLock(true, new PDFViewCtrl.LockRunnable() {
+                        @Override
+                        public void run() throws Exception {
+                            // read XFDF from a string
+                            FDFDoc fdf_doc = FDFDoc.createFromXFDF(xfdf);
+
+                            PDFDoc doc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
+                            doc.fdfMerge(fdf_doc); // note, fdfMerge will create duplicates, if your XFDF contains all annotations you needed for the entire document, use fdfUpdate instead
+                            mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().update(true);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return false;
     }

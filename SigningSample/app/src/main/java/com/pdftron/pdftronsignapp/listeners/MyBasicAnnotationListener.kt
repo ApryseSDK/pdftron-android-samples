@@ -22,8 +22,8 @@ class MyBasicAnnotationListener: ToolManager.BasicAnnotationListener {
         toolMode: ToolManager.ToolMode?
     ): Boolean {
         try {
-            val userEmail = annot?.getCustomData("email")
-            if (userEmail.isNullOrEmpty()) {
+            val annotEmail = annot?.getCustomData("email")
+            if (annotEmail.isNullOrEmpty()) {
                 annot?.setCustomData("email", currentUser.email)
             }
         } catch (e: Exception) {

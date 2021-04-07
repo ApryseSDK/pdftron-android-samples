@@ -20,8 +20,7 @@
             android:value="${pdftronLicenseKey}"/>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/PDFTronAppTheme"
-            android:windowSoftInputMode="adjustPan">
+            android:theme="@style/PDFTronAppTheme">
             <intent-filter
                 android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize">
                 <action android:name="android.intent.action.MAIN" />

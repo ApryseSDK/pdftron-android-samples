@@ -16,6 +16,7 @@ class AddUserToDocFragment : Fragment() {
 
     private val userList = mutableListOf<User>()
     private lateinit var adapter: AddUserToDocAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,16 +34,17 @@ class AddUserToDocFragment : Fragment() {
 
         add_user.setOnClickListener {
             if (name_et.text.toString().isEmpty()) {
-                Toast.makeText(this.context, "Name required", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.context, add_user.context.getString(R.string.name_required), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (email_et.text.toString().isEmpty()) {
-                Toast.makeText(this.context, "Email required", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.context, add_user.context.getString(R.string.email_required), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             addUser(name_et.text.toString(), email_et.text.toString())
         }
         next_btn.setOnClickListener {
+            activity?.supportFragmentManager?.popBackStack()
             (activity as MainActivity).addViewerFragment(userList)
         }
     }

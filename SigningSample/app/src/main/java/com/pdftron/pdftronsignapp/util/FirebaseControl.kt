@@ -54,7 +54,7 @@ class FirebaseControl {
             }
     }
 
-    fun addDocumentToSign(file: File, emailList: List<String>) {
+    fun addDocumentToSign(file: File, emailList: List<String>, closeFragment: ()->Unit) {
         val referenceString = uploadDocToStorage(file)
         val fireStore = FirebaseFirestore.getInstance()
         val user = Firebase.auth.currentUser
@@ -71,10 +71,12 @@ class FirebaseControl {
                     signedTime = null,
                     xfdf = mutableListOf()
                 )
-            )
+            ).addOnSuccessListener {
+                closeFragment()
+            }
     }
 
-    fun updateDocumentToSign(filepath: String, pdfDoc: PDFDoc, docId: String, xdfString: String) {
+    fun updateDocumentToSign(filepath: String, pdfDoc: PDFDoc, docId: String, xdfString: String, closeFragment: ()->Unit) {
         val fireStore = FirebaseFirestore.getInstance()
         val user = Firebase.auth.currentUser
         val docRef = fireStore.collection("documentsToSign").document(docId)
@@ -112,7 +114,9 @@ class FirebaseControl {
                 "signed" to document.signed,
                 "signedTime" to document.signedTime
             )
-            docRef.update(updatedData)
+            docRef.update(updatedData).addOnSuccessListener {
+                closeFragment()
+            }
         }
     }
 

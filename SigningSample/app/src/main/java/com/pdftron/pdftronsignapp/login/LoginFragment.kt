@@ -65,6 +65,14 @@ class LoginFragment : Fragment() {
         if (!isEmailOrPasswordBlank()) {
             return
         }
+        if (editTextTextPassword.text.toString().length < 6) {
+            Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.password_hint),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
         val email = editTextTextEmailAddress.text.toString()
         val password = editTextTextPassword.text.toString()
         auth
@@ -87,7 +95,7 @@ class LoginFragment : Fragment() {
 
                     } else {
                         Log.w(TAG, "registerUser:failure", task.exception)
-                        Toast.makeText(activity, "registerUser:failure", Toast.LENGTH_SHORT)
+                        Toast.makeText(activity, requireContext().getString(R.string.register_user_failure), Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
@@ -118,7 +126,7 @@ class LoginFragment : Fragment() {
                             .commit()
                     } else {
                         Log.w(TAG, "emailLogin:failure", task.exception)
-                        Toast.makeText(activity, "emailLogin:failure", Toast.LENGTH_SHORT)
+                        Toast.makeText(activity, requireContext().getString(R.string.email_login_failure), Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
@@ -127,11 +135,11 @@ class LoginFragment : Fragment() {
 
     private fun isEmailOrPasswordBlank(): Boolean {
         if (editTextTextEmailAddress.text.toString().isEmpty()) {
-            Toast.makeText(requireContext(), "Email required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), requireContext().getString(R.string.email_required), Toast.LENGTH_SHORT).show()
             return false
         }
         if (editTextTextPassword.text.toString().isEmpty()) {
-            Toast.makeText(requireContext(), "Password required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), requireContext().getString(R.string.password_required), Toast.LENGTH_SHORT).show()
             return false
         }
         return true
@@ -161,7 +169,7 @@ class LoginFragment : Fragment() {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        Toast.makeText(it, "signInWithCredential:failure", Toast.LENGTH_SHORT)
+                        Toast.makeText(it, it.getString(R.string.sign_in_with_credential_failure), Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
@@ -182,7 +190,7 @@ class LoginFragment : Fragment() {
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
-                Toast.makeText(activity, "Google sign in failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, requireContext().getString(R.string.google_sign_in_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }

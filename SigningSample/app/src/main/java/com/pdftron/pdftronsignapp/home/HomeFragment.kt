@@ -75,6 +75,10 @@ class HomeFragment : Fragment() {
             startActivityForResult(intent, RequestCode.FILE_REQUEST_CODE)
         }
 
+        if(auth.currentUser.displayName.isNullOrEmpty())
+            user_name.text = auth.currentUser.email
+        else
+            user_name.text = auth.currentUser.displayName
         setUpRecyclerview()
         getDocumentsToSign()
         getSignedDocuments()

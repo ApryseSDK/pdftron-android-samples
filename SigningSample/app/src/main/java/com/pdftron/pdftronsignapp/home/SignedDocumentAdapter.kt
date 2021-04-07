@@ -2,6 +2,7 @@ package com.pdftron.pdftronsignapp.home
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.pdftron.pdftronsignapp.R
 import com.pdftron.pdftronsignapp.data.DocumentToSign
 import kotlinx.android.synthetic.main.document_to_sign_view_holder.view.*
 import java.text.SimpleDateFormat
@@ -19,8 +20,8 @@ class SignedDocumentAdapter(private val signedDocs: MutableList<DocumentToSign>,
             val requestedTime = sdf.format(document.signedTime!!.toDate())
             holder.itemView.when_txt.text = requestedTime
         }
-        holder.itemView.when_lbl.text = "Signed"
-        holder.itemView.sign_btn.text = "View"
+        holder.itemView.when_lbl.text = holder.itemView.context.getString(R.string.signed)
+        holder.itemView.sign_btn.text = holder.itemView.context.getString(R.string.view)
         holder.itemView.sign_btn.setOnClickListener { signClicked(document) }
     }
 

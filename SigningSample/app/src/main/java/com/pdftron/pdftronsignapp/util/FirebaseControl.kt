@@ -6,7 +6,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.Timestamp.now
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -35,19 +34,6 @@ class FirebaseControl {
                         photoUrl = Uri.EMPTY
                     userRef.set(User(userName, user.email, photoUrl.toString()))
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("FirebaseControl", "get failed with ", exception)
-            }
-    }
-
-    fun getUserDocument(updateUi: (data: DocumentSnapshot?) -> Unit) {
-        val fireStore = FirebaseFirestore.getInstance()
-        val user = Firebase.auth.currentUser
-        val userRef = fireStore.document("users/${user?.uid}")
-        userRef.get()
-            .addOnSuccessListener { snapshot ->
-                updateUi(snapshot)
             }
             .addOnFailureListener { exception ->
                 Log.d("FirebaseControl", "get failed with ", exception)

@@ -51,8 +51,6 @@ class HomeFragment : Fragment() {
 
             auth = Firebase.auth
         }
-
-        mFireBaseControl.getUserDocument { updateUi(it) }
     }
 
     override fun onCreateView(
@@ -92,12 +90,6 @@ class HomeFragment : Fragment() {
             LoginFragment.newInstance(),
             LoginFragment.TAG
         )?.commitAllowingStateLoss()
-    }
-
-    private fun updateUi(document: DocumentSnapshot?) {
-        if (document == null)
-            return
-
     }
 
     private fun setUpRecyclerview() {

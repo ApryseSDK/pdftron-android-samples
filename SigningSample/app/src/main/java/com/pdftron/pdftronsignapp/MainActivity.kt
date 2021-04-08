@@ -2,7 +2,6 @@ package com.pdftron.pdftronsignapp
 
 import android.Manifest
 import android.app.Dialog
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -13,34 +12,31 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.pdftron.pdf.Action
 import com.pdftron.pdf.Annot
-import com.pdftron.pdf.Field
+import com.pdftron.pdf.PDFDoc
 import com.pdftron.pdf.PDFDoc.e_both
-import com.pdftron.pdf.annots.Widget
+import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerBuilder2
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
+import com.pdftron.pdf.tools.ToolManager
 import com.pdftron.pdf.utils.Utils
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType
-import com.pdftron.pdf.widget.toolbar.builder.ToolbarItem
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars
+import com.pdftron.pdftronsignapp.customtool.SelectDate
 import com.pdftron.pdftronsignapp.data.User
 import com.pdftron.pdftronsignapp.home.HomeFragment
-import com.pdftron.pdftronsignapp.listeners.MyAnnotationModificationListener
 import com.pdftron.pdftronsignapp.listeners.MyBasicAnnotationListener
 import com.pdftron.pdftronsignapp.listeners.MyTabHostListener
 import com.pdftron.pdftronsignapp.login.LoginFragment
 import com.pdftron.pdftronsignapp.util.*
-import com.pdftron.sdf.Obj
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2
     private lateinit var mBasicAnnotationListener: MyBasicAnnotationListener
-    private lateinit var mAnnotationModificationListener: MyAnnotationModificationListener
     private val mFirebaseControl = FirebaseControl()
     private lateinit var usersList: List<User>
     private var docId: String = ""
@@ -76,15 +72,13 @@ class MainActivity : AppCompatActivity() {
         config.addToolbarBuilder(buildAnnotationToolbar())
         // Create the viewer fragment
         mBasicAnnotationListener = MyBasicAnnotationListener()
-        mAnnotationModificationListener = MyAnnotationModificationListener { annotationsAdded(it) }
         mPdfViewCtrlTabHostFragment =
             ViewerBuilder2.withUri(Uri.fromFile(tempDoc)).usingConfig(config.build()).build(this)
         mPdfViewCtrlTabHostFragment.addHostListener(
             MyTabHostListener(
                 { showBottomBar(false) },
                 mPdfViewCtrlTabHostFragment,
-                mBasicAnnotationListener,
-                mAnnotationModificationListener
+                mBasicAnnotationListener
             )
         )
     }
@@ -96,15 +90,13 @@ class MainActivity : AppCompatActivity() {
         val config = createViewerConfig()
         config.showAppBar(false)
         mBasicAnnotationListener = MyBasicAnnotationListener()
-        mAnnotationModificationListener = MyAnnotationModificationListener { annotationsAdded(it) }
         mPdfViewCtrlTabHostFragment =
             ViewerBuilder2.withFile(fileForThisUser).usingConfig(config.build()).build(this)
         mPdfViewCtrlTabHostFragment.addHostListener(
             MyTabHostListener(
                 { showBottomBar(true) },
                 mPdfViewCtrlTabHostFragment,
-                mBasicAnnotationListener,
-                mAnnotationModificationListener
+                mBasicAnnotationListener
             )
         )
         showPdfViewCtrlTabHostFragment()
@@ -124,28 +116,6 @@ class MainActivity : AppCompatActivity() {
         progressDialog.show()
     }
 
-    private fun annotationsAdded(annots: MutableMap<Annot, Int>?) {
-        annots!!.forEach {
-            val annot = it.key
-            if (annot.isValid) {
-                if (annot.type == Annot.e_Widget) {
-                    val widget = Widget(annot)
-                    val field = widget.field
-                    if (field.type == Field.e_text) {
-                        val pdfDoc = mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfDoc
-                        val dateAction: Action = Action.createJavaScript(
-                            pdfDoc,
-                            "AFDate_FormatEx(\"d/m/yy\");"
-                        )
-                        val aaObj: Obj = widget.sdfObj.putDict("AA")
-                        aaObj.put("K", dateAction.sdfObj)
-                        aaObj.put("F", dateAction.sdfObj)
-                    }
-                }
-            }
-        }
-    }
-
     private fun createViewerConfig(): ViewerConfig.Builder {
         return ViewerConfig.Builder()
             .fullscreenModeEnabled(false)
@@ -156,23 +126,22 @@ class MainActivity : AppCompatActivity() {
             .showBottomToolbar(false)
             .showBottomNavBar(false)
             .showTopToolbar(false)
+            .toolManagerBuilder(toolManagerBuilder())
+    }
+
+    private fun toolManagerBuilder(): ToolManagerBuilder{
+        return ToolManagerBuilder.from()
+            .addCustomizedTool(SelectDate.MODE, SelectDate::class.java)
     }
 
     private fun buildAnnotationToolbar(): AnnotationToolbarBuilder {
-        val builder = AnnotationToolbarBuilder
+        return AnnotationToolbarBuilder
             .withTag("Sign Sample")
             .addToolButton(ToolbarButtonType.SIGNATURE_FIELD, CustomButtonId.SIGNATURE_FIELD)
-            .addToolButton(ToolbarButtonType.FREE_TEXT, CustomButtonId.FREE_TEXT)
-            .addToolButton(ToolbarButtonType.TEXT_FIELD, CustomButtonId.DATE)
+            .addToolButton(ToolbarButtonType.TEXT_FIELD, CustomButtonId.TEXT_FIELD)
+            .addCustomSelectableButton(R.string.date, R.drawable.ic_date_range_24px, CustomButtonId.DATE)
             .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
             .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
-
-        //change icon on text field to a calendar so users use it as a date field. Date selection functionality is added in the annotationsAdded function
-        val toolbarItems: List<ToolbarItem> = builder.toolbarItems
-        val item = toolbarItems.first { it.toolbarButtonType == ToolbarButtonType.TEXT_FIELD }
-        item.setIcon(R.drawable.ic_date_range_24px)
-
-        return builder
     }
 
     private fun showBottomBar(isSigning: Boolean) {
@@ -200,6 +169,11 @@ class MainActivity : AppCompatActivity() {
         mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.disableAnnotEditing(
             arrayOf(Annot.e_Widget)
         )
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfDoc.flattenAnnotationsAdvanced(
+            arrayOf(
+                PDFDoc.FlattenMode.ALL
+            )
+        )
     }
 
     private fun signingBottomBarSetup() {
@@ -223,7 +197,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this,
-                    this.getString(R.string.dates_and_signatures_required),
+                    this.getString(R.string.all_fields_required),
                     Toast.LENGTH_SHORT
                 ).show()
             }

@@ -21,7 +21,7 @@
     <string name="email_login_failure">emailLogin:failure</string>
     <string name="sign_in_with_credential_failure">signInWithCredential:failure</string>
     <string name="google_sign_in_failed">Google sign in failed</string>
-    <string name="dates_and_signatures_required">All Dates and Signatures Required</string>
+    <string name="all_fields_required">All fields are Required</string>
     <string name="email">Email:</string>
     <string name="name">Name:</string>
     <string name="sign">Sign</string>

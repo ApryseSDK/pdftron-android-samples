@@ -6,7 +6,7 @@ import android.view.MenuItem
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
 import com.pdftron.pdf.model.FileInfo
 import com.pdftron.pdf.tools.Tool
-import com.pdftron.pdftronsignapp.customtool.SelectDate
+import com.pdftron.pdftronsignapp.customtool.DateFieldCreate
 import com.pdftron.pdftronsignapp.util.CustomButtonId
 
 class MyTabHostListener(
@@ -61,7 +61,7 @@ class MyTabHostListener(
     override fun onToolbarOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == CustomButtonId.DATE) {
             val toolManager = mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager
-            val tool = toolManager!!.createTool(SelectDate.MODE, null)
+            val tool = toolManager!!.createTool(DateFieldCreate.MODE, null)
             (tool as Tool).isForceSameNextToolMode = true
             toolManager.tool = tool
             return true

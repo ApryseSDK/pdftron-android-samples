@@ -11,6 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.pdftron.fdf.FDFDoc
 import com.pdftron.pdf.PDFDoc
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
 import com.pdftron.pdftronsignapp.data.DocumentToSign
 import com.pdftron.pdftronsignapp.data.User
 import java.io.File
@@ -40,7 +41,7 @@ class FirebaseControl {
             }
     }
 
-    fun addDocumentToSign(file: File, emailList: List<String>, closeFragment: ()->Unit) {
+    fun addDocumentToSign(file: File, emailList: List<String>, closeFragment: () -> Unit) {
         val referenceString = uploadDocToStorage(file)
         val fireStore = FirebaseFirestore.getInstance()
         val user = Firebase.auth.currentUser
@@ -62,9 +63,18 @@ class FirebaseControl {
             }
     }
 
-    fun updateDocumentToSign(filepath: String, pdfDoc: PDFDoc, docId: String, xdfString: String, closeFragment: ()->Unit) {
+    fun updateDocumentToSign(
+        pdfViewCtrlFragment: PdfViewCtrlTabHostFragment2,
+        docId: String,
+        closeFragment: () -> Unit
+    ) {
         val fireStore = FirebaseFirestore.getInstance()
         val user = Firebase.auth.currentUser
+        val filePath = pdfViewCtrlFragment.currentPdfViewCtrlFragment.filePath
+        val pdfDoc = pdfViewCtrlFragment.currentPdfViewCtrlFragment.pdfDoc
+        val fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both)
+        val xdfString = fdfDoc.saveAsXFDF()
+        var updatedFile: File? = null
         val docRef = fireStore.collection("documentsToSign").document(docId)
         docRef.get().addOnSuccessListener { snapshot ->
             val documentData = snapshot.data
@@ -82,18 +92,20 @@ class FirebaseControl {
             )
             document.xfdf.add(xdfString)
             document.signedBy.add(user.email)
-
-            //check if everyone has signed
-            if (document.signedBy.count() == document.emails.count()) {
-                document.signed = true
-                document.signedTime = now()
-                flattenAllAnnotationsAndUploadDocument(
-                    document.docRef,
-                    filepath,
-                    pdfDoc,
-                    document.xfdf
-                )
+            pdfViewCtrlFragment.currentPdfViewCtrlFragment.pdfViewCtrl.docLock(true) {
+                //check if everyone has signed
+                if (document.signedBy.count() == document.emails.count()) {
+                    document.signed = true
+                    document.signedTime = now()
+                    updatedFile = flattenAllAnnotationsAndUploadDocument(
+                        document.docRef,
+                        filePath,
+                        pdfDoc,
+                        document.xfdf
+                    )
+                }
             }
+            pdfViewCtrlFragment.currentPdfViewCtrlFragment.pdfViewCtrl.update(true)
             val updatedData = hashMapOf(
                 "xfdf" to document.xfdf,
                 "signedBy" to document.signedBy,
@@ -102,6 +114,8 @@ class FirebaseControl {
             )
             docRef.update(updatedData).addOnSuccessListener {
                 closeFragment()
+                if(updatedFile != null)
+                    deleteTempFile(updatedFile!!)
             }
         }
     }
@@ -204,7 +218,7 @@ class FirebaseControl {
         filePath: String,
         pdfDoc: PDFDoc,
         fdfStrings: List<String>
-    ) {
+    ): File {
         val storageRef = Firebase.storage.reference
         val docRef = storageRef.child(docRefString)
 
@@ -213,6 +227,8 @@ class FirebaseControl {
             pdfDoc.fdfMerge(fdfDoc)
             println(fdf)
         }
+
+        pdfDoc.lock()
         pdfDoc.flattenAnnotationsAdvanced(
             arrayOf(
                 PDFDoc.FlattenMode.ANNOTS,
@@ -220,8 +236,17 @@ class FirebaseControl {
             )
         )
         pdfDoc.save()
-
+        pdfDoc.unlock()
         val updatedFile = File(filePath)
         docRef.putFile(Uri.fromFile(updatedFile))
+        return updatedFile
+    }
+
+    private fun deleteTempFile(file: File) {
+        try {
+            file.delete()
+        } catch (ex: Exception) {
+            println(ex.message)
+        }
     }
 }

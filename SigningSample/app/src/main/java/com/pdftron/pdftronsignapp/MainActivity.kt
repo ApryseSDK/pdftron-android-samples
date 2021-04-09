@@ -14,7 +14,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.pdftron.pdf.Annot
 import com.pdftron.pdf.PDFDoc
-import com.pdftron.pdf.PDFDoc.e_both
 import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerBuilder2
 import com.pdftron.pdf.config.ViewerConfig
@@ -23,7 +22,7 @@ import com.pdftron.pdf.utils.Utils
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars
-import com.pdftron.pdftronsignapp.customtool.SelectDate
+import com.pdftron.pdftronsignapp.customtool.DateFieldCreate
 import com.pdftron.pdftronsignapp.data.User
 import com.pdftron.pdftronsignapp.home.HomeFragment
 import com.pdftron.pdftronsignapp.listeners.MyBasicAnnotationListener
@@ -129,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun toolManagerBuilder(): ToolManagerBuilder {
         return ToolManagerBuilder.from()
-            .addCustomizedTool(SelectDate.MODE, SelectDate::class.java)
+            .addCustomizedTool(DateFieldCreate.MODE, DateFieldCreate::class.java)
     }
 
     private fun buildAnnotationToolbar(): AnnotationToolbarBuilder {
@@ -188,16 +187,11 @@ class MainActivity : AppCompatActivity() {
         send_btn.text = send_btn.context.getString(R.string.finish)
         send_btn.setOnClickListener {
             mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.save(false, true, true)
-            val filePath = mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.filePath
             val pdfDoc = mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfDoc
             if (areAllSignAndDateFieldsComplete(pdfDoc)) {
-                val fdfDoc = pdfDoc.fdfExtract(e_both)
-                val xdfString = fdfDoc.saveAsXFDF()
                 mFirebaseControl.updateDocumentToSign(
-                    filePath,
-                    pdfDoc,
-                    this.docId,
-                    xdfString
+                    mPdfViewCtrlTabHostFragment,
+                    this.docId
                 ) {
                     supportFragmentManager.popBackStack()
                     bottom_bar.visibility = View.GONE

@@ -6,7 +6,7 @@ import com.pdftron.pdf.tools.TextFieldCreate
 import com.pdftron.pdf.tools.ToolManager
 import com.pdftron.sdf.Obj
 
-class SelectDate(ctrl: PDFViewCtrl): TextFieldCreate(ctrl) {
+class DateFieldCreate(ctrl: PDFViewCtrl): TextFieldCreate(ctrl) {
 
     companion object {
         val MODE: ToolManager.ToolModeBase = ToolManager.ToolMode.addNewMode(Annot.e_Widget)

@@ -19,7 +19,6 @@ import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerBuilder2
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
-import com.pdftron.pdf.tools.ToolManager
 import com.pdftron.pdf.utils.Utils
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType
@@ -124,12 +123,11 @@ class MainActivity : AppCompatActivity() {
             .longPressQuickMenuEnabled(true)
             .showSearchView(true)
             .showBottomToolbar(false)
-            .showBottomNavBar(false)
             .showTopToolbar(false)
             .toolManagerBuilder(toolManagerBuilder())
     }
 
-    private fun toolManagerBuilder(): ToolManagerBuilder{
+    private fun toolManagerBuilder(): ToolManagerBuilder {
         return ToolManagerBuilder.from()
             .addCustomizedTool(SelectDate.MODE, SelectDate::class.java)
     }
@@ -139,7 +137,11 @@ class MainActivity : AppCompatActivity() {
             .withTag("Sign Sample")
             .addToolButton(ToolbarButtonType.SIGNATURE_FIELD, CustomButtonId.SIGNATURE_FIELD)
             .addToolButton(ToolbarButtonType.TEXT_FIELD, CustomButtonId.TEXT_FIELD)
-            .addCustomSelectableButton(R.string.date, R.drawable.ic_date_range_24px, CustomButtonId.DATE)
+            .addCustomSelectableButton(
+                R.string.date,
+                R.drawable.ic_date_range_24px,
+                CustomButtonId.DATE
+            )
             .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
             .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
     }
@@ -169,11 +171,17 @@ class MainActivity : AppCompatActivity() {
         mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.disableAnnotEditing(
             arrayOf(Annot.e_Widget)
         )
-        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfDoc.flattenAnnotationsAdvanced(
-            arrayOf(
-                PDFDoc.FlattenMode.ALL
+        // flatten existing annotations and form fields
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfViewCtrl.docLock(true) {
+            mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfDoc.flattenAnnotationsAdvanced(
+                arrayOf(
+                    PDFDoc.FlattenMode.ANNOTS,
+                    PDFDoc.FlattenMode.FORMS
+                )
             )
-        )
+            // update the viewer
+            mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfViewCtrl.update(true)
+        }
     }
 
     private fun signingBottomBarSetup() {

@@ -5,10 +5,15 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
 import com.pdftron.pdf.model.FileInfo
+import com.pdftron.pdf.tools.Tool
 import com.pdftron.pdftronsignapp.customtool.SelectDate
 import com.pdftron.pdftronsignapp.util.CustomButtonId
 
-class MyTabHostListener(private val showBottomBar:()->Unit, private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2, private val mBasicAnnotationListener: MyBasicAnnotationListener): PdfViewCtrlTabHostFragment2.TabHostListener {
+class MyTabHostListener(
+    private val showBottomBar: () -> Unit,
+    private val mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2,
+    private val mBasicAnnotationListener: MyBasicAnnotationListener
+) : PdfViewCtrlTabHostFragment2.TabHostListener {
     override fun onTabHostShown() {
 
     }
@@ -42,7 +47,7 @@ class MyTabHostListener(private val showBottomBar:()->Unit, private val mPdfView
     }
 
     override fun canShowFileCloseSnackbar(): Boolean {
-       return true
+        return true
     }
 
     override fun onToolbarCreateOptionsMenu(item: Menu?, p1: MenuInflater?): Boolean {
@@ -54,9 +59,10 @@ class MyTabHostListener(private val showBottomBar:()->Unit, private val mPdfView
     }
 
     override fun onToolbarOptionsItemSelected(item: MenuItem?): Boolean {
-        if(item?.itemId == CustomButtonId.DATE){
+        if (item?.itemId == CustomButtonId.DATE) {
             val toolManager = mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager
             val tool = toolManager!!.createTool(SelectDate.MODE, null)
+            (tool as Tool).isForceSameNextToolMode = true
             toolManager.tool = tool
             return true
         }
@@ -84,7 +90,9 @@ class MyTabHostListener(private val showBottomBar:()->Unit, private val mPdfView
     }
 
     override fun onTabDocumentLoaded(p0: String?) {
-        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.setBasicAnnotationListener(mBasicAnnotationListener)
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.setBasicAnnotationListener(
+            mBasicAnnotationListener
+        )
         showBottomBar()
     }
 }

@@ -48,8 +48,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:22.1.1'
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
-    implementation "com.pdftron:pdftron:8.1.3-alpha09"
-    implementation "com.pdftron:tools:8.1.3-alpha09"
+    // PDFTron SDK dependencies
+    implementation "com.pdftron:pdftron:$myPdftronVersion"
+    implementation "com.pdftron:tools:$myPdftronVersion"
 
     implementation 'androidx.multidex:multidex:2.0.1'
 

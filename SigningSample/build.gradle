@@ -14,12 +14,15 @@ buildscript {
     }
 }
 
+ext.myPdftronRepo = "https://pdftron-maven.s3.amazonaws.com/release"
+ext.myPdftronVersion = file("${rootDir}/../pdftron-version.txt").text.trim()
+
 allprojects {
     repositories {
         google()
         jcenter()
         maven {
-            url "https://pdftron-maven.s3.amazonaws.com/snapshot"
+            url myPdftronRepo
         }
     }
 }

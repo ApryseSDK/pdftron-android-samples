@@ -16,6 +16,7 @@ import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFDraw;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -103,21 +104,33 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
+        Boolean shouldUnlock = false;
+        PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
         try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
             String xfdf_string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\"><annots><circle style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20190729202215Z\" flags=\"print\" date=\"D:20190729202215Z\" page=\"0\" rect=\"138.824,653.226,236.28,725.159\" title=\"\" /><circle style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20190729202215Z\" flags=\"print\" date=\"D:20190729202215Z\" page=\"0\" rect=\"103.114,501.958,245.067,590.92\" title=\"\" /><circle style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20190729202216Z\" flags=\"print\" date=\"D:20190729202216Z\" page=\"0\" rect=\"117.85,336.548,328.935,451.568\" title=\"\" /><freetext TextColor=\"#363636\" style=\"solid\" width=\"0\" opacity=\"1\" creationdate=\"D:20190729202455Z\" flags=\"print\" date=\"D:20190729202513Z\" page=\"0\" rect=\"320.774,646.323,550.446,716.498\" title=\"\"><defaultstyle>font: Roboto 24pt;color: #363636</defaultstyle><defaultappearance> 1 1 1 RG 1 1 1 rg /F0 24 Tf </defaultappearance><contents>HELLO PDFTRON!!!</contents><apref y=\"716.498\" x=\"320.774\" gennum=\"0\" objnum=\"404\" /></freetext><line style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20190729202507Z\" flags=\"print\" start=\"278.209,212.495\" end=\"214.177,411.627\" head=\"None\" tail=\"OpenArrow\" date=\"D:20190729202507Z\" page=\"0\" rect=\"206.039,211.73,280.589,416.387\" title=\"\" /></annots><pages><defmtx matrix=\"1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000\" /></pages><pdf-info version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" /></xfdf>";
             FDFDoc fdf_doc = FDFDoc.createFromXFDF(xfdf_string);
             PDFDoc doc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
             doc.fdfMerge(fdf_doc);
-            mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().update(true);
+            pdfViewCtrl.update(true);
         } catch (Exception e) {
             Log.d("Exception", e.toString());
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
         }
     }
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.menu_export_flattened_copy) {
+            PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+            Boolean shouldUnlockRead = false;
             try {
+                pdfViewCtrl.docLockRead();
+                shouldUnlockRead = true;
                 PDFDraw draw = new PDFDraw();  // PDFDraw class is used to rasterize PDF pages.
                 PDFDoc doc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
                 draw.setDPI(92);
@@ -128,6 +141,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 Toast.makeText(this, "Created annotated image: "+ getCacheDir() + "/annotated.png", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Log.d("Exception", e.toString());
+            } finally {
+                if (shouldUnlockRead) {
+                    pdfViewCtrl.docUnlockRead();
+                }
             }
         }
         return false;

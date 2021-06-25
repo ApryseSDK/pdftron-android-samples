@@ -17,6 +17,8 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.Tool;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -144,7 +146,15 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_save) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+                ToolManager toolManager = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+                if (toolManager != null) {
+                    Tool tool = (Tool) toolManager.createTool(ToolManager.ToolMode.PAN, null);
+                    toolManager.setTool(tool);
+                }
+            }
+
+            return true;
         }
         return false;
     }

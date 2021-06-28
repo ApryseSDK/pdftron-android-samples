@@ -8,7 +8,6 @@ import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.DocumentActivity
 import com.pdftron.pdf.utils.HTML2PDF
 
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 "</body>\n" +
                 "</html>"
 
-        val html2PDF = HTML2PDF(this)
+        val html2PDF = HTML2PDF(this.applicationContext)
         html2PDF.setOutputFolder(this.cacheDir)
         html2PDF.setHTML2PDFListener(object : HTML2PDF.HTML2PDFListener {
             override fun onConversionFinished(pdfOutput: String, isLocal: Boolean) {

@@ -1,34 +1,80 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/background_color</item>
+        <item name="colorPrimaryDark">@color/utility_variant_color</item>
+        <item name="colorAccent">@color/accent_color</item>
     </style>
 
     <style name="CustomAppTheme" parent="PDFTronAppTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/background_color</item>
+        <item name="colorPrimaryDark">@color/utility_variant_color</item>
+        <item name="colorAccent">@color/accent_color</item>
 
-        <item name="actionMenuTextColor">@color/app_color_icon</item>
+        <!-- Style of popup menu background color -->
+        <item name="colorBackgroundFloating">@color/background_color</item>
+        <item name="android:colorBackgroundFloating" tools:targetApi="23">@color/background_color</item>  <!--Dialog background color for API 23 -->
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:colorBackground">@color/background_color</item>
+
         <!-- Drawer -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <!-- Action bar -->
-        <item name="actionModeBackground">?attr/colorPrimary</item>
-        <item name="windowActionModeOverlay">true</item>
+
+        <!-- Generic Text Colors -->
+        <item name="android:textColorPrimary">@color/body_text_color</item>
+        <item name="android:textColorSecondary">@color/secondary_color</item>
+        <item name="android:textColorTertiary">@color/secondary_color</item>
+        <!-- Edit Text Colors -->
+        <item name="android:editTextColor">@color/body_text_color</item>
+        <item name="android:textColorHint">@color/body_text_color</item>
+        <!-- Spinner Colors-->
+        <item name="android:spinnerItemStyle">@style/SampleTextViewSpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle" tools:targetApi="23">
+            @style/SampleTextViewSpinnerDropDownItem
+        </item>
+        
+        <!-- Component styles and themes -->
+        <item name="pt_toolbar_popup_theme">@style/ToolbarPopupTheme</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="toolbarNavigationButtonStyle">@style/CustomToolbarButtonNavigationStyle</item>
+        <item name="actionOverflowButtonStyle">@style/SampleActionOverflowButtonStyle</item>
+        <item name="pt_pdf_tab_layout_style">@style/SamplePdfTabLayoutStyle</item>
+        <item name="pt_toolbar_style">@style/SampleToolbarStyle</item>
+        <item name="pt_toolbar_theme">@style/FragmentToolbarTheme</item>
+        <item name="pt_annotation_toolbar_style">@style/SampleAnnotationToolbarTheme</item>
+        <item name="pt_preset_bar_style">@style/SamplePresetBarTheme</item>
+        <item name="pt_bottom_bar_style">@style/SampleBottomBarTheme</item>
+        <item name="pt_toolbar_switcher_button_style">@style/SampleToolbarSwitcherButtonTheme</item>
+        <item name="pt_toolbar_tab_action_button_style">@style/SampleToolbarTabActionButtonTheme</item>
+        <item name="pt_document_slider_style">@style/SampleDocumentSliderStyle</item>
+        <item name="pt_toolbar_switcher_dialog_style">@style/SampleToolbarSwitcherDialogStyle</item>
+
+        <item name="pt_floating_nav_style">@style/ViewerNavFloatingActionButtonStyle</item>
+        <item name="pt_stamp_tab_layout_style">@style/SampleStampTabLayoutStyle</item>
+        <item name="custom_bookmarks_tab_layout">@style/SampleBookmarksTabLayoutStyle</item>
+        <item name="pt_page_indicator_style">@style/SamplePageIndicatorTheme</item>
+        <item name="pt_sticky_note_dialog">@style/SampleStickyNoteDialogTheme</item>
+        <item name="pt_create_signature_dialog_style">@style/SampleCreateSignatureDialogTheme</item>
+        <item name="quick_menu_item">@style/SampleQuickMenuItem</item>
+        <item name="pt_sound_dialog_style">@style/SampleSoundDialogStyle</item>
+        <item name="pt_menu_editor_dialog_style">@style/SampleMenuEditorDialogTheme</item>
+        <item name="pt_annot_style_dialog_style">@style/SampleAnnotStyleDialogTheme</item>
+        <item name="pt_create_stamp_dialog_style">@style/SampleCreateStampDialogTheme</item>
+        <item name="pt_annotation_filter_dialog_style">@style/SampleAnnotationFilterDialogTheme</item>
+        <item name="pt_add_page_dialog_style">@style/SampleAddPageDialogTheme</item>
+        <item name="pt_tab_switcher_dialog_style">@style/SampleTabSwitcherDialogTheme</item>
+        <item name="pt_outline_dialog_style">@style/SampleOutlineDialogTheme</item>
 
         <!--Style customization-->
-        <item name="toolbarNavigationButtonStyle">@style/ToolbarButtonNavigationStyle</item>
-        <item name="thumbnail_slider">@style/CustomThumbnailSliderStyle</item>
-        <item name="custom_bookmarks_tab_layout">@style/CustomBookmarksTabLayoutStyle</item>
+<!--        <item name="thumbnail_slider">@style/CustomThumbnailSliderStyle</item>-->
+<!--        <item name="custom_bookmarks_tab_layout">@style/CustomBookmarksTabLayoutStyle</item>-->
 
-        <item name="pt_annotation_toolbar_style">@style/CustomAnnotationToolbarStyle</item>
-        <item name="pt_bottom_bar_style">@style/CustomBottomBarStyle</item>
-        <item name="pt_preset_bar_style">@style/CustomPresetBarStyle</item>
-        <item name="pt_pdf_tab_layout_style">@style/CustomPdfTabLayoutStyle</item>
+<!--        <item name="pt_annotation_toolbar_style">@style/CustomAnnotationToolbarStyle</item>-->
+<!--        <item name="pt_bottom_bar_style">@style/CustomBottomBarStyle</item>-->
+<!--        <item name="pt_preset_bar_style">@style/CustomPresetBarStyle</item>-->
+<!--        <item name="pt_pdf_tab_layout_style">@style/CustomPdfTabLayoutStyle</item>-->
 
         <!--If using non-NoActionBar theme as parent, uncomment below-->
         <!--Disable action bar start-->
@@ -37,70 +83,251 @@
         <!--Disable action bar end-->
     </style>
 
-    <style name="CustomPdfTabLayoutStyle" parent="PdfTabLayoutStyle">
-        <item name="tabSelectedTextColor">@color/app_color_icon</item>
-        <item name="tabTextColor">@color/app_color_icon</item>
+    <style name="CustomToolbarButtonNavigationStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">48dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:tint">@color/body_text_color</item>
     </style>
 
-    <style name="ToolbarButtonNavigationStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
-        <item name="android:tint">@color/app_color_icon</item>
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">false</item>
+        <item name="color">@color/body_text_color</item>
     </style>
 
-    <style name="CustomAnnotationToolbarStyle" parent="PTAnnotationToolbarTheme">
+    <style name="SamplePdfTabLayoutStyle" parent="PdfTabLayoutStyle">
+        <item name="android:background">@color/background_color</item>
+        <item name="tabSelectedTextColor">?attr/colorAccent</item>
+        <item name="tabTextColor">@color/secondary_color</item>
+    </style>
+
+    <style name="SampleToolbarStyle">
+        <item name="android:background">@color/background_color</item>
+    </style>
+
+    <!-- Theme for all toolbars, including browsers -->
+    <style name="FragmentToolbarTheme" parent="ToolbarTheme">
+        <item name="android:background">@color/background_color</item>  <!-- Affects toolbar action button background and overflow menu background-->
+        <item name="titleTextColor">@color/body_text_color</item>
+        <item name="colorControlNormal">@color/body_text_color</item>
+        <item name="iconTint">@color/body_text_color</item>
+        <item name="android:textColor">@color/body_text_color</item> <!-- For overflow text color-->
+
+        <!--Search-->
+        <item name="android:editTextColor">@color/body_text_color</item>
+        <item name="android:textColorHint">@color/secondary_color</item>
+    </style>
+
+    <style name="SampleAnnotationToolbarTheme" parent="PTAnnotationToolbarTheme">
+        <item name="colorBackground">@color/background_color</item>
+        <item name="colorBackgroundSecondary">@color/utility_variant_color</item>
+        <item name="iconColor">@color/body_text_color</item>
+        <item name="selectedIconColor">@color/body_text_color</item>
+        <item name="disabledIconColor">@color/disabled_state_color</item>
+        <item name="selectedBackgroundColor">@color/utility_variant_color</item>
+        <item name="dividerColor">@color/utility_variant_color</item>
+        <item name="highlightedIconColor">@color/accent_color</item>
+        <item name="textColor">@color/body_text_color</item>
+        <item name="presetTextColor">@color/secondary_color</item>
+        <item name="backgroundColorCompact">@color/utility_variant_color</item>
+    </style>
+
+    <style name="SamplePresetBarTheme" parent="PTPresetBarTheme">
+        <item name="colorBackground">@color/background_color</item>
+        <item name="iconColor">@color/secondary_color</item>
+        <item name="selectedIconColor">@color/body_text_color</item>
+        <item name="disabledIconColor">@color/disabled_state_color</item>
+        <item name="selectedBackgroundColor">@color/utility_variant_color</item>
+        <item name="expandIconColor">@color/body_text_color</item>
+    </style>
+
+    <style name="SampleBottomBarTheme" parent="PTBottomBarTheme">
+        <item name="colorBackground">@color/background_color</item>
+        <item name="iconColor">@color/secondary_color</item>
+        <item name="selectedIconColor">@color/accent_color</item>
+        <item name="disabledIconColor">@color/disabled_state_color</item>
+        <item name="selectedBackgroundColor">@color/utility_variant_color</item>
+    </style>
+    
+    <style name="SampleToolbarSwitcherButtonTheme" parent="PTToolbarSwitcherButtonTheme">
+        <item name="textColor">@color/body_text_color</item>
+        <item name="iconColor">@color/body_text_color</item>
+        <item name="backgroundColorCompact">@color/subtle_utility_color</item>
+    </style>
+
+    <style name="SampleToolbarTabActionButtonTheme" parent="PTToolbarTabActionButtonTheme">
+        <item name="textColor">@color/body_text_color</item>
+        <item name="iconColor">@color/body_text_color</item>
+    </style>
+
+    <style name="SampleDocumentSliderStyle" parent="DocumentSliderStyle">
+        <item name="seekbarColor">@color/secondary_color</item>
+        <item name="colorBackground">@color/background_color</item>
+    </style>
+
+    <style name="SampleToolbarSwitcherDialogStyle" parent="PTToolbarSwitcherDialogTheme">
+        <!-- Text color of items in the toolbar switcher dialog -->
+        <item name="textColor">@color/body_text_color</item>
+        <!-- Icon color of items in the toolbar switcher dialog -->
+        <item name="iconColor">@color/secondary_color</item>
+        <!-- Background color of the toolbar switcher dialog -->
+        <item name="backgroundColor">@color/background_color</item>
+        <!-- Background color of selected item in the toolbar switcher dialog -->
+        <item name="selectedItemBackgroundColor">@color/utility_variant_color</item>
+        <!-- Color of icon of selected item -->
+        <item name="selectedIconColor">@color/accent_color</item>
+    </style>
+
+    <style name="ViewerNavFloatingActionButtonStyle" parent="DefaultFloatingButtonNavLegacyStyle">
+        <item name="tint">@color/accent_color</item>
+        <item name="backgroundTint">@color/background_color</item>
+    </style>
+
+    <style name="SampleStampTabLayoutStyle" parent="StampTabLayoutStyle">
+        <item name="tabIndicatorColor">@color/accent_color</item>
+        <item name="android:background">@color/background_color</item>
+        <item name="tabTextColor">@color/secondary_color</item>
+        <item name="tabSelectedTextColor">@color/accent_color</item>
+        <item name="tabIconTint">@color/secondary_color</item>
+    </style>
+
+    <style name="SampleBookmarksTabLayoutStyle" parent="BookmarksTabLayoutStyle">
+        <item name="tabIndicatorColor">@color/accent_color</item>
+        <item name="tabBackgroundSheet">@color/background_color</item>
+        <item name="tabBackgroundDialog">@color/background_color</item>
+        <item name="tabTintColorSheet">@color/secondary_color</item>
+        <item name="tabTintColorDialog">@color/secondary_color</item>
+        <item name="tabTintSelectedColorDialog">@color/accent_color</item>
+        <item name="tabTintSelectedColorSheet">@color/accent_color</item>
+    </style>
+    
+    <style name="SamplePageIndicatorTheme" parent="PTPageIndicatorTheme">
+        <!-- Background color for page indicator layout -->
+        <item name="backgroundColor">@color/background_color</item>
+        <!-- Text color for page indicator layout -->
+        <item name="textColor">@color/body_text_color</item>
+    </style>
+
+    <style name="SampleStickyNoteDialogTheme" parent="DialogStickyNoteStyle">
+        <!-- Dialog background color -->
+        <item name="backgroundColor">@color/background_color</item>
+        <!-- Background color of the text editor area-->
+        <item name="editTextBackgroundColor">@color/utility_variant_color</item>
+    </style>
+    
+    <style name="SampleCreateSignatureDialogTheme" parent="PTCreateSignatureDialogTheme">
+        <!-- Color used for add image signature button -->
+        <item name="iconColor">@color/secondary_color</item>
+    </style>
+
+    <style name="SampleQuickMenuItem" parent="QuickMenuButton">
+        <item name="android:tint">@color/secondary_color</item>
+        <item name="icon_alpha">1.0</item>
+        <item name="text_alpha">1.0</item>
+    </style>
+
+    <style name="SampleSoundDialogStyle">
+        <item name="iconTint">@color/body_text_color</item>
+    </style>
+
+    <style name="SampleMenuEditorDialogTheme" parent="PTMenuEditorDialogTheme">
+        <!-- Background Color -->
+        <item name="backgroundColor">@color/background_color</item>
+        <!-- Header Text Color -->
+        <item name="headerColor">@color/heading_color</item>
+        <!-- Icon Color -->
+        <item name="iconColor">@color/secondary_color</item>
+        <!-- Text Color -->
+        <item name="textColor">@color/body_text_color</item>
+        <!-- Highlighted Background Color -->
+        <item name="pinnedBackgroundColor">@color/utility_variant_color</item>
+        <!-- Dotted line color-->
+        <item name="dottedLineColor">@color/secondary_color</item>
+        <!-- Dotted line active color-->
+        <item name="dottedLineActiveColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="SampleAnnotStyleDialogTheme" parent="AnnotStyleDialogTheme">
+        <!-- Background Color -->
+        <item name="backgroundColor">@color/background_color</item>
+        <!-- Background Color of Annotation Preview-->
+        <item name="annotPreviewBackgroundColor">@color/utility_variant_color</item>
+        <!-- Text Color -->
+        <item name="textColor">@color/body_text_color</item>
+        <!-- Icon Color -->
+        <item name="iconColor">@color/body_text_color</item>
+        <!-- Selected background color -->
+        <item name="selectedBackgroundColor">@color/utility_variant_color</item>
+        <!-- Preset icon color -->
+        <item name="presetIconColor">@color/body_text_color</item>
+        <!-- Selected preset icon color -->
+        <item name="selectedPresetIconColor">@color/body_text_color</item>
+        <!-- Selected preset background color -->
+        <item name="selectedPresetBackgroundColor">@color/background_color</item>
+        <!-- Tab indicator color -->
+        <item name="tabIndicatorColor">@color/accent_color</item>
+        <!-- Tab text color -->
+        <item name="tabTextColor">@color/secondary_color</item>
+        <!-- Tab selected text color -->
+        <item name="tabSelectedTextColor">@color/accent_color</item>
+    </style>
+
+    <style name="SampleCreateStampDialogTheme" parent="PTCreateStampDialogTheme">
+        <item name="iconColor">@color/body_text_color</item>
+        <item name="selectedBackgroundColor">@color/utility_variant_color</item>
+    </style>
+    
+    <style name="SampleAnnotationFilterDialogTheme" parent="PTAnnotationFilterDialogTheme">
         <!-- Annotation toolbar background color-->
-        <item name="colorBackground">@color/colorPrimary</item>
-        <!-- Background color of a selected button -->
-        <item name="selectedBackgroundColor">@color/annotation_tool_background</item>
-        <!-- Default icon color for a button -->
-        <item name="iconColor">@color/app_color_icon</item>
-    </style>
-
-    <style name="CustomBottomBarStyle" parent="PTBottomBarTheme">
+        <item name="colorBackground">@color/background_color</item>
         <!-- Annotation toolbar background color-->
-        <item name="colorBackground">@color/colorPrimary</item>
-        <!-- Background color of a selected button -->
-        <item name="selectedBackgroundColor">@color/annotation_tool_background</item>
+        <item name="secondaryBackgroundColor">@color/utility_variant_color</item>
         <!-- Default icon color for a button -->
-        <item name="iconColor">@color/app_color_icon</item>
+        <item name="iconColor">@color/secondary_color</item>
+        <!-- Color of text in the annotation filter dialog -->
+        <item name="textColor">@color/selector_text_color_primary</item>
+        <!-- Color of header text in the annotation filter dialog -->
+        <item name="headerTextColor">@color/selector_header_text_color</item>
     </style>
 
-    <style name="CustomPresetBarStyle" parent="PTPresetBarTheme">
-        <!-- Annotation toolbar background color-->
-        <item name="colorBackground">@color/colorPrimary</item>
-        <!-- Background color of a selected button -->
-        <item name="selectedBackgroundColor">@color/annotation_tool_background</item>
-        <!-- Default icon color for a button -->
-        <item name="iconColor">@color/app_color_icon</item>
+    <style name="SampleAddPageDialogTheme" parent="AddPageDialogTheme">
+        <!-- Color of selected dot -->
+        <item name="selectedDotColor">?attr/colorAccent</item>
+        <!-- Color of unselected dot -->
+        <item name="dotColor">@color/utility_variant_color</item>
     </style>
 
-    <style name="CustomThumbnailSliderStyle" parent="ThumbnailSliderStyle">
-        <item name="leftMenuItemColor">@color/app_color_icon</item>
-        <item name="rightMenuItemColor">@color/app_color_icon</item>
-        <item name="seekbarColor">@color/app_color_icon</item>
-        <item name="colorBackground">@color/colorPrimary</item>
+    <style name="SampleTabSwitcherDialogTheme" parent="TabSwitcherDialogTheme">
+        <!-- Tab switcher card background color-->
+        <item name="backgroundColor">@color/background_color</item>
+        <!-- Icon Color -->
+        <item name="iconColor">@color/secondary_color</item>
+        <!-- Text Color -->
+        <item name="textColor">@color/body_text_color</item>
+        <!-- Selected card border color-->
+        <item name="selectedBorderColor">@color/accent_color</item>
     </style>
 
-    <style name="CustomBookmarksTabLayoutStyle" parent="BookmarksTabLayoutStyle">
-        <item name="tabTintColorDialog">@color/app_color_icon</item>
-        <item name="tabTintSelectedColorDialog">@color/app_color_icon</item>
-        <item name="tabBackgroundSheet">@color/annot_toolbar_background_primary</item>
-        <item name="tabBackgroundDialog">@color/colorPrimary</item>
+    <style name="SampleOutlineDialogTheme" parent="PTOutlineDialogTheme">
+        <!-- Header text color -->
+        <item name="headerTextColor">@color/heading_color</item>
+        <!-- Background Color of header -->
+        <item name="headerBackgroundColor">@color/utility_variant_color</item>
+        <!-- Text Color -->
+        <item name="textColor">@color/body_text_color</item>
+        <!-- Icon Color -->
+        <item name="iconColor">@color/body_text_color</item>
     </style>
 
-    <style name="PdfTabLayoutStyle" parent="BasePdfTabLayoutStyle">
-        <item name="tabTextAppearance">@style/CustomPdfTabTextAppearance</item>
+    <style name="SampleActionOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/body_text_color</item>
     </style>
 
-    <style name="CustomPdfTabTextAppearance" parent="PdfTabTextAppearance">
-        <item name="android:textColor">@color/selector_tab_text_color</item>
+    <style name="SampleTextViewSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
     </style>
 
-    <style name="FloatingButtonNavStyle" parent="BaseFloatingButtonNavStyle">
-        <item name="tint">@color/app_color_icon</item>
+    <style name="SampleTextViewSpinnerDropDownItem" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

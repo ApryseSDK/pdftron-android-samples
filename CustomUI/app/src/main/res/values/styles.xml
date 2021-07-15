@@ -19,10 +19,21 @@
         <item name="android:windowBackground">@color/background_color</item>
         <item name="android:colorBackground">@color/background_color</item>
 
-<!--        <item name="actionMenuTextColor">@color/app_color_icon</item>-->
         <!-- Drawer -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <!-- Action bar -->
+
+        <!-- Generic Text Colors -->
+        <item name="android:textColorPrimary">@color/body_text_color</item>
+        <item name="android:textColorSecondary">@color/secondary_color</item>
+        <item name="android:textColorTertiary">@color/secondary_color</item>
+        <!-- Edit Text Colors -->
+        <item name="android:editTextColor">@color/body_text_color</item>
+        <item name="android:textColorHint">@color/body_text_color</item>
+        <!-- Spinner Colors-->
+        <item name="android:spinnerItemStyle">@style/SampleTextViewSpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle" tools:targetApi="23">
+            @style/SampleTextViewSpinnerDropDownItem
+        </item>
         
         <!-- Component styles and themes -->
         <item name="pt_toolbar_popup_theme">@style/ToolbarPopupTheme</item>
@@ -309,6 +320,14 @@
 
     <style name="SampleActionOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/body_text_color</item>
+    </style>
+
+    <style name="SampleTextViewSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="SampleTextViewSpinnerDropDownItem" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
     </style>
 
 </resources>

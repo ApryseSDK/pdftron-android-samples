@@ -16,6 +16,11 @@ This repository contains sample projects using different features of the PDFTron
 |[CustomUI](./CustomUI)| Various samples to customize the UI of PdfViewCtrlTabHostFragment which includes samples for: modifying the quick menu, modifying the annotation toolbar, modifying the options toolbar, and adding custom views to the viewer.
 |[CustomToolSample](./CustomToolSample)| Create a custom tool as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/custom-tool)
 
+## Signing samples
+| Sample | Description |
+|--|--|
+|[SigningSample](./SigningSample)| Customize the viewer UI to assign signing fields to a user, sign a document and send the document to a Firebase server
+
 ## Collaboration samples
 | Sample | Description |
 |--|--|

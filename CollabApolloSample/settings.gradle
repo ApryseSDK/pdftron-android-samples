@@ -1,0 +1,2 @@
+rootProject.name = "CollabApolloSample"
+include ':app'

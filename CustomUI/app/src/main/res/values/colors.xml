@@ -13,7 +13,6 @@
     <color name="annotation_tool_background">#D1D5E3</color>
 
     <color name="background_color">#37474F</color>
-    <color name="pt_background_color">@color/background_color</color>
     <color name="heading_color">#8FDDFA</color>
     <color name="body_text_color">#B7CED1</color>
     <color name="secondary_color">#88ADBB</color>

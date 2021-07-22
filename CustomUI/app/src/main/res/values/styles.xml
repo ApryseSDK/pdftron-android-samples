@@ -316,6 +316,14 @@
         <item name="textColor">@color/body_text_color</item>
         <!-- Icon Color -->
         <item name="iconColor">@color/body_text_color</item>
+        <!-- Disabled Icon Color -->
+        <item name="disabledIconColor">@color/disabled_state_color</item>
+        <!-- Secondary Text Color -->
+        <item name="secondaryTextColor">@color/secondary_color</item>
+        <!-- Selected Background Color -->
+        <item name="selectedBackgroundColor">@color/utility_variant_color</item>
+        <!-- Background Color -->
+        <item name="backgroundColor">@color/background_color</item>
     </style>
 
     <style name="SampleActionOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">

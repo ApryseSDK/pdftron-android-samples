@@ -18,6 +18,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
@@ -39,7 +40,13 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+
+        BottomBarBuilder bottomBarBuilder = BottomBarBuilder.withTag("Testing")
+                .addCustomButton(R.string.qm_star, R.drawable.ic_star_white_24dp, 1)
+                .addCustomButton(R.string.tools_qm_back, R.drawable.ic_arrow_back_black_24dp, 2)
+                .addCustomButton(R.string.watermark_title, R.drawable.ic_download, 3);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
+                .bottomBarBuilder(bottomBarBuilder)
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")

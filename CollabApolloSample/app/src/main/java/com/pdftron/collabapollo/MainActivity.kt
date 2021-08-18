@@ -19,13 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment2
 
     private var mCollabClient = CollabClient.Builder()
-        .setDocumentId("12345")
-        .setDocumentName(DEFAULT_FILE_NAME)
-        .setCollabKey("wv-collab-token")
-        .setSecretKey("My_sUper_SEcreT_k3y")
-        .setApolloServerIp("192.168.1.167")
+        .setApolloServerIp("192.168.0.15")
         .setApolloServerPort("3000")
-        .setAnonymousUsername("testUser")
         .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +38,6 @@ class MainActivity : AppCompatActivity() {
             override fun onTabDocumentLoaded(p0: String?) {
                 handleTabDocumentLoaded(p0!!)
             }
-
         })
 
         val ft = supportFragmentManager.beginTransaction()
@@ -52,10 +46,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun handleTabDocumentLoaded(tag: String) {
-        mCollabClient.start(
-            mPdfViewCtrlTabHostFragment.collabManager,
-            mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfViewCtrl
-        )
+        if (mPdfViewCtrlTabHostFragment is CollabViewerTabHostFragment2) {
+            val collabHost = mPdfViewCtrlTabHostFragment as CollabViewerTabHostFragment2
+            val collabManager = collabHost.collabManager
+            val pdfViewCtrl = collabHost.currentPdfViewCtrlFragment.pdfViewCtrl
+
+            mCollabClient.start(collabManager)
+            mCollabClient.loginAnonymous("testUser")
+            mCollabClient.loadDocument("12345", DEFAULT_FILE_NAME, true, pdfViewCtrl)
+        }
     }
 
     override fun onDestroy() {

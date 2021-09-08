@@ -14,7 +14,7 @@ android {
         manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
     }
     configurations.all {
-        resolutionStrategy.force "androidx.appcompat:appcompat:1.0.0"
+        resolutionStrategy.force "androidx.appcompat:appcompat:1.2.0"
         resolutionStrategy.force "androidx.legacy:legacy-support-v4:1.0.0"
         resolutionStrategy.force "androidx.lifecycle:runtime:2.1.0"
     }

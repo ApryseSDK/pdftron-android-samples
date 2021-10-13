@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment2
 
     private var mCollabClient = CollabClient.Builder()
-        .setApolloServerIp("192.168.0.15")
-        .setApolloServerPort("3000")
+        .url("http://192.168.0.15:3000")
+        .subscriptionUrl("ws://192.168.0.15:3000/subscribe")
         .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {

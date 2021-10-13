@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         // Alternatively, you can open the document using Uri:
         // Uri fileUri = Uri.fromFile(file);
         // mPdfDoc = mPdfViewCtrl.openPDFUri(fileUri, null);
+        mPdfViewCtrl.setRightToLeftLanguage(true);
     }
 
     /**

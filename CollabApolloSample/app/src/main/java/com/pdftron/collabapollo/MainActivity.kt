@@ -49,11 +49,11 @@ class MainActivity : AppCompatActivity() {
         if (mPdfViewCtrlTabHostFragment is CollabViewerTabHostFragment2) {
             val collabHost = mPdfViewCtrlTabHostFragment as CollabViewerTabHostFragment2
             val collabManager = collabHost.collabManager
-            val pdfViewCtrl = collabHost.currentPdfViewCtrlFragment.pdfViewCtrl
-
-            mCollabClient.start(collabManager)
-            mCollabClient.loginAnonymous("testUser")
-            mCollabClient.loadDocument("12345", DEFAULT_FILE_NAME, true, pdfViewCtrl)
+            if (collabManager != null) {
+                mCollabClient.start(collabManager)
+                mCollabClient.loginAnonymous("testUser")
+                mCollabClient.loadDocument("12345", DEFAULT_FILE_NAME, true)
+            }
         }
     }
 

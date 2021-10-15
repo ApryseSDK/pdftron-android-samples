@@ -47,8 +47,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    implementation "com.pdftron:pdftron:9.0.3-alpha08"
-    implementation "com.pdftron:tools:9.0.3-alpha08"
-    implementation "com.pdftron:collab:9.0.3-alpha08"
-    implementation "com.pdftron:collab-client:9.0.3-alpha08"
+    implementation "com.pdftron:pdftron:9.1.1-alpha12"
+    implementation "com.pdftron:tools:9.1.1-alpha12"
+    implementation "com.pdftron:collab:9.1.1-alpha12"
+    implementation "com.pdftron:collab-client:9.1.1-alpha12"
 }

@@ -182,7 +182,7 @@
         <item name="selectedIconColor">@color/accent_color</item>
     </style>
 
-    <style name="ViewerNavFloatingActionButtonStyle" parent="DefaultFloatingButtonNavLegacyStyle">
+    <style name="ViewerNavFloatingActionButtonStyle" parent="DefaultFloatingButtonNavStyle">
         <item name="tint">@color/accent_color</item>
         <item name="backgroundTint">@color/background_color</item>
     </style>

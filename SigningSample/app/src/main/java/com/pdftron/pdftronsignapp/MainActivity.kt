@@ -272,7 +272,7 @@ class MainActivity : AppCompatActivity() {
                 for ((key, value) in annots) {
                     if (key.type == Annot.e_Widget) {
                         val widget = Widget(key)
-                        widget.sdfObj.putText(KEY_WidgetAuthor, mUser.displayName)
+                        widget.sdfObj?.putText(KEY_WidgetAuthor, mUser.displayName)
                     }
                     var author = AnnotUtils.getAuthor(key)
                     Log.i("author", author ?: "")

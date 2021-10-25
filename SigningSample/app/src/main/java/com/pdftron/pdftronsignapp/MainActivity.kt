@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +15,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.pdftron.pdf.Annot
 import com.pdftron.pdf.PDFDoc
+import com.pdftron.pdf.annots.Widget
 import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerBuilder2
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2
+import com.pdftron.pdf.tools.ToolManager.AnnotationModificationListener
+import com.pdftron.pdf.utils.AnnotUtils
 import com.pdftron.pdf.utils.Utils
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType
@@ -31,12 +35,15 @@ import com.pdftron.pdftronsignapp.login.LoginFragment
 import com.pdftron.pdftronsignapp.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import com.pdftron.pdf.utils.AnnotUtils.KEY_WidgetAuthor
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mPdfViewCtrlTabHostFragment: PdfViewCtrlTabHostFragment2
     private lateinit var mBasicAnnotationListener: MyBasicAnnotationListener
     private val mFirebaseControl = FirebaseControl()
     private lateinit var usersList: List<User>
+    private lateinit var mUser: User;
     private var docId: String = ""
     private lateinit var progressDialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -161,15 +168,23 @@ class MainActivity : AppCompatActivity() {
         send_btn.text = send_btn.context.getString(R.string.send)
         send_btn.setOnClickListener { sendDocument() }
 
+        mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.addAnnotationModificationListener(
+            mModificationListener
+        )
+        mUser = usersList.first();
         mBasicAnnotationListener.setCurrentUser(usersList.first())
         main_recycler.adapter =
-            BottomBarAdapter(usersList) { mBasicAnnotationListener.setCurrentUser(it) }
+            BottomBarAdapter(usersList) {
+                mBasicAnnotationListener.setCurrentUser(it)
+                mUser = it;
+            }
         main_recycler.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.toolManager.disableAnnotEditing(
             arrayOf(Annot.e_Widget)
         )
+
         // flatten existing annotations and form fields
         mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfViewCtrl.docLock(true) {
             mPdfViewCtrlTabHostFragment.currentPdfViewCtrlFragment.pdfDoc.flattenAnnotationsAdvanced(
@@ -249,4 +264,44 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
+    private val mModificationListener: AnnotationModificationListener =
+        object : AnnotationModificationListener {
+            override fun onAnnotationsAdded(annots: Map<Annot, Int>) {
+
+                for ((key, value) in annots) {
+                    if (key.type == Annot.e_Widget) {
+                        val widget = Widget(key)
+                        widget.sdfObj.putText(KEY_WidgetAuthor, mUser.displayName)
+                    }
+                    var author = AnnotUtils.getAuthor(key)
+                    Log.i("author", author ?: "")
+                }
+
+            }
+
+            override fun onAnnotationsPreModify(annots: Map<Annot, Int>) {
+
+            }
+
+            override fun onAnnotationsModified(annots: Map<Annot, Int>, extra: Bundle) {
+
+            }
+
+            override fun onAnnotationsPreRemove(annots: Map<Annot, Int>) {
+
+            }
+
+            override fun onAnnotationsRemoved(annots: Map<Annot, Int>) {
+
+            }
+
+            override fun onAnnotationsRemovedOnPage(pageNum: Int) {
+
+            }
+
+            override fun annotationsCouldNotBeAdded(errorMessage: String) {
+
+            }
+        }
 }

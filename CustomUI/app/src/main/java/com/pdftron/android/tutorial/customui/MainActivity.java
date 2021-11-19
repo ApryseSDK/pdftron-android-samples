@@ -32,6 +32,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
+                .addToolbarBuilder(DefaultToolbars.defaultPrepareFormToolbar)
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
@@ -119,96 +121,78 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         PdfViewCtrlTabFragment2 tabFragment = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
         PDFViewCtrl pdfViewCtrl = tabFragment.getPDFViewCtrl();
         PDFDoc pdfDoc = tabFragment.getPdfDoc();
-        boolean shouldUnlock = false;
-        try {
-            if (tabFragment != null) {
-                pdfDoc.lockRead();
-                shouldUnlock = true;
-                int pageNum = 1;
-                for (PageIterator itr = pdfDoc.getPageIterator(); itr.hasNext(); ) {
-
-                    Page page = itr.next();
-                    int numAnnots = page.getNumAnnots();
-                    for (int i = 0; i < numAnnots; ++i) {
-                        Annot annot = page.getAnnot(i);
-                        if (!annot.isValid()) continue;
-
-                        if (annot.getType() == Annot.e_Widget) {
-                            Widget widget = new Widget(annot);
-                            Field field = widget.getField();
-
-                            if (field != null && field.isValid() &&
-                                    (field.getType() == Field.e_signature || field.getType() == Field.e_text)) {
-                                // Create placeholder text view
-                                TextView placeholder = new TextView(this);
-                                placeholder.setText("Placeholder");
-
-                                // Create custom relative layout
-                                CustomRelativeLayout overlay = new CustomRelativeLayout(this);
-                                overlay.setBackgroundColor(this.getResources().getColor(R.color.orange));
-                                overlay.addView(placeholder);
-                                overlay.setAnnot(pdfViewCtrl, widget, pageNum);
-                                overlay.setZoomWithParent(true);
-                                pdfViewCtrl.addView(overlay);
-
-                                // Store a reference to the custom relative layout
-                                mPlaceholders.put(overlay, widget);
-                            }
-                        }
-                    }
-                    pageNum++;
-                }
-                // Refresh visibility of placeholders
-                refreshPlaceholdersVisibility();
-            }
-        } catch (PDFNetException e) {
-            // handle exception
-        } finally {
-            if (shouldUnlock) {
-                Utils.unlockReadQuietly(pdfDoc);
-            }
-        }
+        addAllPlaceholders(pdfViewCtrl, pdfDoc);
 
         ToolManager toolManager = tabFragment.getToolManager();
-        toolManager.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+
+        UndoRedoManager undoRedoManager = toolManager.getUndoRedoManger();
+        undoRedoManager.addUndoRedoStateChangeListener(new UndoRedoManager.UndoRedoStateChangeListener() {
             @Override
-            public void onAnnotationsAdded(Map<Annot, Integer> annots) {
-
-            }
-
-            @Override
-            public void onAnnotationsPreModify(Map<Annot, Integer> annots) {
-
-            }
-
-            @Override
-            public void onAnnotationsModified(Map<Annot, Integer> annots, Bundle extra) {
-                refreshPlaceholdersVisibility();
-            }
-
-            @Override
-            public void onAnnotationsPreRemove(Map<Annot, Integer> annots) {
-
-            }
-
-            @Override
-            public void onAnnotationsRemoved(Map<Annot, Integer> annots) {
-
-            }
-
-            @Override
-            public void onAnnotationsRemovedOnPage(int pageNum) {
-
-            }
-
-            @Override
-            public void annotationsCouldNotBeAdded(String errorMessage) {
-
+            public void onStateChanged() {
+                for (CustomRelativeLayout placeholder : mPlaceholders.keySet()) {
+                    pdfViewCtrl.removeView(placeholder);
+                }
+                mPlaceholders.clear();
+                addAllPlaceholders(pdfViewCtrl, pdfDoc);
             }
         });
     }
 
-    void refreshPlaceholdersVisibility() {
+    private void addPlaceHolder(PDFViewCtrl pdfViewCtrl, Annot annot, int pageNum) throws PDFNetException {
+        if (annot.getType() == Annot.e_Widget) {
+            Widget widget = new Widget(annot);
+            Field field = widget.getField();
+
+            if (field != null && field.isValid() &&
+                    (field.getType() == Field.e_signature || field.getType() == Field.e_text)) {
+                // Create placeholder text view
+                TextView placeholder = new TextView(this);
+                placeholder.setText("Placeholder");
+
+                // Create custom relative layout
+                CustomRelativeLayout overlay = new CustomRelativeLayout(this);
+                overlay.setBackgroundColor(this.getResources().getColor(R.color.orange));
+                overlay.addView(placeholder);
+                overlay.setAnnot(pdfViewCtrl, widget, pageNum);
+                overlay.setZoomWithParent(true);
+                pdfViewCtrl.addView(overlay);
+
+                // Store a reference to the custom relative layout
+                mPlaceholders.put(overlay, widget);
+            }
+        }
+    }
+
+    private void addAllPlaceholders(PDFViewCtrl pdfViewCtrl, PDFDoc pdfDoc) {
+        boolean shouldUnlockRead = false;
+        try {
+            pdfDoc.lockRead();
+            shouldUnlockRead = true;
+            int pageNum = 1;
+            for (PageIterator itr = pdfDoc.getPageIterator(); itr.hasNext(); ) {
+                Page page = itr.next();
+                int numAnnots = page.getNumAnnots();
+                for (int i = 0; i < numAnnots; ++i) {
+                    Annot annot = page.getAnnot(i);
+                    if (!annot.isValid()) continue;
+                    addPlaceHolder(pdfViewCtrl, annot, pageNum);
+
+                }
+                pageNum++;
+            }
+            // Refresh visibility of placeholders
+            refreshPlaceholdersVisibility();
+        } catch (PDFNetException e) {
+            e.printStackTrace();
+            // handle exception
+        } finally {
+            if (shouldUnlockRead) {
+                Utils.unlockReadQuietly(pdfDoc);
+            }
+        }
+    }
+
+    private void refreshPlaceholdersVisibility() {
         PdfViewCtrlTabFragment2 tabFragment2 = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
         if (tabFragment2 == null) return;
         PDFDoc pdfDoc = tabFragment2.getPdfDoc();

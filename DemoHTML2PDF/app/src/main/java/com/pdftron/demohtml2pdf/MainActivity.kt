@@ -14,43 +14,48 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val htmlDocument = "<!DOCTYPE html>\n" +
-                "<html lang=\"de\">\n" +
-                "\n" +
-                "<head>\n" +
-                " <meta charset=\"UTF-8\" />\n" +
-                " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n" +
-                " <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\" />\n" +
-                " <title>Test Page</title>\n" +
-                " <style>\n" +
-                " body {\n" +
-                " font-family: Helvetica, Arial, sans-serif;\n" +
-                " padding: 10px;\n" +
-                " -webkit-hyphens: auto;\n" +
-                " -moz-hyphens: auto;\n" +
-                " hyphens: auto;\n" +
-                " }\n" +
-                "\n" +
-                " h2 {\n" +
-                " width: 100%;\n" +
-                " border-bottom: 1px solid #000000;\n" +
-                " }\n" +
-                "\n" +
-                " </style>\n" +
-                "</head>\n" +
-                "\n" +
-                "<body>\n" +
-                "<h2>Hello World</h2>\n" +
-                "<p> Test Text </p>\n" +
-                "</body>\n" +
-                "</html>"
+        val htmlDocument = "<!DOCTYPE html>\n<div style=\"height:100px; width:100px; \">" +
+                "<span>עברית=בדיקה<br/>BLABLA=Long English Text 1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20</span>\n" +
+                "</div>"
+
+//        val htmlDocument = "<!DOCTYPE html>\n" +
+//                "<html lang=\"de\">\n" +
+//                "\n" +
+//                "<head>\n" +
+//                " <meta charset=\"UTF-8\" />\n" +
+//                " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n" +
+//                " <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\" />\n" +
+//                " <title>Test Page</title>\n" +
+//                " <style>\n" +
+//                " body {\n" +
+//                " font-family: Helvetica, Arial, sans-serif;\n" +
+//                " padding: 10px;\n" +
+//                " -webkit-hyphens: auto;\n" +
+//                " -moz-hyphens: auto;\n" +
+//                " hyphens: auto;\n" +
+//                " }\n" +
+//                "\n" +
+//                " h2 {\n" +
+//                " width: 100%;\n" +
+//                " border-bottom: 1px solid #000000;\n" +
+//                " }\n" +
+//                "\n" +
+//                " </style>\n" +
+//                "</head>\n" +
+//                "\n" +
+//                "<body>\n" +
+//                "<h2>Hello World</h2>\n" +
+//                "<p> Test Text </p>\n" +
+//                "</body>\n" +
+//                "</html>"
 
         val html2PDF = HTML2PDF(this.applicationContext)
         html2PDF.setOutputFolder(this.cacheDir)
+        html2PDF.setOutputFileName("test_html_string.pdf")
         html2PDF.setHTML2PDFListener(object : HTML2PDF.HTML2PDFListener {
             override fun onConversionFinished(pdfOutput: String, isLocal: Boolean) {
                 // Handle callback when conversion finished
-
+                Log.d("sgong", "out: $pdfOutput")
                 openDocument(pdfOutput)
                 finish()
             }

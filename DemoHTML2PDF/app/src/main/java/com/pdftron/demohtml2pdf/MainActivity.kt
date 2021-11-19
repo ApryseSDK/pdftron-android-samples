@@ -14,9 +14,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val htmlDocument = "<!DOCTYPE html>\n<div style=\"height:100px; width:100px; \">" +
+        val htmlDocument = "<!DOCTYPE html>\n<html dir=\"auto\"><div style=\"height:100px; width:200px; \">" +
                 "<span>עברית=בדיקה<br/>BLABLA=Long English Text 1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20</span>\n" +
-                "</div>"
+                "</html></div>"
 
 //        val htmlDocument = "<!DOCTYPE html>\n" +
 //                "<html lang=\"de\">\n" +
@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         html2PDF.setHTML2PDFListener(object : HTML2PDF.HTML2PDFListener {
             override fun onConversionFinished(pdfOutput: String, isLocal: Boolean) {
                 // Handle callback when conversion finished
-                Log.d("sgong", "out: $pdfOutput")
                 openDocument(pdfOutput)
                 finish()
             }

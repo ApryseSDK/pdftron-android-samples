@@ -6,23 +6,28 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
-import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
-import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.QuickMenu;
+import com.pdftron.pdf.tools.QuickMenuItem;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
@@ -39,10 +44,18 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+        ToolManagerBuilder tmBuilder = ToolManagerBuilder.from()
+                .disableToolModes(new ToolManager.ToolMode[] {
+                        ToolManager.ToolMode.AREA_MEASURE_CREATE,
+                        ToolManager.ToolMode.PERIMETER_MEASURE_CREATE,
+                        ToolManager.ToolMode.RECT_AREA_MEASURE_CREATE,
+                        ToolManager.ToolMode.RULER_CREATE
+                });
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .toolManagerBuilder(tmBuilder)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
@@ -53,9 +66,9 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Apply customizations to tab host fragment
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -98,6 +111,44 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
+        mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().addQuickMenuListener(new ToolManager.QuickMenuListener() {
+            @Override
+            public boolean onQuickMenuClicked(QuickMenuItem menuItem) {
+                return false;
+            }
+
+            @Override
+            public boolean onShowQuickMenu(QuickMenu quickmenu, @Nullable Annot annot) {
+                ArrayList<QuickMenuItem> removeList = new ArrayList<>();
+                checkQuickMenu(quickmenu.getFirstRowMenuItems(), removeList, R.id.qm_search);
+                checkQuickMenu(quickmenu.getFirstRowMenuItems(), removeList, R.id.qm_share);
+                checkQuickMenu(quickmenu.getSecondRowMenuItems(), removeList, R.id.qm_search);
+                checkQuickMenu(quickmenu.getSecondRowMenuItems(), removeList, R.id.qm_share);
+                checkQuickMenu(quickmenu.getOverflowMenuItems(), removeList, R.id.qm_search);
+                checkQuickMenu(quickmenu.getOverflowMenuItems(), removeList, R.id.qm_share);
+                quickmenu.removeMenuEntries(removeList);
+                return false;
+            }
+
+            @Override
+            public void onQuickMenuShown() {
+
+            }
+
+            @Override
+            public void onQuickMenuDismissed() {
+
+            }
+        });
+    }
+
+    private void checkQuickMenu(List<QuickMenuItem> menuItems, List<QuickMenuItem> removeList, int removeId) {
+        for (QuickMenuItem item : menuItems) {
+            int menuId = item.getItemId();
+            if (menuId == removeId) {
+                removeList.add(item);
+            }
+        }
     }
 
     @Override

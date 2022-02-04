@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
 
+    boolean isAnnotToolbarVisible = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.CustomAppTheme)
                 .build(this);
@@ -98,12 +99,16 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
+        mPdfViewCtrlTabHostFragment.setToolbarSwitcherVisible(false);
+        mPdfViewCtrlTabHostFragment.setAnnotationToolbarVisible(false, false);
     }
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+        if (menuItem.getItemId() == R.id.action_annot_toolbar) {
+            mPdfViewCtrlTabHostFragment.setToolbarSwitcherVisible(!isAnnotToolbarVisible);
+            mPdfViewCtrlTabHostFragment.setAnnotationToolbarVisible(!isAnnotToolbarVisible, false);
+            isAnnotToolbarVisible = !isAnnotToolbarVisible;
         }
         return false;
     }

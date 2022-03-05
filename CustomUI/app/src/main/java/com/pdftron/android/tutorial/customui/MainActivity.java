@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.android.tutorial.customui.custom.CustomTabClass;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
+                .usingTabHostClass(CustomTabClass.class)
                 .usingTheme(R.style.CustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
@@ -187,4 +189,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public void onJumpToSdCardFolder() {
 
     }
+
+
 }

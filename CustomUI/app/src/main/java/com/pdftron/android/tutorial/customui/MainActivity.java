@@ -12,17 +12,22 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.annots.Text;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment.TabHostListener {
 
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
-                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
+//                .usingCustomToolbar(new int[] {R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.CustomAppTheme)
@@ -53,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Apply customizations to tab host fragment
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -98,6 +103,57 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onTabDocumentLoaded(String s) {
+        PdfViewCtrlTabFragment2 fragment = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+        if (fragment!=null) {
+            fragment.getToolManager().addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+                @Override
+                public void onAnnotationsAdded(Map<Annot, Integer> annots) {
+                    for (Annot annot : annots.keySet()) {
+                        try {
+                            if (annot.isValid() && annot.getType() == Annot.e_Text) {
+                                // sticky note, we'll include custom appearance
+                                StickyNoteUtilsKt.applyCustomAppearanceToStickyNote(
+                                        fragment.getPDFViewCtrl(),
+                                        new Text(annot),
+                                        1, 5);
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onAnnotationsPreModify(Map<Annot, Integer> annots) {
+
+                }
+
+                @Override
+                public void onAnnotationsModified(Map<Annot, Integer> annots, Bundle extra) {
+
+                }
+
+                @Override
+                public void onAnnotationsPreRemove(Map<Annot, Integer> annots) {
+
+                }
+
+                @Override
+                public void onAnnotationsRemoved(Map<Annot, Integer> annots) {
+
+                }
+
+                @Override
+                public void onAnnotationsRemovedOnPage(int pageNum) {
+
+                }
+
+                @Override
+                public void annotationsCouldNotBeAdded(String errorMessage) {
+
+                }
+            });
+        }
     }
 
     @Override

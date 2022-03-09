@@ -19,6 +19,10 @@
         <item name="android:windowBackground">@color/background_color</item>
         <item name="android:colorBackground">@color/background_color</item>
 
+        <!-- Action Mode styles -->
+        <item name="android:actionMenuTextColor">@color/body_text_color</item>
+        <item name="actionMenuTextColor">@color/body_text_color</item>
+
         <!-- Drawer -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 

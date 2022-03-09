@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/controls_thumbnails_view_action_rotate_left"
+        android:title="@string/tools_qm_rotate"
+        android:icon="@drawable/ic_rotate_left_black_24dp"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/controls_thumbnails_view_action_rotate_right"
+        android:title="@string/tools_qm_rotate"
+        android:icon="@drawable/ic_rotate_right_white_24dp"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/controls_thumbnails_view_action_delete"
+        android:title="@string/delete"
+        android:icon="@drawable/ic_delete_white_24dp"
+        app:showAsAction="always"/>
+
+</menu>

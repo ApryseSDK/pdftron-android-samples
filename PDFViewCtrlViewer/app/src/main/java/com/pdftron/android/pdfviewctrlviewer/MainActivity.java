@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
-        mToolbarContainer = findViewById(R.id.annotatio_toolbar_container);
-        mPresetContainer = findViewById(R.id.preset_bar);
+        mToolbarContainer = findViewById(R.id.annotation_toolbar_container);
+        mPresetContainer = findViewById(R.id.preset_container);
         setupToolManager();
         setupAnnotationToolbar();
         try {

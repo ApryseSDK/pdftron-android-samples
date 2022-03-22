@@ -16,6 +16,7 @@ import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.preset.component.PresetBarComponent;
 import com.pdftron.pdf.widget.preset.component.PresetBarViewModel;
 import com.pdftron.pdf.widget.preset.component.view.PresetBarView;
+import com.pdftron.pdf.widget.preset.signature.SignatureViewModel;
 import com.pdftron.pdf.widget.toolbar.ToolManagerViewModel;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public void setupAnnotationToolbar() {
         ToolManagerViewModel toolManagerViewModel = ViewModelProviders.of(this).get(ToolManagerViewModel.class);
         toolManagerViewModel.setToolManager(mToolManager);
+        SignatureViewModel signatureViewModel = ViewModelProviders.of(this).get(SignatureViewModel.class);
         PresetBarViewModel presetViewModel = ViewModelProviders.of(this).get(PresetBarViewModel.class);
         AnnotationToolbarViewModel annotationToolbarViewModel = ViewModelProviders.of(this).get(AnnotationToolbarViewModel.class);
 
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager(),
                 presetViewModel,
                 toolManagerViewModel,
+                signatureViewModel,
                 new PresetBarView(mPresetContainer)
         );
 

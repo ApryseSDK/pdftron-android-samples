@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                         .addToolButton(ToolbarButtonType.INK, DefaultToolbars.ButtonId.INK.value())
                         .addToolButton(ToolbarButtonType.FREE_HIGHLIGHT, DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value())
                         .addToolButton(ToolbarButtonType.ERASER, DefaultToolbars.ButtonId.ERASER.value())
+                        .addToolButton(ToolbarButtonType.MULTI_SELECT, DefaultToolbars.ButtonId.MULTI_SELECT.value())
+                        .addToolButton(ToolbarButtonType.LASSO_SELECT, DefaultToolbars.ButtonId.LASSO_SELECT.value())
                         .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
                         .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
         );

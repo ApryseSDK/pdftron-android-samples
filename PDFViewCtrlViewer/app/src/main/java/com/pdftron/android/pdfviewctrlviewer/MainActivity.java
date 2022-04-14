@@ -10,6 +10,7 @@ import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.controls.ThumbnailSlider;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
@@ -102,6 +103,14 @@ public class MainActivity extends AppCompatActivity {
                         .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
                         .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
         );
+
+        mPdfViewCtrl.addPageChangeListener(new PDFViewCtrl.PageChangeListener() {
+            @Override
+            public void onPageChange(int oldPage, int curPage, PDFViewCtrl.PageChangeState state) {
+                ThumbnailSlider slider = findViewById(R.id.thumbnail_slider);
+                slider.setProgress(curPage);
+            }
+        });
     }
 
     /**

@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/accent_color</item>
     </style>
 
-    <style name="CustomAppTheme" parent="PDFTronAppTheme">
+    <style name="MyAppTheme" parent="PDFTronAppTheme">
         <item name="colorPrimary">@color/background_color</item>
         <item name="colorPrimaryDark">@color/utility_variant_color</item>
         <item name="colorAccent">@color/accent_color</item>
@@ -95,7 +95,7 @@
     <style name="CustomToolbarButtonNavigationStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
         <item name="android:minWidth">48dp</item>
         <item name="android:padding">0dp</item>
-        <item name="android:tint">@color/body_text_color</item>
+        <item name="android:tint">@color/red</item>
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -158,8 +158,8 @@
     </style>
     
     <style name="SampleToolbarSwitcherButtonTheme" parent="PTToolbarSwitcherButtonTheme">
-        <item name="textColor">@color/body_text_color</item>
-        <item name="iconColor">@color/body_text_color</item>
+        <item name="textColor">@color/yellow</item>
+        <item name="iconColor">@android:color/holo_purple</item>
         <item name="backgroundColorCompact">@color/subtle_utility_color</item>
     </style>
 
@@ -336,7 +336,7 @@
     </style>
 
     <style name="SampleActionOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:tint">@color/body_text_color</item>
+        <item name="android:tint">@color/green</item>
     </style>
 
     <style name="SampleTextViewSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">

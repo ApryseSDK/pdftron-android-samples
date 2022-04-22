@@ -18,6 +18,7 @@ import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
@@ -48,16 +49,20 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+        ToolManagerBuilder tmBuilder = ToolManagerBuilder.from().setShowUndoRedo(false);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
-                .addToolbarBuilder(buildNotesToolbar())
-                .addToolbarBuilder(buildShapesToolbar())
-                .toolbarTitle("٩(◕‿◕｡)۶")
+                .useSupportActionBar(false)
+                .multiTabEnabled(false)
+                .toolManagerBuilder(tmBuilder)
+//                .addToolbarBuilder(buildNotesToolbar())
+//                .addToolbarBuilder(buildShapesToolbar())
+//                .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
-                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
+//                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
+//                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
-                .usingTheme(R.style.CustomAppTheme)
+                .usingTheme(R.style.MyAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 

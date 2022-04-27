@@ -17,6 +17,8 @@ import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.Page;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -150,7 +152,51 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            try {
+                Page page = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc().getPage(1);
+                Rect crop_box = page.getCropBox();
+                Rect media_box = page.getMediaBox();
+
+//                page.scale(0.75);
+//
+
+
+
+                double hinc = crop_box.getWidth() * 0.10;
+                double vinc = crop_box.getHeight() * 0.10;
+
+                double mediaX1 = media_box.getX1();
+                media_box.setX1(mediaX1 - hinc);
+                double mediaX2 = media_box.getX2();
+                media_box.setX2( mediaX2 + hinc);
+
+//
+//                double mediaY1 = media_box.getY1();
+//                media_box.setY1( mediaY1 - vinc);
+//
+//                double mediaY2 = media_box.getY2();
+//                media_box.setY2( mediaY2 + vinc);
+
+
+                double cropX1 = crop_box.getX1();
+                crop_box.setX1(cropX1 - hinc );
+                double cropX2 = crop_box.getX1();
+                crop_box.setX2(cropX2 + hinc);
+
+//                double cropY1 = crop_box.getY1();
+//                crop_box.setY1( cropY1 - vinc);
+//
+//                double cropY2 = crop_box.getY2();
+//                crop_box.setY2( cropY2 + vinc);
+
+                crop_box.update();
+
+                page.setCropBox(crop_box);
+                page.setMediaBox(media_box);
+            } catch (Exception e) {
+
+            }
         }
         return false;
     }

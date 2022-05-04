@@ -1,22 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.pdftron.android.samples.pdftron_android_samples"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
-    }
-    configurations.all {
-        resolutionStrategy.force "androidx.appcompat:appcompat:1.2.0"
-        resolutionStrategy.force "androidx.legacy:legacy-support-v4:1.0.0"
-        resolutionStrategy.force "androidx.lifecycle:runtime:2.1.0"
     }
     buildTypes {
         release {

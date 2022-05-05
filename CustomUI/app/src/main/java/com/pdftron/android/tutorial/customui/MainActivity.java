@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
-                .usingTheme(R.style.CustomAppTheme)
+                .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 

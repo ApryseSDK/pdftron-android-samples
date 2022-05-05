@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.pdftron.cadviewer"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -37,7 +37,7 @@ dependencies {
     implementation "com.pdftron:tools:$myPdftronVersion"
 
     // okhttp
-    implementation "com.squareup.okhttp3:okhttp:3.13.1"
+    implementation "com.squareup.okhttp3:okhttp:3.14.9"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

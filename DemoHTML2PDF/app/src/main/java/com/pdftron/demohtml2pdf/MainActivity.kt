@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onConversionFailed(error: String?) {
                 // Handle callback if conversion failed
-                Log.e("html2pdf", error)
+                Log.e("html2pdf", "$error")
             }
         })
         html2PDF.fromHTMLDocument(null, htmlDocument)

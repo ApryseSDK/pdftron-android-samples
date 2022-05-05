@@ -20,7 +20,8 @@
             android:value="${pdftronLicenseKey}"/>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/PDFTronAppTheme">
+            android:theme="@style/PDFTronAppTheme"
+            android:exported="true">
             <intent-filter
                 android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize">
                 <action android:name="android.intent.action.MAIN" />

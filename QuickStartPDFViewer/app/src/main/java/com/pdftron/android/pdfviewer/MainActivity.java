@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
      * @param context the context to start the document reader
      * @param fileResId resource id to a document in res/raw
      */
-    private void openRawResourceDocument(Context context, @IdRes int fileResId) {
+    private void openRawResourceDocument(Context context, @RawRes int fileResId) {
         Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
                 .withFileRes(fileResId)
                 .usingNewUi(true)

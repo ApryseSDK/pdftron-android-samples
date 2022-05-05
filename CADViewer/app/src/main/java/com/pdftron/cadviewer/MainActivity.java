@@ -8,7 +8,6 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private final OkHttpClient client = new OkHttpClient();
 
     private static final String BASE_URL = "https://demo.pdftron.com/"; // Your server root
+    private static final String BCID = "showcase";
 
     private static final String SAMPLE_URL = "https://pdftron.s3.amazonaws.com/downloads/pl/visualization_condominium_with_skylight.dwg";
 
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         httpBuilder.addQueryParameter("uri", SAMPLE_URL);
         httpBuilder.addQueryParameter("ext", "dwg");
+        httpBuilder.addQueryParameter("bcid", BCID);
 
         get(httpBuilder.build());
     }
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                             if (jsonArray.length() > 0) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
                                 String pdfUrl = jsonObject.getString("uri");
-                                openPdf(BASE_URL + pdfUrl);
+                                openPdf(BASE_URL + "demo/" + pdfUrl + "?bcid=" + BCID);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

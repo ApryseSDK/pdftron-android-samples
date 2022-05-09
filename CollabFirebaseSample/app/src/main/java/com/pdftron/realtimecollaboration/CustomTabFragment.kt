@@ -2,11 +2,11 @@ package com.pdftron.realtimecollaboration
 
 import com.pdftron.collab.ui.reply.bottomsheet.ReplyFragment
 import com.pdftron.collab.ui.reply.bottomsheet.ReplyFragmentBuilder
-import com.pdftron.collab.ui.viewer.CollabViewerTabFragment
+import com.pdftron.collab.ui.viewer.CollabViewerTabFragment2
 
-class CustomTabFragment : CollabViewerTabFragment() {
+class CustomTabFragment : CollabViewerTabFragment2() {
     // Define the layout XML file to use for this viewer fragment
-    override fun getContentLayout(): Int {
+    override fun getContentLayoutRes(): Int {
         return R.layout.fragment_custom_reply_viewer
     }
     // Instantiate and display the reply UI in the reply container

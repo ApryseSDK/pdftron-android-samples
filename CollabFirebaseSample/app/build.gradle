@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.pdftron.realtimecollaboration"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -48,7 +47,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-auth:16.2.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.0'
 
     implementation "com.pdftron:pdftron:$myPdftronVersion"
     implementation "com.pdftron:tools:$myPdftronVersion"

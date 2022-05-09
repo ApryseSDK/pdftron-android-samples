@@ -1,9 +1,9 @@
 package com.pdftron.demohtml2pdf
 
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.controls.DocumentActivity
 import com.pdftron.pdf.utils.HTML2PDF
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 "</body>\n" +
                 "</html>"
 
-        val html2PDF = HTML2PDF(this)
+        val html2PDF = HTML2PDF(this.applicationContext)
         html2PDF.setOutputFolder(this.cacheDir)
         html2PDF.setHTML2PDFListener(object : HTML2PDF.HTML2PDFListener {
             override fun onConversionFinished(pdfOutput: String, isLocal: Boolean) {
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onConversionFailed(error: String?) {
                 // Handle callback if conversion failed
-                Log.e("html2pdf", error)
+                Log.e("html2pdf", "$error")
             }
         })
         html2PDF.fromHTMLDocument(null, htmlDocument)
@@ -66,6 +66,15 @@ class MainActivity : AppCompatActivity() {
     fun openDocument(filepath: String) {
         val config = ViewerConfig.Builder()
             .build()
-        DocumentActivity.openDocument(this, Uri.parse(filepath), config)
+
+        val intent = DocumentActivity.IntentBuilder.fromActivityClass(
+            this,
+            DocumentActivity::class.java
+        )
+            .withUri(Uri.parse(filepath))
+            .usingConfig(config)
+            .usingNewUi(true)
+            .build()
+        startActivity(intent)
     }
 }

@@ -6,28 +6,34 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
 
 /**
  * Abstract delegate customization class used to customize a PdfViewCtrlTabFragment. Will apply
  * customization on each tab using when onTabDocumentLoaded is called.
  */
-abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment.TabHostListener {
+abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment2.TabHostListener {
 
     @NonNull
     protected final Context mContext;
     @NonNull
-    private final PdfViewCtrlTabHostFragment mTabHostFragment;
+    private final PdfViewCtrlTabHostFragment2 mTabHostFragment;
 
-    CustomizationDelegate(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment tabHostFragment) {
+    CustomizationDelegate(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment2 tabHostFragment) {
         mContext = context;
         mTabHostFragment = tabHostFragment;
         mTabHostFragment.addHostListener(this);
     }
 
-    abstract protected void applyCustomization(@NonNull PdfViewCtrlTabFragment tabFragment);
+    protected void applyCustomization(@NonNull PdfViewCtrlTabFragment2 tabFragment) {
+        // Implement to customize using tab fragment ...
+    }
+
+    protected void applyCustomization(@NonNull PdfViewCtrlTabHostFragment2 tabHostFragment) {
+        // Implement to customize using host fragment ...
+    }
 
     @Override
     public void onTabHostShown() {
@@ -50,8 +56,8 @@ abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment.TabHo
     }
 
     @Override
-    public void onOpenDocError() {
-
+    public boolean onOpenDocError() {
+        return false;
     }
 
     @Override
@@ -117,6 +123,7 @@ abstract class CustomizationDelegate implements PdfViewCtrlTabHostFragment.TabHo
     @Override
     public void onTabDocumentLoaded(String s) {
         applyCustomization(mTabHostFragment.getCurrentPdfViewCtrlFragment());
+        applyCustomization(mTabHostFragment);
     }
 
 }

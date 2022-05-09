@@ -5,8 +5,8 @@ import androidx.annotation.NonNull;
 
 import com.pdftron.android.tutorial.customui.R;
 import com.pdftron.pdf.Annot;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.ToolManager;
@@ -22,17 +22,17 @@ import java.util.ArrayList;
  */
 public class CustomQuickMenu extends CustomizationDelegate {
 
-    public CustomQuickMenu(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment tabHostFragment) {
+    public CustomQuickMenu(@NonNull Context context, @NonNull PdfViewCtrlTabHostFragment2 tabHostFragment) {
         super(context, tabHostFragment);
     }
 
     @Override
-    public void applyCustomization(@NonNull PdfViewCtrlTabFragment tabFragment) {
+    public void applyCustomization(@NonNull PdfViewCtrlTabFragment2 tabFragment) {
         customizeQuickMenu(mContext, tabFragment);
     }
 
     private static void customizeQuickMenu(@NonNull final Context context,
-            @NonNull final PdfViewCtrlTabFragment tabFragment) {
+            @NonNull final PdfViewCtrlTabFragment2 tabFragment) {
         // let's add some new items in the quick menu
         tabFragment.addQuickMenuListener(new ToolManager.QuickMenuListener() {
             @Override

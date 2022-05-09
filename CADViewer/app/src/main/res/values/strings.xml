@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CADViewer</string>
+    <string name="welcome_msg">Opening CAD file</string>
+</resources>

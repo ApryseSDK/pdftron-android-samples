@@ -27,9 +27,10 @@
         <activity android:name="com.pdftron.pdf.controls.DocumentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
             android:windowSoftInputMode="adjustPan"
-            android:theme="@style/CustomAppTheme"/>
+            android:theme="@style/PDFTronAppTheme"/>
 
-        <activity android:name="com.pdftron.android.samples.stickynote.ReaderActivity">
+        <activity android:name="com.pdftron.android.samples.stickynote.ReaderActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

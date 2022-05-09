@@ -18,9 +18,10 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/CustomAppTheme"
+            android:theme="@style/PDFTronAppTheme"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

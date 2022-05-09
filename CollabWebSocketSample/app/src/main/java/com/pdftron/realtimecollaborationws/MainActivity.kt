@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.pdftron.collab.ui.viewer.CollabViewerBuilder
-import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment
+import com.pdftron.collab.ui.viewer.CollabViewerBuilder2
+import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment2
 import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerConfig
 import io.reactivex.schedulers.Schedulers
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         "Charmander", "Charmeleon", "Charizard",
         "Squirtle", "Wartortle", "Blastoise")
 
-    private lateinit var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment
+    private lateinit var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment2
 
     private val mWSConnection = WSConnection()
 
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             createPdfViewerFragment(this, Uri.parse(DEFAULT_FILE_URL), getViewerConfig())
 
         mPdfViewCtrlTabHostFragment.addCollabHostListener(object :
-            CollabViewerTabHostFragment.CollabTabHostListener {
+            CollabViewerTabHostFragment2.CollabTabHostListener {
             override fun onNavButtonPressed() {
                 finish()
             }
@@ -78,8 +78,8 @@ class MainActivity : AppCompatActivity() {
         context: Context,
         fileUri: Uri,
         config: ViewerConfig
-    ): CollabViewerTabHostFragment {
-        return CollabViewerBuilder.withUri(fileUri)
+    ): CollabViewerTabHostFragment2 {
+        return CollabViewerBuilder2.withUri(fileUri)
             .usingConfig(config)
             .build(context)
     }
@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
             .setAutoSelect(true)
         return ViewerConfig.Builder()
             .multiTabEnabled(false)
-            .fullscreenModeEnabled(false)
             .showCloseTabOption(false)
             .saveCopyExportPath(this.filesDir.absolutePath)
             .openUrlCachePath(this.filesDir.absolutePath)

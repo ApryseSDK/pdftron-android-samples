@@ -1,5 +1,6 @@
 package com.pdftron.android.tutorial.customui;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.android.tutorial.customui.custom.CustomWidget;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
@@ -64,9 +66,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Apply customizations to tab host fragment
-        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
-        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
+//        new CustomAnnotationToolbar(MainActivity.this, mPdfViewCtrlTabHostFragment);
+
+        new CustomWidget(MainActivity.this, mPdfViewCtrlTabHostFragment);
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
             try {
-                pdfViewCtrl.setHighlightFields(false);
+                pdfViewCtrl.setRequiredFieldBorderColor(Utils.color2ColorPt(Color.TRANSPARENT));
             } catch (PDFNetException e) {
                 e.printStackTrace();
             }

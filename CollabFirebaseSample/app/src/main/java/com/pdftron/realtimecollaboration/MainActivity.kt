@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.pdftron.collab.ui.viewer.CollabViewerBuilder2
-import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment2
+import com.pdftron.collab.ui.viewer.CollabViewerBuilder
+import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment
 import com.pdftron.pdf.config.ToolManagerBuilder
 import com.pdftron.pdf.config.ViewerConfig
 import com.pdftron.pdf.dialog.simpleinput.TextInputDialog
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private val server = Server()
 
-    private var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment2? = null
+    private var mPdfViewCtrlTabHostFragment: CollabViewerTabHostFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +62,8 @@ class MainActivity : AppCompatActivity() {
         context: Context,
         fileUri: Uri,
         config: ViewerConfig
-    ): CollabViewerTabHostFragment2 {
-        return CollabViewerBuilder2.withUri(fileUri)
+    ): CollabViewerTabHostFragment {
+        return CollabViewerBuilder.withUri(fileUri)
             .usingConfig(config)
             .build(context)
     }
@@ -72,8 +72,8 @@ class MainActivity : AppCompatActivity() {
         activity: FragmentActivity,
         fileUri: Uri,
         config: ViewerConfig
-    ): CollabViewerTabHostFragment2 {
-        return CollabViewerBuilder2.withUri(fileUri)
+    ): CollabViewerTabHostFragment {
+        return CollabViewerBuilder.withUri(fileUri)
             .usingConfig(config)
             .usingTabClass(CustomTabFragment::class.java)
             .build(activity)
@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
             .setAutoSelect(true)
         return ViewerConfig.Builder()
             .multiTabEnabled(false)
+            .fullscreenModeEnabled(false)
             .showCloseTabOption(false)
             .saveCopyExportPath(this.filesDir.absolutePath)
             .openUrlCachePath(this.filesDir.absolutePath)
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 createPdfViewerFragment(this, Uri.parse(DEFAULT_FILE_URL), getViewerConfig())
 
         mPdfViewCtrlTabHostFragment!!.addCollabHostListener(object :
-            CollabViewerTabHostFragment2.CollabTabHostListener {
+            CollabViewerTabHostFragment.CollabTabHostListener {
             override fun onNavButtonPressed() {
                 finish()
             }
@@ -159,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             R.string.cancel
         )
         dialog.isCancelable = false
-        dialog.setStyle(androidx.fragment.app.DialogFragment.STYLE_NO_TITLE, R.style.MyAppTheme)
+        dialog.setStyle(androidx.fragment.app.DialogFragment.STYLE_NO_TITLE, R.style.CustomAppTheme)
         dialog.show(supportFragmentManager, TextInputDialog.TAG)
     }
 }

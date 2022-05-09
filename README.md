@@ -7,7 +7,6 @@ This repository contains sample projects using different features of the PDFTron
 |[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://www.pdftron.com/documentation/android/get-started/integration/gradle#integrating-standard-version)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
 |[QuickStartPDFViewer](./QuickStartPDFViewer)| Quick start viewer integration using Gradle as described [in this guide](https://www.pdftron.com/documentation/android/guides/getting-started/try-demo/)|
-|[NativeCPPExample](./NativeCppExample)| Native C++ PDFTron library on Android|
 
 ## Customization samples
 | Sample | Description |
@@ -15,11 +14,6 @@ This repository contains sample projects using different features of the PDFTron
 |[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/customize-color-picker#customize-the-icon-picker)
 |[CustomUI](./CustomUI)| Various samples to customize the UI of PdfViewCtrlTabHostFragment which includes samples for: modifying the quick menu, modifying the annotation toolbar, modifying the options toolbar, and adding custom views to the viewer.
 |[CustomToolSample](./CustomToolSample)| Create a custom tool as described [in this guide](https://www.pdftron.com/documentation/android/guides/advanced/custom-tool)
-
-## Signing samples
-| Sample | Description |
-|--|--|
-|[SigningSample](./SigningSample)| Customize the viewer UI to assign signing fields to a user, sign a document and send the document to a Firebase server
 
 ## Collaboration samples
 | Sample | Description |
@@ -31,7 +25,6 @@ This repository contains sample projects using different features of the PDFTron
 | Sample | Description |
 |--|--|
 |[DemoHTML2PDF](./DemoHTML2PDF)| HTML to PDF conversion as described [in this guide](https://www.pdftron.com/documentation/android/guides/basics/html-to-pdf)|
-|[CADViewer](./CADViewer)| CAD to PDF conversion using WebViewer Server [in this guide](https://www.pdftron.com/documentation/web/guides/wv-server-usage/#getpdf)|
 
 ## Running the samples
 

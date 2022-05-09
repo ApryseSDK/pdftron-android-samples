@@ -4,10 +4,10 @@ buildscript {
     
     repositories {
         google()
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:3.4.1'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -21,7 +21,7 @@ ext.myPdftronVersion = file("${rootDir}/../pdftron-version.txt").text.trim()
 allprojects {
     repositories {
         google()
-        mavenCentral()
+        jcenter()
         maven {
             url myPdftronRepo
         }

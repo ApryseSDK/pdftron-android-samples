@@ -25,8 +25,7 @@
 
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan"
-            android:theme="@style/PDFTronAppTheme"
-            android:exported="true">
+            android:theme="@style/CustomAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

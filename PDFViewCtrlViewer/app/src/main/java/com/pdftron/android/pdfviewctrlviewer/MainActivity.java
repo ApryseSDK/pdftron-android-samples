@@ -1,31 +1,22 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.FrameLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.controls.AnnotationToolbar;
+import com.pdftron.pdf.controls.AnnotationToolbarButtonId;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
-import com.pdftron.pdf.widget.preset.component.PresetBarComponent;
-import com.pdftron.pdf.widget.preset.component.PresetBarViewModel;
-import com.pdftron.pdf.widget.preset.component.view.PresetBarView;
-import com.pdftron.pdf.widget.preset.signature.SignatureViewModel;
-import com.pdftron.pdf.widget.toolbar.ToolManagerViewModel;
-import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
-import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
-import com.pdftron.pdf.widget.toolbar.component.AnnotationToolbarComponent;
-import com.pdftron.pdf.widget.toolbar.component.AnnotationToolbarViewModel;
-import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
-import com.pdftron.pdf.widget.toolbar.component.view.AnnotationToolbarView;
 
 import java.io.File;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -33,10 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private PDFViewCtrl mPdfViewCtrl;
     private PDFDoc mPdfDoc;
     private ToolManager mToolManager;
-    private AnnotationToolbarComponent mAnnotationToolbarComponent;
-    private PresetBarComponent mPresetBarComponent;
-    private FrameLayout mToolbarContainer;
-    private FrameLayout mPresetContainer;
+    private AnnotationToolbar mAnnotationToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
-        mToolbarContainer = findViewById(R.id.annotation_toolbar_container);
-        mPresetContainer = findViewById(R.id.preset_container);
         setupToolManager();
         setupAnnotationToolbar();
         try {
@@ -68,40 +54,11 @@ public class MainActivity extends AppCompatActivity {
      * Helper method to set up and initialize the AnnotationToolbar.
      */
     public void setupAnnotationToolbar() {
-        ToolManagerViewModel toolManagerViewModel = ViewModelProviders.of(this).get(ToolManagerViewModel.class);
-        toolManagerViewModel.setToolManager(mToolManager);
-        SignatureViewModel signatureViewModel = ViewModelProviders.of(this).get(SignatureViewModel.class);
-        PresetBarViewModel presetViewModel = ViewModelProviders.of(this).get(PresetBarViewModel.class);
-        AnnotationToolbarViewModel annotationToolbarViewModel = ViewModelProviders.of(this).get(AnnotationToolbarViewModel.class);
-
-        // Create our UI components for the annotation toolbar annd preset bar
-        mAnnotationToolbarComponent = new AnnotationToolbarComponent(
-                this,
-                annotationToolbarViewModel,
-                presetViewModel,
-                toolManagerViewModel,
-                new AnnotationToolbarView(mToolbarContainer)
-        );
-
-        mPresetBarComponent = new PresetBarComponent(
-                this,
-                getSupportFragmentManager(),
-                presetViewModel,
-                toolManagerViewModel,
-                signatureViewModel,
-                new PresetBarView(mPresetContainer)
-        );
-
-        // Create our custom toolbar and pass it to the annotation toolbar UI component
-        mAnnotationToolbarComponent.inflateWithBuilder(
-                AnnotationToolbarBuilder.withTag("Custom Toolbar")
-                        .addToolButton(ToolbarButtonType.SQUARE, DefaultToolbars.ButtonId.SQUARE.value())
-                        .addToolButton(ToolbarButtonType.INK, DefaultToolbars.ButtonId.INK.value())
-                        .addToolButton(ToolbarButtonType.FREE_HIGHLIGHT, DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value())
-                        .addToolButton(ToolbarButtonType.ERASER, DefaultToolbars.ButtonId.ERASER.value())
-                        .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
-                        .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
-        );
+        mAnnotationToolbar = findViewById(R.id.annotationToolbar);
+        // Remember to initialize your ToolManager before calling setup
+        mAnnotationToolbar.setup(mToolManager);
+        mAnnotationToolbar.hideButton(AnnotationToolbarButtonId.CLOSE);
+        mAnnotationToolbar.show();
     }
 
     /**
@@ -118,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
         // Alternatively, you can open the document using Uri:
         // Uri fileUri = Uri.fromFile(file);
         // mPdfDoc = mPdfViewCtrl.openPDFUri(fileUri, null);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Handle configuration changes from the toolbar here
+        mAnnotationToolbar.onConfigurationChanged(newConfig);
     }
 
     /**

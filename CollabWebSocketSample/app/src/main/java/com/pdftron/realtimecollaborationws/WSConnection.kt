@@ -2,7 +2,6 @@ package com.pdftron.realtimecollaborationws
 
 import android.util.Log
 import com.pdftron.collab.db.entity.AnnotationEntity
-import com.pdftron.collab.service.CustomServiceUtils
 import com.pdftron.collab.utils.XfdfUtils
 import com.pdftron.fdf.FDFDoc
 import io.reactivex.*
@@ -60,7 +59,7 @@ class WSConnection : WebSocketListener() {
             val json = JSONObject()
             json.put("annotationId", annot.id)
             json.put("documentId", DOCUMENT_ID)
-            json.put("xfdfString", XfdfUtils.validateXfdf(CustomServiceUtils.getXfdfFromFile(annot.xfdf)))
+            json.put("xfdfString", XfdfUtils.validateXfdf(annot.xfdf))
             val result = json.toString()
             if (mWebSocket != null) {
                 mWebSocket!!.send(result)

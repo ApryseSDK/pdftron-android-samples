@@ -18,10 +18,9 @@
         <activity android:name="com.pdftron.pdf.controls.DocumentActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
                   android:windowSoftInputMode="adjustPan"
-                  android:theme="@style/PDFTronAppTheme"/>
+                  android:theme="@style/CustomAppTheme"/>
 
-        <activity android:name=".MainActivity"
-            android:exported="true">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

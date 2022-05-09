@@ -1,7 +1,6 @@
 package com.pdftron.android.samples.stickynote;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.pdftron.pdf.controls.DocumentActivity;
@@ -16,13 +15,7 @@ public class ReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reader);
         // Open our sample document in the 'res/raw' resource folder
-
-        Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
-                .withFileRes(R.raw.sample)
-                .usingNewUi(true)
-                .build();
-        startActivity(intent);
-
+        DocumentActivity.openDocument(this, R.raw.sample);
         finish();
     }
 }

@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.pdftron.collab.db.entity.AnnotationEntity
-import com.pdftron.collab.service.CustomServiceUtils
 import com.pdftron.collab.utils.XfdfUtils
 import com.pdftron.fdf.FDFDoc
 import com.pdftron.pdf.utils.Utils
@@ -141,7 +140,7 @@ class Server {
             val key = p0.key
             Log.d(TAG, "delete: {$key}")
 
-            val xfdf = XfdfUtils.wrapDeleteXfdf(key)
+            val xfdf = "<delete>${key}</delete>"
             mBroadcaster.onNext(ServerEvent.ImportXfdfCommand(xfdf, false))
         }
     }
@@ -228,7 +227,7 @@ class Server {
             val op = entity.at
             val annotId = entity.id
             val authorId = auth.currentUser!!.uid
-            val xfdf = CustomServiceUtils.getXfdfFromFile(entity.xfdf)
+            val xfdf = entity.xfdf
             when (op) {
                 OP_ADD -> {
                     val annotation = Annotation(

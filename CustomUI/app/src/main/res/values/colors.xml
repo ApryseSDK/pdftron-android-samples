@@ -12,13 +12,4 @@
 
     <color name="annotation_tool_background">#D1D5E3</color>
 
-    <color name="background_color">#37474F</color>
-    <color name="heading_color">#8FDDFA</color>
-    <color name="body_text_color">#B7CED1</color>
-    <color name="secondary_color">#88ADBB</color>
-    <color name="accent_color">#83D4C6</color>
-    <color name="utility_variant_color">#2B3539</color>
-    <color name="subtle_utility_color">#303C42</color>
-    <color name="disabled_state_color">#556D76</color>
-
 </resources>

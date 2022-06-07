@@ -12,7 +12,9 @@ import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.CommonToast;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Delegate class that adds custom quick menu buttons when annotations are selected. In particular,
@@ -54,28 +56,17 @@ public class CustomQuickMenu extends CustomizationDelegate {
                 // Programmatically change quick menu
                 try {
                     if (annot != null && quickMenu != null) {
-                        if (annot.getType() == Annot.e_Square) {
+                        if (annot.getType() == Annot.e_Text) {
                             // Add a custom quick menu button when square annotations are selected
                             // to the first row called "Link" with a ic_link_black_24dp icon
-                            QuickMenuItem item =
+                            QuickMenuItem flatten =
                                     new QuickMenuItem(context,
-                                            R.id.qm_custom_link,
-                                            QuickMenuItem.FIRST_ROW_MENU
+                                            R.id.qm_flatten,
+                                            QuickMenuItem.OVERFLOW_ROW_MENU
                                     );
-                            item.setTitle(R.string.qm_custom_link);
-                            item.setIcon(R.drawable.ic_link_black_24dp);
-                            item.setOrder(3);
                             ArrayList<QuickMenuItem> items = new ArrayList<>(1);
-                            items.add(item);
-                            quickMenu.addMenuEntries(items);
-                        } else if (annot.getType() == Annot.e_Circle) {
-                            // Add a custom quick menu button when circle annotations are selected
-                            // to the overflow called "Unlink"
-                            QuickMenuItem item = new QuickMenuItem(context, R.id.qm_custom_unlink, QuickMenuItem.OVERFLOW_ROW_MENU);
-                            item.setTitle(R.string.qm_custom_unlink);
-                            ArrayList<QuickMenuItem> items = new ArrayList<>(1);
-                            items.add(item);
-                            quickMenu.addMenuEntries(items);
+                            items.add(flatten);
+                            quickMenu.removeMenuEntries(items);
                         }
                     }
                 } catch (Exception ex) {

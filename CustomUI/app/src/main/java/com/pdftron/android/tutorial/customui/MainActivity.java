@@ -17,11 +17,13 @@ import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
@@ -50,8 +52,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
-                .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .hidePresetBars(new ToolbarButtonType[]{
+                        ToolbarButtonType.STICKY_NOTE
+                })
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
@@ -84,29 +88,13 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         return AnnotationToolbarBuilder.withTag(NOTES_TOOLBAR_TAG) // Identifier for toolbar
                 .setToolbarName("Notes Toolbar") // Name used when displaying toolbar
                 .addToolButton(ToolbarButtonType.INK, 1)
-                .addToolButton(ToolbarButtonType.STICKY_NOTE, 2)
-                .addToolButton(ToolbarButtonType.TEXT_HIGHLIGHT, 3)
-                .addToolButton(ToolbarButtonType.TEXT_UNDERLINE, 4)
-                .addToolButton(ToolbarButtonType.TEXT_STRIKEOUT, 5)
-                .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
-                .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
-    }
-
-    private AnnotationToolbarBuilder buildShapesToolbar() {
-        return AnnotationToolbarBuilder.withTag(SHAPES_TOOLBAR_TAG) // Identifier for toolbar
-                .setToolbarName("Shapes Toolbar") // Name used when displaying toolbar
-                .addToolButton(ToolbarButtonType.SQUARE, DefaultToolbars.ButtonId.SQUARE.value())
-                .addToolButton(ToolbarButtonType.CIRCLE, DefaultToolbars.ButtonId.CIRCLE.value())
-                .addToolButton(ToolbarButtonType.LINE, DefaultToolbars.ButtonId.LINE.value())
-                .addToolButton(ToolbarButtonType.POLYGON, DefaultToolbars.ButtonId.POLYGON.value())
-                .addToolButton(ToolbarButtonType.POLYLINE, DefaultToolbars.ButtonId.POLYLINE.value())
-                .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
-                .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
+                .addToolButton(ToolbarButtonType.STICKY_NOTE, 2);
     }
 
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override

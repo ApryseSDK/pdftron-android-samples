@@ -28,6 +28,8 @@ import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     private PdfViewCtrlTabHostFragment2 mPdfViewCtrlTabHostFragment;
 
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
+    private ToolManager mToolManager;
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
 
     @Override
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
+
                 .usingTheme(R.style.CustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
@@ -104,11 +108,14 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
     }
 
+
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
-            ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
-            tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+            mToolManager = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            mToolManager.enableAnnotManager("12345-67890-ABCD-EFGH", (action, xfdfCommand, xfdfJSON) -> {
+            });
+            mToolManager.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> annots) {
                     demoExtraAnnotData("onAnnotationsAdded", annots);
@@ -150,7 +157,14 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            try {
+                String exportPath = "/storage/emulated/0/Download/Asdf.pdf";
+                File copy = new File(exportPath);
+                FileUtils.copyFile(mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getFile(), copy);
+                mToolManager.getAnnotManager().exportToFile(copy);
+                Toast.makeText(this, "File was exported to: " + exportPath, Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+            }
         }
         return false;
     }

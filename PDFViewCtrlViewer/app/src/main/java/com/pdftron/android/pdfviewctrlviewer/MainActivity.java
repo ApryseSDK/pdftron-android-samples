@@ -1,5 +1,8 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
@@ -9,10 +12,14 @@ import androidx.lifecycle.ViewModelProviders;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.annots.FileAttachment;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
+import com.pdftron.pdf.utils.RequestCode;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.preset.component.PresetBarComponent;
 import com.pdftron.pdf.widget.preset.component.PresetBarViewModel;
 import com.pdftron.pdf.widget.preset.component.view.PresetBarView;
@@ -38,6 +45,15 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mToolbarContainer;
     private FrameLayout mPresetContainer;
 
+    protected ToolManager.ToolMode mImageCreationMode;
+    protected boolean mImageStampDelayCreation = false;
+    protected boolean mImageSignatureDelayCreation = false;
+    protected android.net.Uri mOutputFileUri;
+    protected PointF mAnnotTargetPoint;
+    protected int mAnnotTargetPage;
+    protected Intent mAnnotIntentData;
+    protected Long mTargetWidget;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,12 +72,104 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+
+        if (mImageSignatureDelayCreation) {
+            mImageSignatureDelayCreation = false;
+            consumeImageSignature();
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (Activity.RESULT_OK == resultCode) {
+            if (requestCode == RequestCode.PICK_PHOTO_CAM) {
+                // save the data and process the image stamp
+                // after onResume is called.
+                if (mImageCreationMode != null) {
+                    if (mImageCreationMode == ToolManager.ToolMode.SIGNATURE) {
+                        mImageSignatureDelayCreation = true;
+                        mAnnotIntentData = data;
+                    } else {
+                        mImageStampDelayCreation = true;
+                        mAnnotIntentData = data;
+                    }
+                }
+            }
+        }
+    }
+
+    protected void consumeImageSignature() {
+        if (mAnnotTargetPoint == null && (mTargetWidget == null || mTargetWidget == 0)) {
+            // from preset bar
+            PresetBarViewModel presetViewModel = ViewModelProviders.of(this).get(PresetBarViewModel.class);
+            presetViewModel.saveStampPreset(AnnotStyle.CUSTOM_ANNOT_TYPE_SIGNATURE,
+                    ViewerUtils.getImageSignaturePath(this,
+                            mAnnotIntentData, mOutputFileUri));
+        } else {
+            ViewerUtils.createImageSignature(this, mAnnotIntentData, mPdfViewCtrl,
+                    mOutputFileUri, mAnnotTargetPoint, mAnnotTargetPage, mTargetWidget);
+        }
+    }
+
     /**
      * Helper method to set up and initialize the ToolManager.
      */
     public void setupToolManager() {
         mToolManager = ToolManagerBuilder.from()
                 .build(this, mPdfViewCtrl);
+
+        mToolManager.setAdvancedAnnotationListener(new ToolManager.AdvancedAnnotationListener() {
+            @Override
+            public void fileAttachmentSelected(FileAttachment attachment) {
+
+            }
+
+            @Override
+            public void freehandStylusUsedFirstTime() {
+
+            }
+
+            @Override
+            public void imageStamperSelected(PointF targetPoint) {
+
+            }
+
+            @Override
+            public void imageSignatureSelected(PointF targetPoint, int targetPage, Long widget) {
+                mImageCreationMode = ToolManager.ToolMode.SIGNATURE;
+                mAnnotTargetPoint = targetPoint;
+                mAnnotTargetPage = targetPage;
+                mTargetWidget = widget;
+                mOutputFileUri = ViewerUtils.openImageIntent(MainActivity.this);
+
+            }
+
+            @Override
+            public void attachFileSelected(PointF targetPoint) {
+
+            }
+
+            @Override
+            public void freeTextInlineEditingStarted() {
+
+            }
+
+            @Override
+            public boolean newFileSelectedFromTool(String filePath, int pageNumber) {
+                return false;
+            }
+
+            @Override
+            public void fileCreated(String fileLocation, AnnotAction action) {
+
+            }
+        });
     }
 
     /**
@@ -99,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                         .addToolButton(ToolbarButtonType.INK, DefaultToolbars.ButtonId.INK.value())
                         .addToolButton(ToolbarButtonType.FREE_HIGHLIGHT, DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value())
                         .addToolButton(ToolbarButtonType.ERASER, DefaultToolbars.ButtonId.ERASER.value())
+                        .addToolButton(ToolbarButtonType.SIGNATURE, DefaultToolbars.ButtonId.SIGNATURE.value())
                         .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
                         .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
         );

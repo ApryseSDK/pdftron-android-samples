@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.MyCustomAppTheme)
-                .build(this);
+                .build(this, CustomTabHostFragment.class);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
         // Apply customizations to tab host fragment

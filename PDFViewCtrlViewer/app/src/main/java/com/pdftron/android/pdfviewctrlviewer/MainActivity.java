@@ -1,18 +1,25 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
+import android.content.Intent;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.annots.FileAttachment;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
+import com.pdftron.pdf.utils.CommonToast;
+import com.pdftron.pdf.utils.RequestCode;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.preset.component.PresetBarComponent;
 import com.pdftron.pdf.widget.preset.component.PresetBarViewModel;
 import com.pdftron.pdf.widget.preset.component.view.PresetBarView;
@@ -38,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mToolbarContainer;
     private FrameLayout mPresetContainer;
 
+    // Insert File Attachment
+    protected boolean mFileAttachmentDelayCreation = false;
+    protected boolean mSaveFileAttachmentDelay = false;
+    protected Intent mAnnotIntentData;
+    protected PointF mAnnotTargetPoint;
+    protected FileAttachment mFileAttachment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
-            viewFromResource(R.raw.sample, "sample_file");
+            viewFromResource(R.raw.sample, "sample_attach");
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
@@ -62,6 +76,73 @@ public class MainActivity extends AppCompatActivity {
     public void setupToolManager() {
         mToolManager = ToolManagerBuilder.from()
                 .build(this, mPdfViewCtrl);
+        mToolManager.setFileAttachmentAnnotationListener(new ToolManager.FileAttachmentAnnotationListener() {
+            @Override
+            public void onSaveFileAttachmentSelected(FileAttachment fileAttachment, Intent intent) {
+                if (intent != null) {
+                    mFileAttachment = fileAttachment;
+                    startActivityForResult(intent, RequestCode.CREATE_FILE_IN_SYSTEM);
+                }
+            }
+        });
+        mToolManager.setAdvancedAnnotationListener(new ToolManager.AdvancedAnnotationListener() {
+            @Override
+            public void fileAttachmentSelected(FileAttachment attachment) {
+
+            }
+
+            @Override
+            public void freehandStylusUsedFirstTime() {
+
+            }
+
+            @Override
+            public void imageStamperSelected(PointF targetPoint) {
+
+            }
+
+            @Override
+            public void imageSignatureSelected(PointF targetPoint, int targetPage, Long widget) {
+
+            }
+
+            @Override
+            public void attachFileSelected(PointF targetPoint) {
+                mAnnotTargetPoint = targetPoint;
+                ViewerUtils.openFileIntent(MainActivity.this);
+            }
+
+            @Override
+            public void freeTextInlineEditingStarted() {
+
+            }
+
+            @Override
+            public boolean newFileSelectedFromTool(String filePath, int pageNumber) {
+                return false;
+            }
+
+            @Override
+            public void fileCreated(String fileLocation, AnnotAction action) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestCode.SELECT_FILE) {
+            // save the data and process the file attachment
+            // after onResume is called.
+            mFileAttachmentDelayCreation = true;
+            mAnnotIntentData = data;
+        }
+
+        if (requestCode == RequestCode.CREATE_FILE_IN_SYSTEM) {
+            mSaveFileAttachmentDelay = true;
+            mAnnotIntentData = data;
+        }
     }
 
     /**
@@ -99,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                         .addToolButton(ToolbarButtonType.INK, DefaultToolbars.ButtonId.INK.value())
                         .addToolButton(ToolbarButtonType.FREE_HIGHLIGHT, DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value())
                         .addToolButton(ToolbarButtonType.ERASER, DefaultToolbars.ButtonId.ERASER.value())
+                        .addToolButton(ToolbarButtonType.ATTACHMENT, DefaultToolbars.ButtonId.ATTACHMENT.value())
                         .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
                         .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
         );
@@ -138,6 +220,20 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (mPdfViewCtrl != null) {
             mPdfViewCtrl.resume();
+        }
+
+        if (mFileAttachmentDelayCreation) {
+            mFileAttachmentDelayCreation = false;
+            ViewerUtils.createFileAttachment(this, mAnnotIntentData, mPdfViewCtrl, mAnnotTargetPoint);
+        }
+
+        if (mSaveFileAttachmentDelay) {
+            // we are not touching the current document so can execute right away
+            mSaveFileAttachmentDelay = false;
+            if (mFileAttachment != null && mAnnotIntentData != null) {
+                boolean success = ViewerUtils.exportFileAttachment(mPdfViewCtrl, mFileAttachment, mAnnotIntentData.getData());
+                CommonToast.showText(mPdfViewCtrl.getContext(), success ? com.pdftron.pdf.tools.R.string.file_attachments_saved : com.pdftron.pdf.tools.R.string.tools_misc_operation_failed);
+            }
         }
     }
 

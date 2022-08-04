@@ -1,5 +1,6 @@
 package com.pdftron.android.tutorial.customui;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,9 +19,12 @@ import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.config.ToolStyleConfig;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.AnnotStyleDialogFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
@@ -30,7 +34,9 @@ import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment2.TabHostListener {
@@ -108,6 +114,10 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            Set<String> fonts = new HashSet<>();
+            fonts.add("fonts/Roboto-Regular.ttf");
+            tm.setFreeTextFonts(fonts);
+
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> annots) {
@@ -150,7 +160,12 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            AnnotStyle annotStyle = new AnnotStyle();
+            annotStyle.setAnnotType(Annot.e_FreeText);
+            annotStyle.setStyle(Color.BLUE, Color.YELLOW, 5f, 0.8f);
+            AnnotStyleDialogFragment.Builder styleDialogBuilder = new AnnotStyleDialogFragment.Builder(annotStyle).setFontListFromAsset(ToolStyleConfig.getInstance().getFreeTextFonts());
+            AnnotStyleDialogFragment annotStyleDialog = styleDialogBuilder.build();
+            annotStyleDialog.show(getSupportFragmentManager(), "CUSTOM_TAG");
         }
         return false;
     }

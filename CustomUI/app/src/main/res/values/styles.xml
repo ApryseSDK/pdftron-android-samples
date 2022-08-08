@@ -119,6 +119,7 @@
     <!-- Theme for all toolbars, including browsers -->
     <style name="FragmentToolbarTheme" parent="ToolbarTheme">
         <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:colorControlHighlight" tools:targetApi="23">@color/disabled_state_color</item>
         <item name="titleTextColor">@color/body_text_color</item>
         <item name="colorControlNormal">@color/body_text_color</item>
         <item name="iconTint">@color/body_text_color</item>

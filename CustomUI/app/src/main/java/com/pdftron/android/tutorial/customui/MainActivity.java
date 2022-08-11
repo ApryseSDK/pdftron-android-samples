@@ -6,10 +6,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
@@ -21,9 +24,13 @@ import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.dialog.toolbarswitcher.ToolbarSwitcherViewModel;
+import com.pdftron.pdf.dialog.toolbarswitcher.button.ToolbarSwitcherButton;
+import com.pdftron.pdf.dialog.toolbarswitcher.model.ToolbarSwitcherState;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
@@ -51,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
+                .hidePresetBar(true)
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
@@ -60,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
-
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
         new CustomLinkClick(MainActivity.this, mPdfViewCtrlTabHostFragment);
@@ -108,6 +115,21 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            ToolbarSwitcherButton switcher = this.findViewById(R.id.switcher_button);
+            switcher.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPdfViewCtrlTabHostFragment.handleToolSwitcherClicked(switcher);
+                }
+            });
+
+            mPdfViewCtrlTabHostFragment.addOnToolbarChangedListener(new PdfViewCtrlTabHostFragment2.OnToolbarChangedListener() {
+                @Override
+                public void onToolbarChanged(String newToolbar) {
+                    switcher.setText(newToolbar);
+                }
+            });
+
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> annots) {

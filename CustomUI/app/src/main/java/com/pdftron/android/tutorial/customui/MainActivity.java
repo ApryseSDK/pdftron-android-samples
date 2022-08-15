@@ -1,12 +1,14 @@
 package com.pdftron.android.tutorial.customui;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,11 +19,14 @@ import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
@@ -149,8 +154,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+        if (menuItem.getItemId() == R.id.add_pin) {
+            pinClick(this, mPdfViewCtrlTabHostFragment);
         }
         return false;
     }
@@ -263,5 +268,33 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
             }
         }
         return null;
+    }
+
+    private static void pinClick(@NonNull final Context context,
+            @NonNull final PdfViewCtrlTabHostFragment2 hostFragment) {
+
+        PdfViewCtrlTabFragment2 tabFragment = hostFragment.getCurrentPdfViewCtrlFragment();
+        if (tabFragment != null) {
+            final PDFViewCtrl pdfViewCtrl = tabFragment.getPDFViewCtrl();
+            final ToolManager toolManager = tabFragment.getToolManager();
+
+            if (pdfViewCtrl != null && toolManager != null) {
+                int centerX = pdfViewCtrl.getWidth() / 2;
+                int centerY = pdfViewCtrl.getHeight() / 2;
+                int iconSize = (int) Utils.convDp2Pix(context, 16);
+
+                CustomRelativeLayout overlay = new CustomRelativeLayout(context);
+                overlay.setBackgroundColor(Color.RED);
+                overlay.setZoomWithParent(false);
+
+                pdfViewCtrl.addView(overlay);
+                overlay.setScreenRect(
+                        centerX - iconSize,
+                        centerY + iconSize,
+                        centerX + iconSize,
+                        centerY - iconSize,
+                        pdfViewCtrl.getCurrentPage());
+            }
+        }
     }
 }

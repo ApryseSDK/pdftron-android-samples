@@ -28,6 +28,7 @@
         android:onClick="cloudSq"
         android:text="Cloud Square"
         android:textColor="@color/tools_colors_white"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -41,6 +42,7 @@
         android:onClick="custStamp"
         android:text="Custom Stamp"
         android:textColor="@color/tools_colors_white"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline" />
 

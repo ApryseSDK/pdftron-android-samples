@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder
                 .from()
                 .setRealTimeAnnotEdit(false)
-                .addCustomizedTool(CustomCloudSquare.MODE, CustomCloudSquare.class)
-                .addCustomizedTool(CustomStamp.MODE, CustomStamp.class);
+                .addCustomizedTool(ToolManager.ToolMode.ANNOT_EDIT, CustomAnnotEdit.class);
 
         ViewerConfig config = new ViewerConfig.Builder()
                 .toolManagerBuilder(toolManagerBuilder)

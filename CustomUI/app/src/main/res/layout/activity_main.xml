@@ -52,10 +52,6 @@
                 app:srcCompat="@drawable/annotation_note_icon_checkmark_fill"
                 app:tint="#4CAF50" />
         </androidx.appcompat.widget.Toolbar>
-        <FrameLayout
-            android:id="@+id/toolbar_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
     </com.pdftron.pdf.widget.AppBarLayout>
 
     <FrameLayout

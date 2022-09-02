@@ -6,14 +6,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <com.pdftron.pdf.widget.AppBarLayout
+        android:id="@+id/my_app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            style="?attr/pt_toolbar_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/pt_toolbar_theme"
+            app:contentInsetStart="@dimen/second_keyline"
+            app:navigationContentDescription="@string/abc_action_bar_up_description"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+            app:popupTheme="?attr/pt_toolbar_popup_theme"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Title">
+
+            <com.pdftron.pdf.dialog.toolbarswitcher.button.ToolbarSwitcherButton
+                android:id="@+id/my_switcher_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"></com.pdftron.pdf.dialog.toolbarswitcher.button.ToolbarSwitcherButton>
+
+            <TextView
+                android:id="@+id/toolbar_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Locked" />
+
+            <ImageView
+                android:id="@+id/toolbar_img"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/annotation_note_icon_checkmark_fill"
+                app:tint="#4CAF50" />
+        </androidx.appcompat.widget.Toolbar>
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.pdftron.pdf.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/my_app_bar_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

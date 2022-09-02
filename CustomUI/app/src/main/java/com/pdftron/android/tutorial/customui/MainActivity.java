@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.dialog.toolbarswitcher.button.ToolbarSwitcherButton;
 import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
@@ -51,15 +53,26 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
-                .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
-                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
+        ToolbarSwitcherButton switcher = this.findViewById(R.id.my_switcher_button);
+        switcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPdfViewCtrlTabHostFragment.handleToolSwitcherClicked(switcher);
+            }
+        });
+
+        mPdfViewCtrlTabHostFragment.addOnToolbarChangedListener(new PdfViewCtrlTabHostFragment2.OnToolbarChangedListener() {
+            @Override
+            public void onToolbarChanged(String newToolbar) {
+                switcher.setText(newToolbar);
+            }
+        });
 
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);

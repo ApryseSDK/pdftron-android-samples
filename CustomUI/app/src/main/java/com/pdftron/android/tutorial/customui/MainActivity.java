@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
+                .showTopToolbar(false)
+                .fullscreenModeEnabled(false)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingConfig(viewerConfig)

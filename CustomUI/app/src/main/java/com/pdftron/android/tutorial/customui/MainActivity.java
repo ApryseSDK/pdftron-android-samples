@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
+                .showBottomToolbar(false)
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
@@ -149,8 +150,12 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+        if (menuItem.getItemId() == R.id.action_my_reflow_mode) {
+            mPdfViewCtrlTabHostFragment.onToggleReflow();
+        } else if (menuItem.getItemId() == R.id.action_my_search) {
+            mPdfViewCtrlTabHostFragment.onSearchOptionSelected();
+        } else if (menuItem.getItemId() == R.id.action_my_thumbnail_view) {
+            mPdfViewCtrlTabHostFragment.onPageThumbnailOptionSelected(false, (Integer) null);
         }
         return false;
     }

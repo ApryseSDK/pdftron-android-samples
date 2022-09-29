@@ -2,7 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_show_toast"
-        android:title="Show toast"
+        android:id="@+id/action_my_reflow_mode"
+        android:title="Reflow"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_my_search"
+        android:title="Search"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_my_thumbnail_view"
+        android:title="Thumbnail"
         app:showAsAction="never" />
 </menu>

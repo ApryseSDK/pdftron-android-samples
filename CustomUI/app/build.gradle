@@ -23,8 +23,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.pdftron:pdftron:$myPdftronVersion"
-    implementation "com.pdftron:tools:$myPdftronVersion"
+    implementation "com.pdftron:pdftron:9.3.2-beta06"
+    implementation "com.pdftron:tools:9.3.2-beta06"
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

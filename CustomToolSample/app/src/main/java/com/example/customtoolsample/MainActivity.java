@@ -152,8 +152,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabDocumentLoaded(String tag) {
-                Button view = findViewById(R.id.button4);
-                AnnotUtils.createPdfFromView(view, 360, 120, new File(getFilesDir(), "output.pdf"));
+                // Create an appearance from a button and store into a PDF, note this can be any Android View
+                createTextWidgetAppearance();
+
+                // Add annotation modified listener to update the appearance when it gets resized
                 fragment.getCurrentPdfViewCtrlFragment().getToolManager().addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                     @Override
                     public void onAnnotationsAdded(Map<Annot, Integer> annots) {
@@ -169,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onAnnotationsModified(Map<Annot, Integer> annots, Bundle extra) {
                         for (Annot annot : annots.keySet()) {
                             try {
+                                // This will update all widgets, add extra logic here if you want to target specific widgets
                                 if (annot.getType() == Annot.e_Widget) {
                                     AnnotUtils.refreshCustomFreeTextAppearance(new File(getFilesDir(), "output.pdf"), annot);
                                 }
@@ -202,5 +205,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return fragment;
+    }
+
+    private void createTextWidgetAppearance() {
+        Button view = findViewById(R.id.button4);
+        AnnotUtils.createPdfFromView(view, 360, 120, new File(getFilesDir(), "output.pdf"));
     }
 }

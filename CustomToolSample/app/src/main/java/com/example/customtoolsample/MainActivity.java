@@ -2,21 +2,28 @@ package com.example.customtoolsample;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Button;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.model.FileInfo;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.Utils;
 
 import java.io.File;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder
                 .from()
                 .setRealTimeAnnotEdit(false)
-                .addCustomizedTool(CustomCloudSquare.MODE, CustomCloudSquare.class)
-                .addCustomizedTool(CustomStamp.MODE, CustomStamp.class);
+//                .addCustomizedTool(CustomStamp.MODE, CustomStamp.class);
+                .addCustomizedTool(ToolManager.ToolMode.FORM_TEXT_FIELD_CREATE, CustomStamp.class);
 
         ViewerConfig config = new ViewerConfig.Builder()
                 .toolManagerBuilder(toolManagerBuilder)
@@ -57,31 +64,143 @@ public class MainActivity extends AppCompatActivity {
                 .replace(fragmentContainer, fragment)
                 .commit();
 
+        fragment.addHostListener(new PdfViewCtrlTabHostFragment2.TabHostListener() {
+            @Override
+            public void onTabHostShown() {
+
+            }
+
+            @Override
+            public void onTabHostHidden() {
+
+            }
+
+            @Override
+            public void onLastTabClosed() {
+
+            }
+
+            @Override
+            public void onTabChanged(String tag) {
+
+            }
+
+            @Override
+            public boolean onOpenDocError() {
+                return false;
+            }
+
+            @Override
+            public void onNavButtonPressed() {
+
+            }
+
+            @Override
+            public void onShowFileInFolder(String fileName, String filepath, int itemSource) {
+
+            }
+
+            @Override
+            public boolean canShowFileInFolder() {
+                return false;
+            }
+
+            @Override
+            public boolean canShowFileCloseSnackbar() {
+                return false;
+            }
+
+            @Override
+            public boolean onToolbarCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+                return false;
+            }
+
+            @Override
+            public boolean onToolbarPrepareOptionsMenu(Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onToolbarOptionsItemSelected(MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onStartSearchMode() {
+
+            }
+
+            @Override
+            public void onExitSearchMode() {
+
+            }
+
+            @Override
+            public boolean canRecreateActivity() {
+                return false;
+            }
+
+            @Override
+            public void onTabPaused(FileInfo fileInfo, boolean isDocModifiedAfterOpening) {
+
+            }
+
+            @Override
+            public void onJumpToSdCardFolder() {
+
+            }
+
+            @Override
+            public void onTabDocumentLoaded(String tag) {
+                Button view = findViewById(R.id.button4);
+                AnnotUtils.createPdfFromView(view, 360, 120, new File(getFilesDir(), "output.pdf"));
+                fragment.getCurrentPdfViewCtrlFragment().getToolManager().addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+                    @Override
+                    public void onAnnotationsAdded(Map<Annot, Integer> annots) {
+
+                    }
+
+                    @Override
+                    public void onAnnotationsPreModify(Map<Annot, Integer> annots) {
+
+                    }
+
+                    @Override
+                    public void onAnnotationsModified(Map<Annot, Integer> annots, Bundle extra) {
+                        for (Annot annot : annots.keySet()) {
+                            try {
+                                if (annot.getType() == Annot.e_Widget) {
+                                    AnnotUtils.refreshCustomFreeTextAppearance(new File(getFilesDir(), "output.pdf"), annot);
+                                }
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAnnotationsPreRemove(Map<Annot, Integer> annots) {
+
+                    }
+
+                    @Override
+                    public void onAnnotationsRemoved(Map<Annot, Integer> annots) {
+
+                    }
+
+                    @Override
+                    public void onAnnotationsRemovedOnPage(int pageNum) {
+
+                    }
+
+                    @Override
+                    public void annotationsCouldNotBeAdded(String errorMessage) {
+
+                    }
+                });
+            }
+        });
+
         return fragment;
-    }
-
-    public void cloudSq(View view) {
-
-        useCloudSquare(fr);
-    }
-
-    public void custStamp(View view) {
-        useCustomStamp(fr);
-    }
-
-    public void useCloudSquare(@NonNull PdfViewCtrlTabHostFragment2 fragment) {
-        // Create our custom tool
-        ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
-        ToolManager.Tool customTool = toolManager.createTool(CustomCloudSquare.MODE, toolManager.getTool());
-        // Then set it in ToolManager
-        toolManager.setTool(customTool);
-    }
-
-    public void useCustomStamp(@NonNull PdfViewCtrlTabHostFragment2 fragment) {
-        // Create our custom tool
-        ToolManager toolManager = fragment.getCurrentPdfViewCtrlFragment().getToolManager();
-        ToolManager.Tool customTool = toolManager.createTool(CustomStamp.MODE, toolManager.getTool());
-        // Then set it in ToolManager
-        toolManager.setTool(customTool);
     }
 }

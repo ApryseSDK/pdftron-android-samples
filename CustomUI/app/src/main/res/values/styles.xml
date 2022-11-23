@@ -13,6 +13,9 @@
         <item name="colorPrimaryDark">@color/utility_variant_color</item>
         <item name="colorAccent">@color/accent_color</item>
 
+        <!-- Style of status bar color -->
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/holo_blue_dark</item>
+
         <!-- Style of popup menu background color -->
         <item name="colorBackgroundFloating">@color/background_color</item>
         <item name="android:colorBackgroundFloating" tools:targetApi="23">@color/background_color</item>  <!--Dialog background color for API 23 -->

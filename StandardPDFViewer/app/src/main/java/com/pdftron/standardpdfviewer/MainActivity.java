@@ -1,13 +1,22 @@
 package com.pdftron.standardpdfviewer;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.pdftron.common.PDFNetException;
+import com.pdftron.filters.SecondaryFileFilter;
+import com.pdftron.pdf.Convert;
+import com.pdftron.pdf.DocumentConversion;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
+import com.pdftron.pdf.utils.Utils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,26 +25,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // uncomment to use PDFViewCtrl only
-//        PDFViewCtrl pdfViewCtrl = findViewById(R.id.pdfviewctrl);
-//        try {
-//            pdfViewCtrl.openPDFUri(Uri.parse("https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf"), null);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
+        PDFViewCtrl pdfViewCtrl = findViewById(R.id.pdfviewctrl);
+        File lecture6 = Utils.copyResourceToLocal(this, R.raw.lecture, "lecture", ".ppt");
+        Uri fileUri = Uri.fromFile(lecture6);
 
-        boolean newUi = true;
+        try {
+            String tag = fileUri.getPath();
+            File file = new File(tag);
+            if (!file.exists()) {
+                throw new RuntimeException();
+            }
 
-        ViewerConfig.Builder builder = new ViewerConfig.Builder()
-                .useStandardLibrary(true)
-                .openUrlCachePath(this.getCacheDir().getAbsolutePath())
-                .saveCopyExportPath(this.getCacheDir().getAbsolutePath());
-        Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
-                .withUri(Uri.parse("https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"))
-                .usingConfig(builder.build())
-                .usingNewUi(newUi)
-                .build();
-        startActivity(intent);
-        finish();
+            // Crashes after the following is called if 'armeabi-v7a'
+            DocumentConversion documentConversion = Convert.universalConversion(tag, null);
+            pdfViewCtrl.openUniversalDocument(documentConversion);
+        } catch (Exception e) {
+
+        }
+
     }
 }

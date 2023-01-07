@@ -12,6 +12,12 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
+
+        ndk {
+            // Tells Gradle to build outputs for the following ABIs and package
+            // them into your APK.
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a' // If we remove 'arm64-v8a', it will crash on device
+        }
     }
     buildTypes {
         release {
@@ -28,7 +34,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // PDFTron SDK dependencies
-    implementation "com.pdftron:pdftron-standard:$myPdftronVersion"
+    implementation "com.pdftron:pdftron:$myPdftronVersion"
     implementation "com.pdftron:tools:$myPdftronVersion"
 
     implementation 'androidx.multidex:multidex:2.0.1'

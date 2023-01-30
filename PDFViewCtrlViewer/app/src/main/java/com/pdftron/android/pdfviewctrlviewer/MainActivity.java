@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProviders;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.Utils;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
         mToolbarContainer = findViewById(R.id.annotation_toolbar_container);
         mPresetContainer = findViewById(R.id.preset_container);
+        mPdfViewCtrl.setPagePresentationMode(PDFViewCtrl.PagePresentationMode.SINGLE_VERT);
         setupToolManager();
         setupAnnotationToolbar();
         try {
@@ -54,6 +57,20 @@ public class MainActivity extends AppCompatActivity {
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        try {
+            addCustomView(new Rect(100, 100, 340, 200));
+        } catch (PDFNetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addCustomView(Rect rect) {
+        CustomRelativeLayout view = new CustomRelativeLayout(this);
+        view.setBackgroundColor(getResources().getColor(R.color.orange));
+        view.setRect(mPdfViewCtrl, rect, 1);
+        view.setZoomWithParent(true);
+        mPdfViewCtrl.addView(view);
     }
 
     /**

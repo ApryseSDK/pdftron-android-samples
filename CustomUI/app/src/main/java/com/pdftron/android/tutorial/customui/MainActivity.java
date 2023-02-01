@@ -18,6 +18,8 @@ import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
@@ -48,15 +50,15 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder
+                .from()
+                .addCustomizedTool(ToolManager.ToolMode.FORM_TEXT_FIELD_CREATE, CustomTool.class);
+
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
-                .addToolbarBuilder(buildNotesToolbar())
-                .addToolbarBuilder(buildShapesToolbar())
-                .toolbarTitle("٩(◕‿◕｡)۶")
-                .fullscreenModeEnabled(false)
+                .toolManagerBuilder(toolManagerBuilder)
+                .pdfViewCtrlConfig(PDFViewCtrlConfig.getDefaultConfig(this).setHighlightFields(false))
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
-                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
@@ -81,34 +83,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         }
     }
 
-    private AnnotationToolbarBuilder buildNotesToolbar() {
-        return AnnotationToolbarBuilder.withTag(NOTES_TOOLBAR_TAG) // Identifier for toolbar
-                .setToolbarName("Notes Toolbar") // Name used when displaying toolbar
-                .addToolButton(ToolbarButtonType.INK, 1)
-                .addToolButton(ToolbarButtonType.STICKY_NOTE, 2)
-                .addToolButton(ToolbarButtonType.TEXT_HIGHLIGHT, 3)
-                .addToolButton(ToolbarButtonType.TEXT_UNDERLINE, 4)
-                .addToolButton(ToolbarButtonType.TEXT_STRIKEOUT, 5)
-                .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
-                .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
-    }
-
-    private AnnotationToolbarBuilder buildShapesToolbar() {
-        return AnnotationToolbarBuilder.withTag(SHAPES_TOOLBAR_TAG) // Identifier for toolbar
-                .setToolbarName("Shapes Toolbar") // Name used when displaying toolbar
-                .addToolButton(ToolbarButtonType.SQUARE, DefaultToolbars.ButtonId.SQUARE.value())
-                .addToolButton(ToolbarButtonType.CIRCLE, DefaultToolbars.ButtonId.CIRCLE.value())
-                .addToolButton(ToolbarButtonType.LINE, DefaultToolbars.ButtonId.LINE.value())
-                .addToolButton(ToolbarButtonType.POLYGON, DefaultToolbars.ButtonId.POLYGON.value())
-                .addToolButton(ToolbarButtonType.POLYLINE, DefaultToolbars.ButtonId.POLYLINE.value())
-                .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
-                .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
-    }
-
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            tm.setTextFieldCustomAppearanceEnabled(true);
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> annots) {

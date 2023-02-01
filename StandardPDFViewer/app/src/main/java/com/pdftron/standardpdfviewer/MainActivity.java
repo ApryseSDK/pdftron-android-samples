@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
+import com.pdftron.pdf.utils.Utils;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,14 +27,16 @@ public class MainActivity extends AppCompatActivity {
 //            ex.printStackTrace();
 //        }
 
+        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pptx");
+        Uri uri = Uri.fromFile(f);
         boolean newUi = true;
 
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
-                .useStandardLibrary(true)
+//                .useStandardLibrary(true)
                 .openUrlCachePath(this.getCacheDir().getAbsolutePath())
                 .saveCopyExportPath(this.getCacheDir().getAbsolutePath());
         Intent intent = DocumentActivity.IntentBuilder.fromActivityClass(this, DocumentActivity.class)
-                .withUri(Uri.parse("https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"))
+                .withUri(uri)
                 .usingConfig(builder.build())
                 .usingNewUi(newUi)
                 .build();

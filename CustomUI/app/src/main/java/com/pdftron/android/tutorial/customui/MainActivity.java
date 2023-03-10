@@ -11,13 +11,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.pdftron.android.tutorial.customui.custom.CustomAnnotEdit;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
+import com.pdftron.android.tutorial.customui.custom.CustomFormFill;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.android.tutorial.customui.custom.CustomTextFieldCreate;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
+    public static final String FORM_CREATE_TOOLBAR_TAG = "form_create_toolbar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +54,21 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
         File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
         Uri uri = Uri.fromFile(f);
+
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder
+                .from()
+                .addCustomizedTool(ToolManager.ToolMode.FORM_TEXT_FIELD_CREATE, CustomTextFieldCreate.class)
+                .addCustomizedTool(ToolManager.ToolMode.ANNOT_EDIT, CustomAnnotEdit.class)
+                .addCustomizedTool(ToolManager.ToolMode.FORM_FILL, CustomFormFill.class);
+
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
+                .addToolbarBuilder(buildFormFieldToolbar())
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
                 .fullscreenModeEnabled(false)
+                .pdfViewCtrlConfig(PDFViewCtrlConfig.getDefaultConfig(this).setHighlightFields(false))
+                .toolManagerBuilder(toolManagerBuilder)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
@@ -79,6 +95,12 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         if (mPdfViewCtrlTabHostFragment != null) {
             mPdfViewCtrlTabHostFragment.removeHostListener(this);
         }
+    }
+
+    private AnnotationToolbarBuilder buildFormFieldToolbar() {
+        return AnnotationToolbarBuilder.withTag(FORM_CREATE_TOOLBAR_TAG) // Identifier for toolbar
+                .setToolbarName("Form Create Toolbar") // Name used when displaying toolbar
+                .addToolButton(ToolbarButtonType.TEXT_FIELD, 1);
     }
 
     private AnnotationToolbarBuilder buildNotesToolbar() {
@@ -109,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+            tm.setTextFieldCustomAppearanceEnabled(true);
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> annots) {

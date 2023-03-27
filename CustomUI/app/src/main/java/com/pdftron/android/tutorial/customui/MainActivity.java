@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         setContentView(R.layout.activity_main);
 
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
-        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+        File f = Utils.copyResourceToLocal(this, R.raw.test1, "test1", ".pdf");
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
@@ -151,7 +152,16 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            PDFDoc doc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
+            try {
+                File f = Utils.copyResourceToLocal(this, R.raw.xfdf2, "xfdf", ".xfdf");
+                Uri uri = Uri.fromFile(f);
+                FDFDoc merge = FDFDoc.createFromXFDF(uri.getPath());
+                doc.fdfUpdate(merge);
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().update(true);
+            } catch (PDFNetException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

@@ -114,14 +114,32 @@ public class MainActivity extends AppCompatActivity implements CollabViewerTabHo
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
             try {
+
+                // START THIS METHOD WORKS
+//                PDFDoc doc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
+//                try {
+//                    File f = Utils.copyResourceToLocal(this, R.raw.xfdf2, "xfdf", ".xfdf");
+//                    Uri uri = Uri.fromFile(f);
+//                    FDFDoc merge = FDFDoc.createFromXFDF(uri.getPath());
+//                    doc.fdfUpdate(merge);
+//                    mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().update(true);
+//                } catch (PDFNetException e) {
+//                    e.printStackTrace();
+//                }
+
+                // END THIS METHOD WORKS
+
+                // START THIS METHOD DOESN'T WORK
                 mPdfViewCtrlTabHostFragment.getCollabManager().setCurrentUser("123", null);
                 mPdfViewCtrlTabHostFragment.getCollabManager().setCurrentDocument("1234");
                 File f = Utils.copyResourceToLocal(this, R.raw.xfdf2, "xfdf", ".xfdf");
                 Uri uri = Uri.fromFile(f);
                 FDFDoc initialMarkup = FDFDoc.createFromXFDF(uri.getPath());
                 String xfdf = initialMarkup.saveAsXFDF();
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc().fdfMerge(initialMarkup);
                 mPdfViewCtrlTabHostFragment.getCollabManager().importAnnotations(xfdf, true);
                 initialMarkup.close();
+                // END THIS METHOD DOESN'T WORK
             } catch (PDFNetException e) {
                 e.printStackTrace();
             }

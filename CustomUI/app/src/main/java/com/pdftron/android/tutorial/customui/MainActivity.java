@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements CollabViewerTabHo
                 Uri uri = Uri.fromFile(f);
                 FDFDoc initialMarkup = FDFDoc.createFromXFDF(uri.getPath());
                 String xfdf = initialMarkup.saveAsXFDF();
-                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc().fdfMerge(initialMarkup);
                 mPdfViewCtrlTabHostFragment.getCollabManager().importAnnotations(xfdf, true);
                 initialMarkup.close();
                 // END THIS METHOD DOESN'T WORK

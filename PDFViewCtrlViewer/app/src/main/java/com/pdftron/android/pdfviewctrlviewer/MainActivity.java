@@ -95,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
         // Create our custom toolbar and pass it to the annotation toolbar UI component
         mAnnotationToolbarComponent.inflateWithBuilder(
                 AnnotationToolbarBuilder.withTag("Custom Toolbar")
+                        .addToolStickyButton(
+                                ToolbarButtonType.SIGNATURE,
+                                DefaultToolbars.ButtonId.SIGNATURE.value()
+                        )
                         .addToolButton(ToolbarButtonType.SQUARE, DefaultToolbars.ButtonId.SQUARE.value())
                         .addToolButton(ToolbarButtonType.INK, DefaultToolbars.ButtonId.INK.value())
                         .addToolButton(ToolbarButtonType.FREE_HIGHLIGHT, DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value())

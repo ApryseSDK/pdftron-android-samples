@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
@@ -28,7 +29,11 @@ import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -105,9 +110,35 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
     }
 
+    private void setExternalXfdf() throws IOException, PDFNetException {
+        FileInputStream fis = new FileInputStream(Utils.copyResourceToLocal(this, R.raw.local_changes, "local_changes", ".xfdf"));
+        InputStreamReader inputStreamReader = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String receiveString = "";
+        StringBuilder stringBuilder = new StringBuilder();
+
+        while ( (receiveString = bufferedReader.readLine()) != null ) {
+            stringBuilder.append("").append(receiveString);
+        }
+
+        fis.close();
+        String ret = stringBuilder.toString();
+        mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager().getAnnotManager().onRemoteChange(ret);
+    }
+
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+
+            try {
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager().enableAnnotManager("tester");
+                setExternalXfdf();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (PDFNetException e) {
+                throw new RuntimeException(e);
+            }
+
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override

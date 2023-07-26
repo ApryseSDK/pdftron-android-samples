@@ -3,6 +3,7 @@ package com.pdftron.android.tutorial.customui;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,12 +15,16 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.collab.db.entity.AnnotationEntity;
+import com.pdftron.collab.ui.viewer.CollabManager;
+import com.pdftron.collab.ui.viewer.CollabViewerBuilder2;
+import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment2;
+import com.pdftron.collab.utils.XfdfUtils;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
-import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
@@ -35,12 +40,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment2.TabHostListener {
 
-    private PdfViewCtrlTabHostFragment2 mPdfViewCtrlTabHostFragment;
+    private CollabViewerTabHostFragment2 mPdfViewCtrlTabHostFragment;
 
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
@@ -57,13 +63,14 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .multiTabEnabled(false)
                 .fullscreenModeEnabled(false)
                 .build();
-        mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
-                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
+        mPdfViewCtrlTabHostFragment = CollabViewerBuilder2.withUri(uri)
+//                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
+//                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
-                .usingTheme(R.style.MyCustomAppTheme)
+//                .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
 
@@ -111,7 +118,24 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     }
 
     private void setExternalXfdf() throws IOException, PDFNetException {
-        FileInputStream fis = new FileInputStream(Utils.copyResourceToLocal(this, R.raw.local_changes, "local_changes", ".xfdf"));
+
+        CollabManager collabManager = mPdfViewCtrlTabHostFragment.getCollabManager();
+        collabManager.setCurrentUser("12345", "Tester1");
+        collabManager.setCurrentDocument("456789");
+
+        String xfdfAnnots = getStringFromXFDFFile(R.raw.xfdf_annots, "xfdf_annots");
+        String xfdfCommand = getStringFromXFDFFile(R.raw.xfdf_command, "xfdf_command");
+
+        // Doesn't work, annot not rotated
+        collabManager.importAnnotations(xfdfAnnots, true);
+
+        // Works, annot rotated
+//        collabManager.importAnnotationCommand(xfdfCommand, true);
+    }
+
+    String getStringFromXFDFFile(int fileRes, String fileName) throws IOException {
+
+        FileInputStream fis = new FileInputStream(Utils.copyResourceToLocal(this, fileRes, fileName, ".xfdf"));
         InputStreamReader inputStreamReader = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         String receiveString = "";
@@ -122,8 +146,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         }
 
         fis.close();
-        String ret = stringBuilder.toString();
-        mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager().getAnnotManager().onRemoteChange(ret);
+        return stringBuilder.toString();
     }
 
     @Override
@@ -131,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
 
             try {
-                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager().enableAnnotManager("tester");
+//                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager().enableAnnotManager("tester");
                 setExternalXfdf();
             } catch (IOException e) {
                 throw new RuntimeException(e);

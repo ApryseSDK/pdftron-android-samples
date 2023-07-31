@@ -1,18 +1,26 @@
 package com.pdftron.android.pdfviewctrlviewer;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.annots.FileAttachment;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AppUtils;
+import com.pdftron.pdf.utils.RequestCode;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.preset.component.PresetBarComponent;
 import com.pdftron.pdf.widget.preset.component.PresetBarViewModel;
 import com.pdftron.pdf.widget.preset.component.view.PresetBarView;
@@ -27,7 +35,7 @@ import com.pdftron.pdf.widget.toolbar.component.view.AnnotationToolbarView;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ToolManager.AdvancedAnnotationListener {
     private static final String TAG = MainActivity.class.getName();
 
     private PDFViewCtrl mPdfViewCtrl;
@@ -37,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private PresetBarComponent mPresetBarComponent;
     private FrameLayout mToolbarContainer;
     private FrameLayout mPresetContainer;
+
+    protected ToolManager.ToolMode mImageCreationMode;
+    protected PointF mAnnotTargetPoint;
+    protected android.net.Uri mOutputFileUri;
+    protected boolean mImageStampDelayCreation = false;
+    protected Intent mAnnotIntentData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +70,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (Activity.RESULT_OK == resultCode) {
+            if (requestCode == RequestCode.PICK_PHOTO_CAM) {
+                // save the data and process the image stamp
+                // after onResume is called.
+                if (mImageCreationMode != null) {
+                    if (mImageCreationMode == ToolManager.ToolMode.STAMPER) {
+                        mImageStampDelayCreation = true;
+                        mAnnotIntentData = data;
+                    }
+                }
+            }
+        } else {
+            if (mToolManager != null && mToolManager.getTool() != null) {
+                ((Tool) mToolManager.getTool()).clearTargetPoint();
+            }
+        }
+    }
+
     /**
      * Helper method to set up and initialize the ToolManager.
      */
     public void setupToolManager() {
         mToolManager = ToolManagerBuilder.from()
                 .build(this, mPdfViewCtrl);
+        mToolManager.setAdvancedAnnotationListener(this);
     }
 
     /**
@@ -99,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                         .addToolButton(ToolbarButtonType.INK, DefaultToolbars.ButtonId.INK.value())
                         .addToolButton(ToolbarButtonType.FREE_HIGHLIGHT, DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value())
                         .addToolButton(ToolbarButtonType.ERASER, DefaultToolbars.ButtonId.ERASER.value())
+                        .addToolButton(ToolbarButtonType.IMAGE, DefaultToolbars.ButtonId.IMAGE.value())
                         .addToolStickyButton(ToolbarButtonType.UNDO, DefaultToolbars.ButtonId.UNDO.value())
                         .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value())
         );
@@ -139,6 +177,11 @@ public class MainActivity extends AppCompatActivity {
         if (mPdfViewCtrl != null) {
             mPdfViewCtrl.resume();
         }
+
+        if (mImageStampDelayCreation) {
+            mImageStampDelayCreation = false;
+            ViewerUtils.createImageStamp(this, mAnnotIntentData, mPdfViewCtrl, mOutputFileUri, mAnnotTargetPoint);
+        }
     }
 
     @Override
@@ -158,5 +201,47 @@ public class MainActivity extends AppCompatActivity {
                 mPdfDoc = null;
             }
         }
+    }
+
+    @Override
+    public void fileAttachmentSelected(FileAttachment attachment) {
+
+    }
+
+    @Override
+    public void freehandStylusUsedFirstTime() {
+
+    }
+
+    @Override
+    public void imageStamperSelected(PointF targetPoint) {
+        mImageCreationMode = ToolManager.ToolMode.STAMPER;
+        mAnnotTargetPoint = targetPoint;
+        mOutputFileUri = ViewerUtils.openImageIntent(this);
+    }
+
+    @Override
+    public void imageSignatureSelected(PointF targetPoint, int targetPage, Long widget) {
+
+    }
+
+    @Override
+    public void attachFileSelected(PointF targetPoint) {
+
+    }
+
+    @Override
+    public void freeTextInlineEditingStarted() {
+
+    }
+
+    @Override
+    public boolean newFileSelectedFromTool(String filePath, int pageNumber) {
+        return false;
+    }
+
+    @Override
+    public void fileCreated(String fileLocation, AnnotAction action) {
+
     }
 }

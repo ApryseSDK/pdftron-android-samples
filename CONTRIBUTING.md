@@ -1,4 +1,4 @@
-# Contributing to PDFTron - Android samples
+# Contributing to Apryse - Android samples
 
 ## Issues
 1. Check existing issues (open/closed) to avoid duplicates.

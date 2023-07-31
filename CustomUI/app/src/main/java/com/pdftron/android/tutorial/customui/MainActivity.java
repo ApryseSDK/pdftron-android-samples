@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .fullscreenModeEnabled(false)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})

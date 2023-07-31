@@ -1,6 +1,6 @@
 # Signing app sample
 
-This sample demonstrates how to a Signing App in Android as described [in this blog](https://www.pdftron.com/blog/android/build-a-signing-app-in-android/). 
+This sample demonstrates how to a Signing App in Android as described [in this blog](https://apryse.com/blog/android/build-a-signing-app-in-android). 
 
 Creating Form | Signing Form
 --- | ---
@@ -16,7 +16,7 @@ app/
   src/                        - Project source files and resources.
   build.gradle                - Module level Gradle build file.
 build.gradle                  - Project level Gradle build file.
-gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and credentials.
+gradle.properties             - Project-wide Gradle settings. Contains Apryse license key and credentials.
 ```
 
 ## License

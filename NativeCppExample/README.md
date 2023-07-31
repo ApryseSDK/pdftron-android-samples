@@ -9,7 +9,7 @@ app/
   build.gradle                - Module level Gradle build file.
 PDFTron/                      - location of the native lib files
 build.gradle                  - Project level Gradle build file.
-gradle.properties             - Project-wide Gradle settings. Contains PDFTron license key and credentials.
+gradle.properties             - Project-wide Gradle settings. Contains Apryse license key and credentials.
 ```
 
 ## Instructions
@@ -49,7 +49,7 @@ gradle.properties
 4. Clean and run the project and you should see the installed fonts displaying in your simulator/device. Note that you can attach a debugger and step through the C++ code in `cpp/native-lib.cpp`
 
 ## Resources
-- Access  the C++ API [here](https://www.pdftron.com/api/PDFTronSDK/cpp/index.html)
+- Access  the C++ API [here](https://docs.apryse.com/api/PDFTronSDK/cpp/index.html)
 
 ## License
 See [License](./../LICENSE)

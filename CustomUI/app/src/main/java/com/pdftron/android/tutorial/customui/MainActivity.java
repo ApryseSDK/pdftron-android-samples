@@ -14,28 +14,34 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.collab.ui.viewer.CollabViewerBuilder2;
+import com.pdftron.collab.ui.viewer.CollabViewerTabHostFragment2;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
-import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHostFragment2.TabHostListener {
 
-    private PdfViewCtrlTabHostFragment2 mPdfViewCtrlTabHostFragment;
+    private CollabViewerTabHostFragment2 mPdfViewCtrlTabHostFragment;
 
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
@@ -46,18 +52,21 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         setContentView(R.layout.activity_main);
 
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
-        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+        File f = Utils.copyResourceToLocal(this, R.raw.sample2, "sample2", ".pdf");
+//        File f = new File("/data/data/com.pdftron.android.tutorial.customui/files/Getting Started.pdf");
         Uri uri = Uri.fromFile(f);
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
                 .toolbarTitle("٩(◕‿◕｡)۶")
+                .multiTabEnabled(false)
                 .fullscreenModeEnabled(false)
                 .build();
-        mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
+        mPdfViewCtrlTabHostFragment = CollabViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
                 .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
+                .usingAnnotationManagerEditMode(AnnotManager.EditPermissionMode.EDIT_OTHERS)
                 .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
@@ -108,6 +117,15 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            mPdfViewCtrlTabHostFragment.getCollabManager().setCurrentUser("a", "a");
+            mPdfViewCtrlTabHostFragment.getCollabManager().setCurrentDocument("a");
+            try {
+                String xfdf = IOUtils.toString(getApplicationContext().getResources().openRawResource(R.raw.data), StandardCharsets.UTF_8);
+                mPdfViewCtrlTabHostFragment.getCollabManager().importAnnotationCommand(xfdf, true);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override

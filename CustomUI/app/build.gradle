@@ -4,7 +4,7 @@ android {
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.pdftron.android.tutorial.customui"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -23,8 +23,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.pdftron:pdftron:$myPdftronVersion"
-    implementation "com.pdftron:tools:$myPdftronVersion"
+    implementation "com.pdftron:pdftron:10.4.0"
+    implementation "com.pdftron:tools:10.4.0"
+    implementation "com.pdftron:collab:10.4.0"
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

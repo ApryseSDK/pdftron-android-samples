@@ -27,13 +27,13 @@ class FirebaseControl {
         userRef.get()
             .addOnSuccessListener { snapshot ->
                 if (!snapshot.exists()) {
-                    var userName = user?.displayName
-                    var photoUrl = user?.photoUrl
+                    var userName = user.displayName
+                    var photoUrl = user.photoUrl
                     if (userName.isNullOrEmpty())
                         userName = user.email
                     if (photoUrl == null)
                         photoUrl = Uri.EMPTY
-                    userRef.set(User(userName, user.email, photoUrl.toString()))
+                    userRef.set(User(userName!!, user.email!!, photoUrl!!.toString()))
                 }
             }
             .addOnFailureListener { exception ->

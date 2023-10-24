@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity() {
         val file = File(path)
         mFirebaseControl.addDocumentToSign(
             file,
-            usersList.map { it.email }) {
+            usersList.map { it.email!! }) {
             supportFragmentManager.popBackStack()
             bottom_bar.visibility = View.GONE
             deleteTempFile(file)

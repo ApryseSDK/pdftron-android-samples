@@ -3,10 +3,11 @@ package com.pdftron.android.tutorial.customui;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,15 +15,19 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.FileInfo;
+import com.pdftron.pdf.tools.CustomRelativeLayout;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -108,6 +113,32 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            // Add custom views on top of the custom stamp annotations
+
+            PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+            AnnotUtils.traverseAnnotsWithPage(pdfViewCtrl.getDoc(), new AnnotUtils.AnnotWithPageVisitor() {
+                @Override
+                public void visit(@NonNull Pair<Annot, Integer> annotPair) {
+                    Annot annot = annotPair.first;
+                    int pageNumber = annotPair.second;
+                    try {
+                        if (annot.getType() == Annot.e_Stamp && annot.getCustomData("custom_pin") != null) {
+                            // Hide the annotation in the viewer
+                            pdfViewCtrl.hideAnnotation(annot);
+
+                            // Instead add the custom view on top of the annotation
+                            CustomRelativeLayout overlay = new CustomRelativeLayout(MainActivity.this);
+                            overlay.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.location_on));
+                            overlay.setAnnot(pdfViewCtrl, annot, pageNumber);
+                            overlay.setZoomWithParent(true);
+                            pdfViewCtrl.addView(overlay);
+                        }
+                    } catch (PDFNetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
@@ -148,10 +179,25 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
         }
     }
 
+    private void addPin() {
+        PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+        int currentPage = pdfViewCtrl.getCurrentPage();
+
+        // Add a pin to the center of the screen
+        CustomRelativeLayout pin = new CustomRelativeLayout(MainActivity.this);
+        pin.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.location_on));
+        pin.setZoomWithParent(false);
+        pdfViewCtrl.addView(pin);
+        double centerX = pdfViewCtrl.getWidth() / 2.0f;
+        double centerY = pdfViewCtrl.getHeight() / 2.0f;
+        double iconSize = 80.0f;
+        pin.setScreenRect(centerX - iconSize / 2, centerY - iconSize / 2, centerX + iconSize / 2, centerY + iconSize / 2, currentPage);
+    }
+
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            addPin();
         }
         return false;
     }

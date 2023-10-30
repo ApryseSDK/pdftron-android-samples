@@ -1,12 +1,12 @@
 package com.pdftron.android.tutorial.customui;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,10 +14,19 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Element;
+import com.pdftron.pdf.ElementBuilder;
+import com.pdftron.pdf.ElementWriter;
+import com.pdftron.pdf.Image;
 import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.Point;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.annots.Text;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
@@ -27,6 +36,7 @@ import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
+import com.pdftron.sdf.Obj;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -151,9 +161,61 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            try {
+                // Create sticky note with a custom image appearance
+                PDFViewCtrl pdfViewCtrl = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl();
+                PDFDoc pdfDoc = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
+                int currentPage = pdfViewCtrl.getCurrentPage();
+
+                // Create the sticky note and add a custom image appearance
+                Text text = Text.create(pdfDoc, new Point(100, 200));
+                text.setAnchorPosition(new Point(0.5f, 0.5f)); // anchor to the center
+                setCustomImage(this, text, pdfDoc, R.raw.ic_pin);
+                pdfDoc.getPage(currentPage).annotPushBack(text);
+                pdfViewCtrl.update(text, currentPage);
+            } catch (PDFNetException e) {
+                throw new RuntimeException(e);
+            }
         }
         return false;
+    }
+
+    public void setCustomImage(Context context, Annot annot, PDFDoc doc, int imageRes) throws PDFNetException {
+        // Initialize a new ElementWriter and ElementBuilder
+        ElementWriter writer = new ElementWriter();
+        ElementBuilder builder = new ElementBuilder();
+
+        writer.begin(doc.getSDFDoc(), true);
+
+        File imageFile = Utils.copyResourceToLocal(context, imageRes, "image", ".png");
+
+        // Initialize the new image
+        Image image = Image.create(doc.getSDFDoc(), imageFile.getAbsolutePath());
+        int w = image.getImageWidth();
+        int h = image.getImageHeight();
+
+        // Initialize a new image element
+        Element element = builder.createImage(image, 0, 0, w, h);
+
+        // Write the element
+        writer.writePlacedElement(element);
+
+        // Get the bounding box of the new element
+        Rect bbox = element.getBBox();
+
+        // Configure the appearance stream that will be written to the annotation
+        Obj new_appearance_stream = writer.end();
+
+        // Set the bounding box to be the rect of the new element
+        new_appearance_stream.putRect(
+                "BBox",
+                bbox.getX1(),
+                bbox.getY1(),
+                bbox.getX2(),
+                bbox.getY2());
+
+        // Overwrite the annotation's appearance with the new appearance stream
+        annot.setAppearance(new_appearance_stream);
     }
 
     @Override

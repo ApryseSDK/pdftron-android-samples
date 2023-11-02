@@ -21,4 +21,7 @@
     <color name="subtle_utility_color">#303C42</color>
     <color name="disabled_state_color">#556D76</color>
 
+    <color name="tools_link_stroke">#00000000</color>
+    <color name="tools_link_fill">#00000000</color>
+
 </resources>

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.LongSparseArray;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -58,13 +59,11 @@ public class CustomLinkClick extends CustomizationDelegate {
                     // instead of jumping to the destination, let's display a flashing view on top of the link
                     try {
                         if (annot != null && annot.isValid() && annot.getType() == Annot.e_Link) {
-                            int pageNum = bundle.getInt(Tool.PAGE_NUMBER);
-
-                            // add custom on top of link
-                            addCustomViewOnLink(context, mLinkOverlayMap, pdfViewCtrl, annot, pageNum);
-
                             toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
                             pdfViewCtrl.invalidate();
+
+                            // Show toast indicating the link was clicked
+                            Toast.makeText(context, "Link clicked!", Toast.LENGTH_SHORT).show();
                             return true;
                         }
                     } catch (PDFNetException e) {

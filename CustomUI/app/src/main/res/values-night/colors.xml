@@ -7,4 +7,6 @@
 
     <color name="annotation_tool_background">#3D4763</color>
 
+    <color name="tools_link_stroke">#00000000</color>
+    <color name="tools_link_fill">#00000000</color>
 </resources>

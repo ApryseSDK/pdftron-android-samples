@@ -8,6 +8,7 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.model.ShapeBorderStyle;
 import com.pdftron.pdf.tools.RectCreate;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.AnnotUtils;
@@ -30,7 +31,7 @@ public class CustomCloudSquare extends RectCreate {
     @Override
     protected Annot createMarkup(@NonNull PDFDoc doc, Rect bbox) throws PDFNetException {
         Annot annot = super.createMarkup(doc, bbox);
-        AnnotUtils.setBorderStyle(annot, Markup.e_Cloudy, Annot.BorderStyle.e_solid, null);
+        mBorderStyle = ShapeBorderStyle.CLOUDY;
         return annot;
     }
 }

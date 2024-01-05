@@ -151,7 +151,9 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            if (menuItem.getItemId() == R.id.action_show_toast) {
+                mPdfViewCtrlTabHostFragment.onOpenAddNewTab(ViewerBuilder2.withUri(Uri.parse("https://pdftron.s3.amazonaws.com/webviewer/demo/samples/files/simple-excel_2007.xlsx")).createBundle(this));
+            }
         }
         return false;
     }

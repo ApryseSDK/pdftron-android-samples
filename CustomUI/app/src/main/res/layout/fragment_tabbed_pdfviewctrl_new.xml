@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.view.DispatchFairInsetsRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pdfviewctrl_tab_host"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!-- This layout *MUST* have android:fitsSystemWindows="true" so that insets can be applied
+         as padding when fullscreen mode is disabled. -->
+    <android.view.DispatchFairInsetsFrameLayout
+        android:id="@+id/realtabcontent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_toolbar_container"
+        android:layout_below="@+id/app_bar_layout"
+        android:layout_toRightOf="@+id/toolbar_container_vert"
+        android:layout_toEndOf="@+id/toolbar_container_vert"
+        android:layout_toLeftOf="@+id/toolbar_container_vert_end"
+        android:layout_toStartOf="@+id/toolbar_container_vert_end"
+        android:layout_alignWithParentIfMissing="true"
+        android:fitsSystemWindows="true"
+        tools:layout="@layout/fragment_tabbed_pdfviewctrl_tab_content_new" />
+
+    <!-- NOTE: This layout *MUST* have android:fitsSystemWindows="true" so that
+         it is not positioned behind the status bar. -->
+    <com.pdftron.pdf.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="false">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/pt_toolbar_theme"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"
+            style="?attr/pt_toolbar_style"
+            app:popupTheme="?attr/pt_toolbar_popup_theme"
+            app:contentInsetStart="@dimen/second_keyline"
+            app:navigationContentDescription="@string/abc_action_bar_up_description"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp" >
+
+            <com.pdftron.pdf.dialog.toolbarswitcher.button.ToolbarSwitcherButton
+                android:id="@+id/switcher_button"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.pdftron.pdf.dialog.toolbarswitcher.button.ToolbarSwitcherCompactButton
+                android:id="@+id/switcher_compact_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+        </androidx.appcompat.widget.Toolbar>
+
+        <FrameLayout
+            android:id="@+id/top_toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/top_toolbar_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:visibility="gone"
+                android:background="@drawable/annotation_toolbar_drag_area"/>
+
+        </FrameLayout>
+
+        <com.pdftron.pdf.controls.SearchToolbar
+            android:id="@+id/search_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:visibility="gone"
+            android:theme="?attr/pt_toolbar_theme"
+            style="?attr/pt_toolbar_style"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="?attr/pt_toolbar_popup_theme"
+            app:contentInsetStart="@dimen/second_keyline"
+            app:navigationContentDescription="@string/abc_action_bar_up_description"
+            app:navigationIcon="@drawable/ic_arrow_back_white_24dp" />
+
+        <!-- The tabPaddingStart and tabPaddingEnd attributes are changed from their default values
+             of 12dp (internal library values) because we need the custom tab views to fill the
+             entire space with their selectable backgrounds.
+             The tabContentStart attribute is only used when the TabLayout's tab mode is set to
+             the scrollable mode. -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false">
+
+            <com.pdftron.pdf.controls.CustomFragmentTabLayout
+                android:id="@+id/doc_tabs"
+                style="?attr/pt_pdf_tab_layout_style"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/tab_layout_height"
+                android:clipToPadding="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tab_placeholder"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <FrameLayout
+                android:id="@+id/tab_placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/tab_layout_height"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/doc_tabs"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/doc_tabs"
+                app:layout_constraintBottom_toBottomOf="@id/doc_tabs"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.pdftron.pdf.widget.AppBarLayout>
+
+    <com.pdftron.pdf.widget.IgnoreTopInsetCoordinatorLayout
+        android:id="@+id/controls_pane_coordinator_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_container"
+        android:layout_below="@id/app_bar_layout"
+        android:layout_alignWithParentIfMissing="true"
+        android:fitsSystemWindows="false">
+
+        <ViewStub
+            android:id="@+id/controls_search_results_stub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/controls_search_results"
+            android:layout="@layout/controls_search_results_layout" />
+
+    </com.pdftron.pdf.widget.IgnoreTopInsetCoordinatorLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_elevation"
+        android:id="@+id/bottom_bar_shadow"
+        android:background="@drawable/controls_thumbnail_slider_scrubberview_bg"
+        android:layout_above="@+id/bottom_container"/>
+
+    <com.pdftron.pdf.widget.IgnoreTopInsetRelativeLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="false" >
+
+        <FrameLayout
+            android:id="@+id/bottom_nav_container"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:fitsSystemWindows="false" />
+
+    </com.pdftron.pdf.widget.IgnoreTopInsetRelativeLayout>
+
+    <com.pdftron.pdf.widget.IgnoreTopInsetRelativeLayout
+        android:id="@+id/ignore_top_inset_preset_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="false" >
+
+        <FrameLayout
+            android:id="@+id/presets_container"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_centerHorizontal="true"
+            android:fitsSystemWindows="false" />
+
+    </com.pdftron.pdf.widget.IgnoreTopInsetRelativeLayout>
+
+    <com.pdftron.pdf.widget.ConsumeStartInsetFrameLayout
+        android:id="@+id/toolbar_container_vert"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_container"
+        android:layout_below="@id/app_bar_layout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="true">
+
+        <View
+            android:id="@+id/start_toolbar_placeholder"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@drawable/annotation_toolbar_drag_area" />
+
+    </com.pdftron.pdf.widget.ConsumeStartInsetFrameLayout>
+
+    <com.pdftron.pdf.widget.ConsumeEndInsetFrameLayout
+        android:id="@+id/toolbar_container_vert_end"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_container"
+        android:layout_below="@id/app_bar_layout"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="true">
+
+        <View
+            android:id="@+id/end_toolbar_placeholder"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@drawable/annotation_toolbar_drag_area" />
+
+    </com.pdftron.pdf.widget.ConsumeEndInsetFrameLayout>
+
+    <com.pdftron.pdf.widget.ConsumeHorizontalInsetFrameLayout
+        android:id="@+id/bottom_toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_container"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/actionbar_elevation"
+        android:fitsSystemWindows="true" >
+
+        <View
+            android:id="@+id/bottom_toolbar_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="gone"
+            android:background="@drawable/annotation_toolbar_drag_area" />
+
+    </com.pdftron.pdf.widget.ConsumeHorizontalInsetFrameLayout>
+
+</android.view.DispatchFairInsetsRelativeLayout>

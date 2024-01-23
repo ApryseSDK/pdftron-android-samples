@@ -5,18 +5,27 @@ import android.content.Intent;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.Highlights;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.TextSearchResult;
 import com.pdftron.pdf.annots.FileAttachment;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.controls.FindTextOverlay;
+import com.pdftron.pdf.controls.SearchResultsView;
+import com.pdftron.pdf.controls.SearchToolbar;
+import com.pdftron.pdf.tools.TextHighlighter;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AppUtils;
 import com.pdftron.pdf.utils.RequestCode;
 import com.pdftron.pdf.utils.Utils;
@@ -68,6 +77,103 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
         }
+
+        // Setup search results view
+        final SearchResultsView searchResultsView = findViewById(R.id.searchResultsView);
+        final SearchToolbar searchToolbar = findViewById(R.id.searchtoolbar);
+        final FindTextOverlay searchOverlay = findViewById(R.id.find_text_view);
+
+        searchResultsView.setPdfViewCtrl(mPdfViewCtrl);
+        searchResultsView.setSearchResultsListener(new SearchResultsView.SearchResultsListener() {
+            @Override
+            public void onSearchResultClicked(TextSearchResult result) {
+                // If using FindTextOverlay
+                if (searchOverlay != null) {
+                    searchOverlay.highlightFullTextSearchResult(result);
+                } else {
+                    // If not using FindTextOverlay, use this code instead:
+                    ToolManager.Tool tool = mToolManager.createTool(ToolManager.ToolMode.TEXT_HIGHLIGHTER, null);
+                    if (tool instanceof TextHighlighter) {
+                        TextHighlighter highlighter = (TextHighlighter) tool;
+                        mToolManager.setTool(highlighter);
+                        highlighter.start(result.getResultStr());
+
+                        mPdfViewCtrl.selectAndJumpWithHighlights(result.getHighlights());
+                        highlighter.update();
+                        highlighter.highlightSelection();
+                    }
+                }
+
+                // Hide Search results
+                searchResultsView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFullTextSearchStart() {
+
+            }
+
+            @Override
+            public void onSearchResultFound(TextSearchResult result) {
+
+            }
+        });
+        searchResultsView.setVisibility(View.GONE);
+
+        // Set up the search controls in our activity
+        searchOverlay.setPdfViewCtrl(mPdfViewCtrl);
+        searchToolbar.setSearchToolbarListener(new SearchToolbar.SearchToolbarListener() {
+            @Override
+            public void onExitSearch() {
+                searchToolbar.setVisibility(View.GONE);
+                searchOverlay.setVisibility(View.GONE);
+                searchOverlay.exitSearchMode();
+            }
+
+            @Override
+            public void onClearSearchQuery() {
+                searchOverlay.cancelFindText();
+            }
+
+            @Override
+            public void onSearchQuerySubmit(String s) {
+                searchOverlay.queryTextSubmit(s);
+            }
+
+            @Override
+            public void onSearchQueryChange(String s) {
+                searchOverlay.setSearchQuery(s);
+            }
+
+            @Override
+            public void onSearchOptionsItemSelected(MenuItem menuItem, String searchQuery) {
+                int id = menuItem.getItemId();
+
+                if (id == com.pdftron.pdf.tools.R.id.action_list_all) {
+                    if (searchResultsView.getVisibility() == View.VISIBLE) {
+                        searchResultsView.setVisibility(View.GONE);
+                    } else if (!Utils.isNullOrEmpty(searchQuery)) {
+                        searchResultsView.setVisibility(View.VISIBLE);
+                        searchResultsView.findText(searchQuery);
+
+                        searchOverlay.setSearchQuery(searchQuery);
+                        searchOverlay.highlightSearchResults();
+                    }
+                } else if (id == R.id.action_match_case) {
+                    boolean isChecked = menuItem.isChecked();
+                    searchOverlay.setSearchMatchCase(!isChecked);
+                    searchOverlay.resetFullTextResults();
+                    menuItem.setChecked(!isChecked);
+                } else if (id == R.id.action_whole_word) {
+                    boolean isChecked = menuItem.isChecked();
+                    searchOverlay.setSearchWholeWord(!isChecked);
+                    searchOverlay.resetFullTextResults();
+                    menuItem.setChecked(!isChecked);
+                }
+            }
+        });
+        searchToolbar.setVisibility(View.VISIBLE);
+        searchOverlay.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -56,10 +56,6 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
-        mToolbarContainer = findViewById(R.id.annotation_toolbar_container);
-        mPresetContainer = findViewById(R.id.preset_container);
         setupToolManager();
         setupAnnotationToolbar();
         try {
@@ -96,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
      * Helper method to set up and initialize the ToolManager.
      */
     public void setupToolManager() {
-        mToolManager = ToolManagerBuilder.from()
-                .build(this, mPdfViewCtrl);
         mToolManager.setAdvancedAnnotationListener(this);
     }
 
@@ -174,6 +168,14 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
     @Override
     protected void onResume() {
         super.onResume();
+
+        mPdfViewCtrl = findViewById(R.id.pdfviewctrl);
+        mToolbarContainer = findViewById(R.id.annotation_toolbar_container);
+        mPresetContainer = findViewById(R.id.preset_container);
+
+        mToolManager = ToolManagerBuilder.from()
+                .build(this, mPdfViewCtrl);
+
         if (mPdfViewCtrl != null) {
             mPdfViewCtrl.resume();
         }

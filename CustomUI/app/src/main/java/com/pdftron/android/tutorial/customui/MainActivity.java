@@ -1,6 +1,7 @@
 package com.pdftron.android.tutorial.customui;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -8,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -29,6 +31,9 @@ import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -105,9 +110,21 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .addToolStickyButton(ToolbarButtonType.REDO, DefaultToolbars.ButtonId.REDO.value());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onTabDocumentLoaded(String s) {
         if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
+            File f = Utils.copyResourceToLocal(this, R.raw.annotation, "annotation", ".xfdf");
+            try {
+                byte[] rawValue = new byte[0];
+                rawValue = Files.readAllBytes(Paths.get(f.toURI()));
+                String xfdf = new String(rawValue, StandardCharsets.UTF_8);
+                FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc().fdfMerge(fdfDoc);
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().update();
+            } catch (Exception e ){
+                Log.d("ERROR", e.toString());
+            }
             ToolManager tm = mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
             tm.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override

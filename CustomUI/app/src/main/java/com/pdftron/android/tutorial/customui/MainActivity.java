@@ -14,8 +14,11 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pdftron.android.tutorial.customui.custom.CustomAnnotationToolbar;
 import com.pdftron.android.tutorial.customui.custom.CustomLinkClick;
 import com.pdftron.android.tutorial.customui.custom.CustomQuickMenu;
+import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Convert;
+import com.pdftron.pdf.DocumentConversion;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.ViewerBuilder2;
@@ -29,6 +32,7 @@ import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -151,7 +155,15 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+            File f = Utils.copyResourceToLocal(this, R.raw.jp2, "jp2", ".jp2");
+            Uri uri = Uri.fromFile(f);
+            try {
+                mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPDFViewCtrl().openNonPDFUri(uri, null);
+            } catch (PDFNetException e) {
+                throw new RuntimeException(e);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
         return false;
     }

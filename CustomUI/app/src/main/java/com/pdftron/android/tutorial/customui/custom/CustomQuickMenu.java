@@ -38,49 +38,15 @@ public class CustomQuickMenu extends CustomizationDelegate {
             @Override
             public boolean onQuickMenuClicked(QuickMenuItem menuItem) {
                 int which = menuItem.getItemId();
-                if (which == R.id.qm_star) {
-                    CommonToast.showText(context, "Star pressed");
+                if (which == R.id.qm_translate) {
+                    CommonToast.showText(context, "Translate pressed");
                     return true;
-                } else if (which == R.id.qm_custom_link) {
-                    CommonToast.showText(context, "Link pressed");
-                } else if (which == R.id.qm_custom_unlink) {
-                    CommonToast.showText(context, "Unlink pressed");
                 }
                 return false;
             }
 
             @Override
             public boolean onShowQuickMenu(QuickMenu quickMenu, Annot annot) {
-                // Programmatically change quick menu
-                try {
-                    if (annot != null && quickMenu != null) {
-                        if (annot.getType() == Annot.e_Square) {
-                            // Add a custom quick menu button when square annotations are selected
-                            // to the first row called "Link" with a ic_link_black_24dp icon
-                            QuickMenuItem item =
-                                    new QuickMenuItem(context,
-                                            R.id.qm_custom_link,
-                                            QuickMenuItem.FIRST_ROW_MENU
-                                    );
-                            item.setTitle(R.string.qm_custom_link);
-                            item.setIcon(R.drawable.ic_link_black_24dp);
-                            item.setOrder(3);
-                            ArrayList<QuickMenuItem> items = new ArrayList<>(1);
-                            items.add(item);
-                            quickMenu.addMenuEntries(items);
-                        } else if (annot.getType() == Annot.e_Circle) {
-                            // Add a custom quick menu button when circle annotations are selected
-                            // to the overflow called "Unlink"
-                            QuickMenuItem item = new QuickMenuItem(context, R.id.qm_custom_unlink, QuickMenuItem.OVERFLOW_ROW_MENU);
-                            item.setTitle(R.string.qm_custom_unlink);
-                            ArrayList<QuickMenuItem> items = new ArrayList<>(1);
-                            items.add(item);
-                            quickMenu.addMenuEntries(items);
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
 
                 return false;
             }

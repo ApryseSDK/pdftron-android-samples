@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@id/qm_first_row_group">
+        <item android:id="@+id/qm_copy"
+            android:title="@string/tools_qm_copy"
+            android:icon="@drawable/ic_copy_black_24dp"/>
+        <item android:id="@+id/qm_translate"
+            android:title="Translate"
+            android:icon="@drawable/ic_translate_24px"/>
+        <item android:id="@+id/qm_highlight"
+            android:title="@string/tools_qm_highlight"
+            android:icon="@drawable/ic_annotation_highlight_black_24dp" />
+        <item android:id="@+id/qm_underline"
+            android:title="@string/tools_qm_underline"
+            android:icon="@drawable/ic_annotation_underline_black_24dp"/>
+        <item android:id="@+id/qm_squiggly"
+            android:title="@string/tools_qm_squiggly"
+            android:icon="@drawable/ic_annotation_squiggly_black_24dp"/>
+        <item android:id="@+id/qm_strikeout"
+            android:title="@string/tools_qm_strikeout"
+            android:icon="@drawable/ic_annotation_strikeout_black_24dp"/>
+    </group>
+</menu>

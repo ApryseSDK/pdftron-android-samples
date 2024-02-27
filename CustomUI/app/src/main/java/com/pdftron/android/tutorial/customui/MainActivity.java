@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .fullscreenModeEnabled(false)
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
-                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
+//                .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
+//                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);

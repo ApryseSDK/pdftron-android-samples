@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
+            mPdfViewCtrl.setZoomEnabled(false);
             viewFromResource(R.raw.sample, "sample_file");
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");

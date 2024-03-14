@@ -25,6 +25,7 @@ import com.pdftron.pdf.widget.preset.component.PresetBarComponent;
 import com.pdftron.pdf.widget.preset.component.PresetBarViewModel;
 import com.pdftron.pdf.widget.preset.component.view.PresetBarView;
 import com.pdftron.pdf.widget.preset.signature.SignatureViewModel;
+import com.pdftron.pdf.widget.seekbar.DocumentSlider;
 import com.pdftron.pdf.widget.toolbar.ToolManagerViewModel;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -35,7 +36,7 @@ import com.pdftron.pdf.widget.toolbar.component.view.AnnotationToolbarView;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity implements ToolManager.AdvancedAnnotationListener {
+public class MainActivity extends AppCompatActivity implements ToolManager.AdvancedAnnotationListener, DocumentSlider.OnDocumentSliderTrackingListener {
     private static final String TAG = MainActivity.class.getName();
 
     private PDFViewCtrl mPdfViewCtrl;
@@ -64,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
         setupAnnotationToolbar();
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
+            mPdfViewCtrl.setPagePresentationMode(PDFViewCtrl.PagePresentationMode.SINGLE_CONT);
+            DocumentSlider documentSlider = findViewById(R.id.slider);
+            documentSlider.setPdfViewCtrl(mPdfViewCtrl);
+            documentSlider.setOnDocumentSliderTrackingListener(this);
+
             viewFromResource(R.raw.sample, "sample_file");
         } catch (PDFNetException e) {
             Log.e(TAG, "Error setting up PDFViewCtrl");
@@ -242,6 +248,16 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
 
     @Override
     public void fileCreated(String fileLocation, AnnotAction action) {
+
+    }
+
+    @Override
+    public void onDocumentSliderStartTrackingTouch() {
+
+    }
+
+    @Override
+    public void onDocumentSliderStopTrackingTouch(int pageNum) {
 
     }
 }

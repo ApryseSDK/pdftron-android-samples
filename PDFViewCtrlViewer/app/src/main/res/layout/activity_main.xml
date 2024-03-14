@@ -31,4 +31,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <com.pdftron.pdf.widget.seekbar.DocumentSlider
+        android:id="@+id/slider"
+        android:layout_width="@dimen/document_seek_bar_height"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="1.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

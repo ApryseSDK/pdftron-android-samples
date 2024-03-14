@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,14 +42,27 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
     public static final String NOTES_TOOLBAR_TAG = "notes_toolbar";
     public static final String SHAPES_TOOLBAR_TAG = "shapes_toolbar";
 
+    int counter = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        startFragment();
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startFragment();
+            }
+        });
+
+    }
+
+    private void startFragment() {
         // Instantiate a PdfViewCtrlTabHostFragment with a document Uri
-        File f = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
-        Uri uri = Uri.fromFile(f);
+        Uri uri = Uri.parse(getDocument());
         ViewerConfig viewerConfig = new ViewerConfig.Builder()
                 .addToolbarBuilder(buildNotesToolbar())
                 .addToolbarBuilder(buildShapesToolbar())
@@ -56,11 +71,11 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
                 .build();
         mPdfViewCtrlTabHostFragment = ViewerBuilder2.withUri(uri)
                 .usingCustomToolbar(new int[]{R.menu.my_custom_options_toolbar})
-                .usingNavIcon(R.drawable.ic_star_white_24dp)
                 .usingConfig(viewerConfig)
                 .usingTheme(R.style.MyCustomAppTheme)
                 .build(this);
         mPdfViewCtrlTabHostFragment.addHostListener(this);
+
 
         // Apply customizations to tab host fragment
         new CustomQuickMenu(MainActivity.this, mPdfViewCtrlTabHostFragment);
@@ -69,8 +84,23 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
         // Add the fragment to our activity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment);
+        ft.replace(R.id.fragment_container, mPdfViewCtrlTabHostFragment).addToBackStack(null);
         ft.commit();
+    }
+
+    private String getDocument() {
+        ArrayList<String> links = new ArrayList<>();
+        links.add("https://pdftron.s3.amazonaws.com/downloads/pl/Report_2011.pdf");
+        links.add("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf");
+        links.add("https://pdfobject.com/pdf/sample.pdf");
+        links.add( "https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf");
+        links.add("https://css4.pub/2015/icelandic/dictionary.pdf");
+        if (counter == 5) {
+            counter = 0;
+        }
+        String result = links.get(counter);
+        counter++;
+        return result;
     }
 
     @Override
@@ -183,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public void onNavButtonPressed() {
-
+        this.getSupportFragmentManager().popBackStack();
     }
 
     @Override

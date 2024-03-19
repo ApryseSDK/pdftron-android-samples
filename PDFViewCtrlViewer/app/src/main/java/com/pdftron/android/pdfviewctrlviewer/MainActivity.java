@@ -66,9 +66,16 @@ public class MainActivity extends AppCompatActivity implements ToolManager.Advan
         try {
             AppUtils.setupPDFViewCtrl(mPdfViewCtrl);
             mPdfViewCtrl.setPagePresentationMode(PDFViewCtrl.PagePresentationMode.SINGLE_CONT);
+
             DocumentSlider documentSlider = findViewById(R.id.slider);
             documentSlider.setPdfViewCtrl(mPdfViewCtrl);
             documentSlider.setOnDocumentSliderTrackingListener(this);
+            mPdfViewCtrl.addPageChangeListener(new PDFViewCtrl.PageChangeListener() {
+                @Override
+                public void onPageChange(int i, int i1, PDFViewCtrl.PageChangeState pageChangeState) {
+                    documentSlider.updateProgress();
+                }
+            });
 
             viewFromResource(R.raw.sample, "sample_file");
         } catch (PDFNetException e) {

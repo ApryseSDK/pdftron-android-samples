@@ -29,6 +29,10 @@ import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -150,8 +154,22 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
 
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.action_show_toast) {
-            Toast.makeText(this, "Show toast is clicked!", Toast.LENGTH_SHORT).show();
+        if (menuItem.getItemId() == R.id.action_compare_same_file) {
+            File firstFile = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+            File secondFile = Utils.copyResourceToLocal(this, R.raw.sample, "sample2", ".pdf");
+            compareFiles(firstFile, secondFile);
+        } else if (menuItem.getItemId() == R.id.action_compare_with_changes) {
+            File firstFile = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+            File secondFile = Utils.copyResourceToLocal(this, R.raw.sample_with_changes, "sample2", ".pdf");
+            compareFiles(firstFile, secondFile);
+        } else if (menuItem.getItemId() == R.id.action_compare_with_revert) {
+            File firstFile = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+            File secondFile = Utils.copyResourceToLocal(this, R.raw.sample_with_changes_reverted, "sample2", ".pdf");
+            compareFiles(firstFile, secondFile);
+        } else if (menuItem.getItemId() == R.id.action_compare_with_clone) {
+            File firstFile = Utils.copyResourceToLocal(this, R.raw.sample, "sample", ".pdf");
+            File secondFile = Utils.copyResourceToLocal(this, R.raw.sample_direct_clone, "sample2", ".pdf");
+            compareFiles(firstFile, secondFile);
         }
         return false;
     }
@@ -264,5 +282,27 @@ public class MainActivity extends AppCompatActivity implements PdfViewCtrlTabHos
             }
         }
         return null;
+    }
+
+    private void compareFiles(File firstFile, File secondFile) {
+        try {
+            try (InputStream is =  new FileInputStream(firstFile.getAbsolutePath())) {
+                InputStream is2 =  new FileInputStream(secondFile.getAbsolutePath());
+                String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+                String secondMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is2);
+
+                if (md5.equals(secondMd5)) {
+                    Toast.makeText(this, "This file is the same: " + md5, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "This file is not the same: " + md5 + ", " + secondMd5, Toast.LENGTH_SHORT).show();
+                }
+                Log.d("LOGMD5", md5);
+                Log.d("LOGMD5", secondMd5);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

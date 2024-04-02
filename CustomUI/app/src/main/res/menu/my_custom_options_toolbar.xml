@@ -2,7 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_show_toast"
-        android:title="Show toast"
+        android:id="@+id/action_compare_same_file"
+        android:title="Compare the same file"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_compare_with_changes"
+        android:title="Compare with modified file"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_compare_with_revert"
+        android:title="Compare with reverted file"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_compare_with_clone"
+        android:title="Compare with clone"
         app:showAsAction="never" />
 </menu>

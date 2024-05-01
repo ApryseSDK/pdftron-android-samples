@@ -31,7 +31,6 @@ This repository contains sample projects using different features of the Apryse 
 | Sample | Description |
 |--|--|
 |[DemoHTML2PDF](./DemoHTML2PDF)| HTML to PDF conversion as described [in this guide](https://docs.apryse.com/documentation/android/guides/basics/html-to-pdf/)|
-|[CADViewer](./CADViewer)| CAD to PDF conversion using WebViewer Server [in this guide](https://docs.apryse.com/documentation/web/guides/wv-server-usage/#getpdf)|
 
 ## Running the samples
 

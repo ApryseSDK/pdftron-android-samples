@@ -7,7 +7,6 @@ This repository contains sample projects using different features of the Apryse 
 |[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://docs.apryse.com/documentation/android/get-started/integration/gradle/#integrating-standard-version)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
 |[QuickStartPDFViewer](./QuickStartPDFViewer)| Quick start viewer integration using Gradle as described [in this guide](https://docs.apryse.com/documentation/android/guides/getting-started/try-demo)|
-|[NativeCPPExample](./NativeCppExample)| Native C++ Apryse library on Android|
 
 ## Customization samples
 | Sample | Description |

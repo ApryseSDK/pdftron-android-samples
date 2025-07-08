@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 35
 
 
     defaultConfig {
         applicationId "com.pdftron.nativecppexample"
         minSdkVersion 28
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
 
@@ -35,6 +35,7 @@ android {
             version "3.10.2"
         }
     }
+    namespace 'com.pdftron.nativecppexample'
 
     defaultConfig {
         ndk {

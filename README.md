@@ -1,19 +1,19 @@
 # Apryse Android Samples
-This repository contains sample projects using different features of the Apryse Android SDK. The guides for each sample can be found in the [Apryse Android documentation](https://docs.apryse.com/documentation/android/guides/).
+This repository contains sample projects using different features of the Apryse Android SDK. The guides for each sample can be found in the [Apryse Android documentation](https://docs.apryse.com/android/get-started/samples).
 
 ## Integration samples
 | Sample | Description |
 |--|--|
-|[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://docs.apryse.com/documentation/android/get-started/integration/gradle/#integrating-standard-version)
+|[StandardPDFViewer](./StandardPDFViewer)| Standard gradle integration as described [in this guide](https://docs.apryse.com/android/get-started/integration#integrate-with-gradle)
 |[PDFViewCtrlViewer](./PDFViewCtrlViewer)| Viewer integration using PDFViewCtrl and AnnotationToolbar|
-|[QuickStartPDFViewer](./QuickStartPDFViewer)| Quick start viewer integration using Gradle as described [in this guide](https://docs.apryse.com/documentation/android/guides/getting-started/try-demo)|
+|[QuickStartPDFViewer](./QuickStartPDFViewer)|
 
 ## Customization samples
 | Sample | Description |
 |--|--|
-|[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://docs.apryse.com/documentation/android/guides/advanced/customize-color-picker/#customize-the-icon-picker)
+|[CustomStickyNote](./CustomStickyNote)| Customize sticky note icons as described [in this guide](https://docs.apryse.com/android/annotation/customize-color-picker#customize-the-icon-picker)
 |[CustomUI](./CustomUI)| Various samples to customize the UI of PdfViewCtrlTabHostFragment which includes samples for: modifying the quick menu, modifying the annotation toolbar, modifying the options toolbar, and adding custom views to the viewer.
-|[CustomToolSample](./CustomToolSample)| Create a custom tool as described [in this guide](https://docs.apryse.com/documentation/android/guides/advanced/custom-tool/)
+|[CustomToolSample](./CustomToolSample)| Create a custom tool as described [in this guide](https://docs.apryse.com/android/ui-customization/custom-tool)
 
 ## Signing samples
 | Sample | Description |
@@ -24,12 +24,12 @@ This repository contains sample projects using different features of the Apryse 
 | Sample | Description |
 |--|--|
 [CollabWebSocketSample](./CollabWebSocketSample) | Create a real-time document collaboration app with Node.js + SQLite3 + WebSocket
-|[CollabFirebaseSample](./CollabFirebaseSample)| Create a real-time document collaboration app as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-1) and customize as described [in this blog](https://www.pdftron.com/blog/android/build-real-time-collab-with-firebase-2) |
+|[CollabFirebaseSample](./CollabFirebaseSample)| Create a real-time document collaboration app as described [in this blog](https://apryse.com/blog/android/build-real-time-collab-with-firebase-1) and customize as described [in the docs](https://docs.apryse.com/web/collaboration/realtime-collaboration-server) |
 
 ## Feature samples
 | Sample | Description |
 |--|--|
-|[DemoHTML2PDF](./DemoHTML2PDF)| HTML to PDF conversion as described [in this guide](https://docs.apryse.com/documentation/android/guides/basics/html-to-pdf/)|
+|[DemoHTML2PDF](./DemoHTML2PDF)| HTML to PDF conversion as described [in this guide](https://docs.apryse.com/android/conversion/html-to-pdf)|
 
 ## Running the samples
 
